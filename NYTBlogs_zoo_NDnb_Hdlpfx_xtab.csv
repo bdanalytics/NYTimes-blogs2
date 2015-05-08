@@ -1,0 +1,186 @@
+"Headline.pfx" "NewsDesk.nb" "Popular.fctr" ".n"
+"myMisc::" "Business" "N" 1021
+"myMisc::" "myMisc::" "N" 800
+"myMisc::" "Culture" "N" 599
+"myMisc::" "TStyle" "N" 532
+"myMisc::" "Business" NA 419
+"myMisc::" "OpEd" "Y" 403
+"myMisc::" "Culture" NA 231
+"myMisc::" "Foreign" "N" 219
+"myMisc::" "Business" "Y" 216
+"myMisc::" "myMisc::" NA 199
+"myMisc::" "OpEd" NA 189
+".*Fashion Week::" "TStyle" "N" 184
+"myMisc::" "OpEd" "N" 167
+"19[0-9][0-9]::" "Foreign" "N" 150
+"myMisc::" "Styles" "N" 128
+"myMisc::" "Metro" "N" 116
+"myMisc::" "Science" "Y" 111
+"myMisc::" "myEducation" "N" 108
+"myMisc::" "Travel" "N" 106
+"myMisc::" "myMisc::" "Y" 97
+"myMisc::" "myMultimedia" "N" 86
+"myPolitics::" "myPolitics::" "N" 85
+"myTech::" "Business" "N" 83
+"myMisc::" "Styles" "Y" 81
+"myMisc::" "TStyle" NA 78
+"myMisc::" "Styles" NA 66
+"myMisc::" "Foreign" NA 63
+"Morning Agenda::" "Business" "N" 62
+"Daily Clip Report::" "Daily Clip Report::" "N" 62
+"6 Q's About the News::" "myEducation" "N" 61
+"Test Yourself::" "myEducation" "N" 61
+"Word of the Day::" "myEducation" "N" 61
+"Daily Report::" "Business" "N" 60
+"New York Today::" "Metro" "N" 59
+"Today in Small Business::" "Business" "N" 58
+"First Draft::" "First Draft::" "N" 58
+"Pictures of the (Day|Year|.)::" "myMultimedia" "N" 53
+"myMisc::" "Science" "N" 51
+"myMisc::" "Science" NA 51
+"myMisc::" "Culture" "Y" 50
+"What We're::" "OpEd" "N" 45
+"Today in Politics::" "Today in Politics::" "N" 44
+"myMisc::" "Metro" NA 44
+"19[0-9][0-9]::" "Foreign" NA 43
+"myPolitics::" "myPolitics::" NA 41
+"Verbatim::" "Verbatim::" "N" 33
+"myMisc::" "myEducation" NA 33
+"myMisc::" "Travel" NA 30
+"myMisc::" "myMultimedia" NA 29
+"myMisc::" "Magazine" "N" 28
+"The Daily Gift::" "TStyle" "N" 25
+"myTech::" "Business" "Y" 24
+"myTech::" "Business" NA 23
+"Pictures of the (Day|Year|.)::" "myMultimedia" NA 23
+"Daily Clip Report::" "Daily Clip Report::" NA 22
+"The Daily Gift::" "TStyle" NA 22
+"New York Today::" "Metro" NA 21
+"Today in Politics::" "Today in Politics::" NA 21
+"Daily Report::" "Business" NA 18
+"myPolitics::" "OpEd" "Y" 17
+"Test Yourself::" "myEducation" NA 17
+"Word of the Day::" "myEducation" NA 17
+"Morning Agenda::" "Business" NA 16
+"On This Day::" "myEducation" "N" 15
+"myFood::" "Science" "N" 15
+"Today in Small Business::" "Business" NA 15
+"6 Q's About the News::" "myEducation" NA 15
+"First Draft::" "First Draft::" NA 14
+"myFood::" "TStyle" "N" 13
+"myMultimedia::" "Culture" "N" 12
+"Quiz(.*)([?=|]|[?=:]::" "myEducation" "N" 12
+"What We're::" "OpEd" NA 12
+"Verbatim::" "Verbatim::" NA 12
+"myMisc::" "Metro" "Y" 11
+"myFood::" "Business" "N" 10
+"myEducation::" "myEducation" "N" 10
+"myFood::" "Styles" "N" 10
+"Your Turn::" "Styles" "N" 9
+"myFood::" "Travel" "N" 9
+"Ask Well::" "Science" "Y" 9
+"myEducation::" "Styles" "Y" 9
+"myMultimedia::" "TStyle" "N" 7
+"myMisc::" "TStyle" "Y" 7
+"Reporter's Notebook::" "Reporter's Notebook::" NA 7
+"myEducation::" "Culture" "N" 6
+"myPolitics::" "Culture" "N" 6
+"Readers Respond::" "Readers Respond::" "N" 6
+"Reporter's Notebook::" "Reporter's Notebook::" "N" 6
+"Ask Well::" "Science" "N" 6
+"Readers Respond::" "Readers Respond::" "Y" 6
+"myEducation::" "Business" "N" 5
+"myEducation::" "Foreign" "N" 5
+"myFood::" "myEducation" "N" 5
+"myPolitics::" "OpEd" "N" 5
+"myPolitics::" "myPolitics::" "Y" 5
+"myEducation::" "Business" NA 5
+"myMultimedia::" "Culture" NA 5
+"myMultimedia::" "Business" "N" 4
+"myMultimedia::" "Foreign" "N" 4
+"myFood::" "Metro" "N" 4
+"myMultimedia::" "myEducation" "N" 4
+"myMultimedia::" "myMultimedia::" "N" 4
+"myMisc::" "National" "N" 4
+"myEducation::" "myEducation::" "Y" 4
+"Your Turn::" "Styles" "Y" 4
+"myFood::" "Styles" "Y" 4
+"myEducation::" "Culture" NA 4
+"Quiz(.*)([?=|]|[?=:]::" "myEducation" NA 4
+"Readers Respond::" "Readers Respond::" NA 4
+"myMultimedia::" "TStyle" NA 4
+"myTech::" "myEducation" "N" 3
+"myTech::" "OpEd" "N" 3
+"myEducation::" "Styles" "N" 3
+"myEducation::" "Business" "Y" 3
+"New York Today::" "Metro" "Y" 3
+"myMisc::" "Magazine" NA 3
+"On This Day::" "myEducation" NA 3
+"myEducation::" "myEducation::" NA 3
+"myMultimedia::" "myMultimedia::" NA 3
+"Ask Well::" "Science" NA 3
+"myFood::" "Science" NA 3
+"Your Turn::" "Styles" NA 3
+"myEducation::" "Styles" NA 3
+"myPolitics::" "Business" "N" 2
+"myTech::" "Culture" "N" 2
+"myFood::" "Foreign" "N" 2
+"myFood::" "Magazine" "N" 2
+"myEducation::" "myEducation::" "N" 2
+"Readers Respond::" "OpEd" "N" 2
+"myMisc::" "Sports" "N" 2
+"myPolitics::" "Styles" "N" 2
+"myTech::" "Styles" "N" 2
+"myFood::" "Business" "Y" 2
+"myPolitics::" "Business" "Y" 2
+"myMisc::" "Foreign" "Y" 2
+"myMisc::" "myMultimedia" "Y" 2
+"Readers Respond::" "OpEd" "Y" 2
+"myTech::" "OpEd" "Y" 2
+"Reporter's Notebook::" "Reporter's Notebook::" "Y" 2
+"myFood::" "Science" "Y" 2
+"myMultimedia::" "Styles" "Y" 2
+"myFood::" "Business" NA 2
+"myTech::" "Culture" NA 2
+"myEducation::" "myEducation" NA 2
+"myPolitics::" "OpEd" NA 2
+"myPolitics::" "Styles" NA 2
+"The Daily Gift::" "The Daily Gift::" NA 2
+".*Fashion Week::" "TStyle" NA 2
+"Readers Respond::" "Business" "N" 1
+"myFood::" "Culture" "N" 1
+"myPolitics::" "Foreign" "N" 1
+"Readers Respond::" "Magazine" "N" 1
+"myEducation::" "Metro" "N" 1
+"myFood::" "OpEd" "N" 1
+"myEducation::" "Science" "N" 1
+"myTech::" "Science" "N" 1
+"The Daily Gift::" "The Daily Gift::" "N" 1
+"myEducation::" "TStyle" "N" 1
+"myPolitics::" "TStyle" "N" 1
+"myPolitics::" "Foreign" "Y" 1
+"Readers Respond::" "Metro" "Y" 1
+"myFood::" "Metro" "Y" 1
+"myMultimedia::" "Metro" "Y" 1
+"Quiz(.*)([?=|]|[?=:]::" "myEducation" "Y" 1
+"myFood::" "OpEd" "Y" 1
+"myMultimedia::" "OpEd" "Y" 1
+"myPolitics::" "Styles" "Y" 1
+"myMisc::" "Travel" "Y" 1
+"myEducation::" "TStyle" "Y" 1
+"myTech::" "TStyle" "Y" 1
+"myMultimedia::" "Business" NA 1
+"myPolitics::" "Business" NA 1
+"myPolitics::" "Culture" NA 1
+"myPolitics::" "Foreign" NA 1
+"myMultimedia::" "Metro" NA 1
+"myMultimedia::" "myEducation" NA 1
+"myTech::" "myEducation" NA 1
+"myMultimedia::" "myMultimedia" NA 1
+"myEducation::" "OpEd" NA 1
+"myTech::" "OpEd" NA 1
+"myFood::" "Styles" NA 1
+"myMultimedia::" "Styles" NA 1
+"myTech::" "Styles" NA 1
+"myFood::" "Travel" NA 1
+"myFood::" "TStyle" NA 1

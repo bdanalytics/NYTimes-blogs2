@@ -1,0 +1,2432 @@
+---
+# Get YAML keywords from myYAML_ref.Rmd
+title: "NYTimes:Blogs:: Popular classification:: fillmiss_fin"
+author: "bdanalytics"
+
+# Choose one:
+output:
+    html_document:
+        keep_md: yes
+        pandoc_args: ["+RTS", "-K64M", "-RTS"]
+
+# output:
+#   pdf_document:
+#     fig_width: 8
+#     highlight: zenburn
+#     #keep_md: yes
+#     keep_tex: yes
+#     number_sections: yes
+#     toc: yes
+---
+
+**  **    
+**Date: `r format(Sys.time(), "(%a) %b %d, %Y")`**    
+
+# Introduction:  
+
+Data: 
+Source: 
+    Training:   https://kaggle2.blob.core.windows.net/competitions-data/kaggle/4347/NYTimesBlogTrain.csv
+    New:        https://kaggle2.blob.core.windows.net/competitions-data/kaggle/4347/NYTimesBlogTest.csv  
+Time period: 
+
+```{r set_global_options_wd, echo=FALSE}
+setwd("~/Documents/Work/Courses/MIT/Analytics_Edge_15_071x/Assignments/Kaggle_NYTimes_blogs")
+```
+
+# Synopsis:
+
+Based on analysis utilizing <> techniques, <conclusion heading>:  
+
+### ![](<filename>.png)
+
+## Potential next steps include:
+- Organization:
+    - Categorize by chunk
+    - Priority criteria:
+        0. Ease of change
+        1. Impacts report
+        2. Cleans innards
+        3. Bug report
+        
+- manage.missing.data chunk:
+    - cleaner way to manage re-splitting of training vs. new entity
+
+- extract.features chunk:
+    - Add n-grams for glb_txt_vars
+        - "RTextTools", "tau", "RWeka", and "textcat" packages
+    - Convert user-specified mutate code to config specs
+    
+- fit.models chunk:
+    - Prediction accuracy scatter graph:
+    -   Add tiles (raw vs. PCA)
+    -   Use shiny for drop-down of "important" features
+    -   Use plot.ly for interactive plots ?
+    
+    - Change .fit suffix of model metrics to .mdl if it's data independent (e.g. AIC, Adj.R.Squared - is it truly data independent ?, etc.)
+    - move model_type parameter to myfit_mdl before indep_vars_vctr (keep all model_* together)
+    - create a custom model for rpart that has minbucket as a tuning parameter
+    - varImp for randomForest crashes in caret version:6.0.41 -> submit bug report
+
+- Probability handling for multinomials vs. desired binomial outcome
+-   ROCR currently supports only evaluation of binary classification tasks (version 1.0.7)
+-   extensions toward multiclass classification are scheduled for the next release
+
+- Skip trControl.method="cv" for dummy classifier ?
+- Add custom model to caret for a dummy (baseline) classifier (binomial & multinomial) that generates proba/outcomes which mimics the freq distribution of glb_rsp_var values; Right now glb_dmy_glm_mdl always generates most frequent outcome in training data
+- glm_dmy_mdl should use the same method as glm_sel_mdl until custom dummy classifer is implemented
+
+- fit.all.training chunk:
+    - myplot_prediction_classification: displays 'x' instead of '+' when there are no prediction errors 
+- Compare glb_sel_mdl vs. glb_fin_mdl:
+    - varImp
+    - Prediction differences (shd be minimal ?)
+
+- Move glb_analytics_diag_plots to mydsutils.R: (+) Easier to debug (-) Too many glb vars used
+- Add print(ggplot.petrinet(glb_analytics_pn) + coord_flip()) at the end of every major chunk
+- Parameterize glb_analytics_pn
+- Move glb_impute_missing_data to mydsutils.R: (-) Too many glb vars used; glb_<>_df reassigned
+- Replicate myfit_mdl_classification features in myfit_mdl_regression
+- Do non-glm methods handle interaction terms ?
+- f-score computation for classifiers should be summation across outcomes (not just the desired one ?)
+- Add accuracy computation to glb_dmy_mdl in predict.data.new chunk
+- Why does splitting fit.data.training.all chunk into separate chunks add an overhead of ~30 secs ? It's not rbind b/c other chunks have lower elapsed time. Is it the number of plots ?
+- Incorporate code chunks in print_sessionInfo
+- Test against 
+    - projects in github.com/bdanalytics
+    - lectures in jhu-datascience track
+
+# Analysis: 
+```{r set_global_options}
+rm(list=ls())
+set.seed(12345)
+options(stringsAsFactors=FALSE)
+source("~/Dropbox/datascience/R/myscript.R")
+source("~/Dropbox/datascience/R/mydsutils.R")
+source("~/Dropbox/datascience/R/myplot.R")
+source("~/Dropbox/datascience/R/mypetrinet.R")
+# Gather all package requirements here
+#suppressPackageStartupMessages(require())
+#packageVersion("snow")
+
+#require(sos); findFn("pinv", maxPages=2, sortby="MaxScore")
+
+# Analysis control global variables
+glb_trnng_url <- "https://kaggle2.blob.core.windows.net/competitions-data/kaggle/4347/NYTimesBlogTrain.csv"
+glb_newdt_url <- "https://kaggle2.blob.core.windows.net/competitions-data/kaggle/4347/NYTimesBlogTest.csv"
+glb_out_pfx <- "NYTBlogs_fillmiss_fin_"
+
+glb_is_separate_newent_dataset <- TRUE    # or TRUE
+glb_split_entity_newent_datasets <- TRUE   # or FALSE
+glb_split_newdata_method <- "sample"          # "condition" or "sample" or "copy"
+glb_split_newdata_condition <- "<col_name> <condition_operator> <value>"    # or NULL
+glb_split_newdata_size_ratio <- 0.3               # > 0 & < 1
+glb_split_sample.seed <- 123               # or any integer
+glb_drop_vars <- c(NULL) # or c("<col_name>")
+
+#glb_max_fitent_obs <- 2238 # NULL # or any integer
+glb_max_fitent_obs <- NULL # or any integer                         
+glb_is_regression <- FALSE; glb_is_classification <- TRUE; glb_is_binomial <- TRUE
+
+glb_rsp_var_raw <- "Popular"
+# for classification, the response variable has to be a factor
+glb_rsp_var <- "Popular.fctr"
+# if the response factor is based on numbers e.g (0/1 vs. "A"/"B"), 
+#   caret predict(..., type="prob") crashes
+glb_map_rsp_raw_to_var <- function(raw) {
+    relevel(factor(ifelse(raw == 1, "Y", "N")), as.factor(c("Y", "N")), ref="N")
+    #as.factor(paste0("B", raw))
+    #as.factor(raw)    
+}
+glb_map_rsp_raw_to_var(c(1, 1, 0, 0, 0))
+glb_map_rsp_var_to_raw <- function(var) {
+    as.numeric(var) - 1
+    #as.numeric(var)
+    #levels(var)[as.numeric(var)]
+    #c(" <=50K", " >50K")[as.numeric(var)]
+}
+glb_map_rsp_var_to_raw(glb_map_rsp_raw_to_var(c(1, 1, 0, 0, 0)))
+if ((glb_rsp_var != glb_rsp_var_raw) & is.null(glb_map_rsp_raw_to_var))
+    stop("glb_map_rsp_raw_to_var function expected")
+glb_rsp_var_out <- paste0(glb_rsp_var, ".predict.") # model_id is appended later
+
+# List info gathered for various columns
+# <col_name>:   <description>; <notes>
+# NewsDesk = the New York Times desk that produced the story
+# SectionName = the section the article appeared in (Opinion, Arts, Technology, etc.)
+# SubsectionName = the subsection the article appeared in (Education, Small Business, Room for Debate, etc.)
+# Headline = the title of the article
+# Snippet = a small portion of the article text
+# Abstract = a summary of the blog article, written by the New York Times
+# WordCount = the number of words in the article
+#   created WordCount.log
+
+# PubDate = the publication date, in the format "Year-Month-Day Hour:Minute:Second"
+glb_date_vars <- c("PubDate")
+
+# UniqueID = a unique identifier for each article
+glb_id_vars <- c("UniqueID")
+
+glb_is_textual <- TRUE # vs. glb_is_numerical ???
+#Sys.setlocale("LC_ALL", "C") # For english
+glb_txt_vars <- c("Headline", "Snippet", "Abstract")   
+glb_append_stop_words <- list() # NULL # or c("<freq_word>") 
+
+# Properties:
+#   numrows(glb_feats_df) << numrows(glb_fitent_df)
+#   Select terms that appear in at least 0.2 * O(FP/FN(glb_OOBent_df))
+#       numrows(glb_OOBent_df) = 1.1 * numrows(glb_newent_df)
+#glb_sprs_thresholds <- c(0.982, 0.965, 0.965)
+glb_sprs_thresholds <- c(0.982, 0.970, 0.970)
+names(glb_sprs_thresholds) <- glb_txt_vars
+
+# List transformed vars  
+glb_exclude_vars_as_features <- c(NULL) # or c("<var_name>") 
+if (glb_is_textual)
+    glb_exclude_vars_as_features <- union(glb_exclude_vars_as_features, 
+                                          glb_txt_vars)
+if (glb_rsp_var_raw != glb_rsp_var)
+    glb_exclude_vars_as_features <- union(glb_exclude_vars_as_features, 
+                                            glb_rsp_var_raw)
+# List feats that shd be excluded due to known causation by prediction variable
+glb_exclude_vars_as_features <- union(glb_exclude_vars_as_features, 
+                                      c(NULL)) # or c("<col_name>")
+# List output vars (useful during testing in console)          
+# glb_exclude_vars_as_features <- union(glb_exclude_vars_as_features, 
+#                         grep(glb_rsp_var_out, names(glb_trnent_df), value=TRUE)) 
+
+glb_impute_na_data <- TRUE            # or TRUE
+glb_mice_complete.seed <- 144               # or any integer
+
+glb_models_lst <- list(); glb_models_df <- data.frame()
+# rpart:  .rnorm messes with the models badly
+#         caret creates dummy vars for factor feats which messes up the tuning
+#             - better to feed as.numeric(<feat>.fctr) to caret 
+# Regression
+if (glb_is_regression)
+    glb_models_method_vctr <- c("lm", "glm", "rpart", "rf") else
+# Classification
+    if (glb_is_binomial)
+        glb_models_method_vctr <- c("glm", "rpart", "rf") else  
+        glb_models_method_vctr <- c("rpart", "rf")
+
+# Baseline prediction model feature(s)
+glb_Baseline_mdl_var <- NULL # or c("<col_name>")
+
+glb_model_metric_terms <- NULL # or matrix(c(
+#                               0,1,2,3,4,
+#                               2,0,1,2,3,
+#                               4,2,0,1,2,
+#                               6,4,2,0,1,
+#                               8,6,4,2,0
+#                           ), byrow=TRUE, nrow=5)
+glb_model_metric <- NULL # or "<metric_name>"
+glb_model_metric_maximize <- NULL # or FALSE (TRUE is not the default for both classification & regression) 
+glb_model_metric_smmry <- NULL # or function(data, lev=NULL, model=NULL) {
+#     confusion_mtrx <- t(as.matrix(confusionMatrix(data$pred, data$obs)))
+#     #print(confusion_mtrx)
+#     #print(confusion_mtrx * glb_model_metric_terms)
+#     metric <- sum(confusion_mtrx * glb_model_metric_terms) / nrow(data)
+#     names(metric) <- glb_model_metric
+#     return(metric)
+# }
+
+glb_tune_models_df <- 
+   rbind(
+    #data.frame(parameter="cp", min=0.00005, max=0.00005, by=0.000005),
+                            #seq(from=0.01,  to=0.01, by=0.01)
+    #data.frame(parameter="mtry", min=2, max=4, by=1),
+    data.frame(parameter="dummy", min=2, max=4, by=1)
+        ) 
+# or NULL
+glb_n_cv_folds <- 3 # or NULL
+
+glb_clf_proba_threshold <- NULL # 0.5
+
+# Model selection criteria
+if (glb_is_regression)
+    glb_model_evl_criteria <- c("min.RMSE.OOB", "max.R.sq.OOB", "max.Adj.R.sq.fit")
+if (glb_is_classification) {
+    if (glb_is_binomial)
+        glb_model_evl_criteria <- 
+            c("max.Accuracy.OOB", "max.auc.OOB", "max.Kappa.OOB", "min.aic.fit") else
+        glb_model_evl_criteria <- c("max.Accuracy.OOB", "max.Kappa.OOB")
+}
+
+glb_sel_mdl_id <- NULL # or "<model_id_prefix>.<model_method>"
+glb_fin_mdl_id <- glb_sel_mdl_id # or "Final"
+
+# Depict process
+glb_analytics_pn <- petrinet(name="glb_analytics_pn",
+                        trans_df=data.frame(id=1:6,
+    name=c("data.training.all","data.new",
+           "model.selected","model.final",
+           "data.training.all.prediction","data.new.prediction"),
+    x=c(   -5,-5,-15,-25,-25,-35),
+    y=c(   -5, 5,  0,  0, -5,  5)
+                        ),
+                        places_df=data.frame(id=1:4,
+    name=c("bgn","fit.data.training.all","predict.data.new","end"),
+    x=c(   -0,   -20,                    -30,               -40),
+    y=c(    0,     0,                      0,                 0),
+    M0=c(   3,     0,                      0,                 0)
+                        ),
+                        arcs_df=data.frame(
+    begin=c("bgn","bgn","bgn",        
+            "data.training.all","model.selected","fit.data.training.all",
+            "fit.data.training.all","model.final",    
+            "data.new","predict.data.new",
+            "data.training.all.prediction","data.new.prediction"),
+    end  =c("data.training.all","data.new","model.selected",
+            "fit.data.training.all","fit.data.training.all","model.final",
+            "data.training.all.prediction","predict.data.new",
+            "predict.data.new","data.new.prediction",
+            "end","end")
+                        ))
+#print(ggplot.petrinet(glb_analytics_pn))
+print(ggplot.petrinet(glb_analytics_pn) + coord_flip())
+glb_analytics_avl_objs <- NULL
+
+glb_chunks_df <- myadd_chunk(NULL, "import.data")
+```
+
+## Step ``r mydsp_chunk(glb_chunks_df)``
+```{r import.data, cache=FALSE}
+glb_trnent_df <- myimport_data(url=glb_trnng_url, comment="glb_trnent_df", 
+                                force_header=TRUE)
+if (glb_is_separate_newent_dataset) {
+    glb_newent_df <- myimport_data(url=glb_newdt_url, comment="glb_newent_df", 
+                                   force_header=TRUE)
+    
+    # To make plots / stats / checks easier in chunk:inspectORexplore.data
+    glb_entity_df <- myrbind_df(glb_trnent_df, glb_newent_df); 
+    comment(glb_entity_df) <- "glb_entity_df"
+} else {
+    glb_entity_df <- glb_trnent_df; comment(glb_entity_df) <- "glb_entity_df"
+    if (!glb_split_entity_newent_datasets) {
+        stop("Not implemented yet") 
+        glb_newent_df <- glb_trnent_df[sample(1:nrow(glb_trnent_df),
+                                          max(2, nrow(glb_trnent_df) / 1000)),]                    
+    } else      if (glb_split_newdata_method == "condition") {
+            glb_newent_df <- do.call("subset", 
+                list(glb_trnent_df, parse(text=glb_split_newdata_condition)))
+            glb_trnent_df <- do.call("subset", 
+                list(glb_trnent_df, parse(text=paste0("!(", 
+                                                      glb_split_newdata_condition,
+                                                      ")"))))
+        } else if (glb_split_newdata_method == "sample") {
+                require(caTools)
+                
+                set.seed(glb_split_sample.seed)
+                split <- sample.split(glb_trnent_df[, glb_rsp_var_raw], 
+                                      SplitRatio=(1-glb_split_newdata_size_ratio))
+                glb_newent_df <- glb_trnent_df[!split, ] 
+                glb_trnent_df <- glb_trnent_df[split ,]
+        } else if (glb_split_newdata_method == "copy") {  
+            glb_trnent_df <- glb_entity_df
+            comment(glb_trnent_df) <- "glb_trnent_df"
+            glb_newent_df <- glb_entity_df
+            comment(glb_newent_df) <- "glb_newent_df"
+        } else stop("glb_split_newdata_method should be %in% c('condition', 'sample', 'copy')")   
+
+    comment(glb_newent_df) <- "glb_newent_df"
+    myprint_df(glb_newent_df)
+    str(glb_newent_df)
+
+    if (glb_split_entity_newent_datasets) {
+        myprint_df(glb_trnent_df)
+        str(glb_trnent_df)        
+    }
+}         
+
+if (nrow(glb_trnent_df) == nrow(glb_entity_df))
+    warning("glb_trnent_df same as glb_entity_df")
+if (nrow(glb_newent_df) == nrow(glb_entity_df))
+    warning("glb_newent_df same as glb_entity_df")
+
+if (length(glb_drop_vars) > 0) {
+    warning("dropping vars: ", paste0(glb_drop_vars, collapse=", "))
+    glb_entity_df <- glb_entity_df[, setdiff(names(glb_entity_df), glb_drop_vars)]
+    glb_trnent_df <- glb_trnent_df[, setdiff(names(glb_trnent_df), glb_drop_vars)]    
+    glb_newent_df <- glb_newent_df[, setdiff(names(glb_newent_df), glb_drop_vars)]    
+}
+
+# Check for duplicates in glb_id_vars
+if (length(glb_id_vars) == 0) {
+    warning("using .rownames as identifiers for observations")
+    glb_entity_df$.rownames <- rownames(glb_entity_df)
+    glb_id_vars <- ".rownames"
+}
+if (sum(duplicated(glb_entity_df[, glb_id_vars, FALSE])) > 0)
+    stop(glb_id_vars, " duplicated in glb_entity_df")
+glb_exclude_vars_as_features <- union(glb_exclude_vars_as_features, glb_id_vars)
+
+# Combine trnent & newent into glb_entity_df for easier manipulation
+glb_trnent_df$.src <- "Train"; glb_newent_df$.src <- "Test"; 
+glb_exclude_vars_as_features <- union(glb_exclude_vars_as_features, ".src")
+glb_entity_df <- myrbind_df(glb_trnent_df, glb_newent_df)
+comment(glb_entity_df) <- "glb_entity_df"
+glb_trnent_df <- glb_newent_df <- NULL
+
+glb_chunks_df <- myadd_chunk(glb_chunks_df, "inspect.data", major.inc=TRUE)
+```
+
+## Step ``r mydsp_chunk(glb_chunks_df)``
+```{r inspect.data, cache=FALSE}
+#print(str(glb_entity_df))
+#View(glb_entity_df)
+
+dsp_class_dstrb <- function(var) {
+    xtab_df <- mycreate_xtab_df(glb_entity_df, c(".src", var))
+    rownames(xtab_df) <- xtab_df$.src
+    xtab_df <- subset(xtab_df, select=-.src)
+    print(xtab_df)
+    print(xtab_df / rowSums(xtab_df, na.rm=TRUE))    
+}    
+
+dsp_problem_data <- function(df) {
+    print(sprintf("numeric data missing in %s: ", 
+                  ifelse(!is.null(df_name <- comment(df)), df_name, "")))
+    print(sapply(setdiff(names(df), myfind_chr_cols_df(df)), 
+                 function(col) sum(is.na(df[, col]))))
+    
+    print(sprintf("numeric data w/ 0s in %s: ", 
+                  ifelse(!is.null(df_name <- comment(df)), df_name, "")))
+    print(sapply(setdiff(names(df), myfind_chr_cols_df(df)), 
+                 function(col) sum(df[, col] == 0, na.rm=TRUE)))
+    
+    print(sprintf("numeric data w/ Infs in %s: ", 
+                  ifelse(!is.null(df_name <- comment(df)), df_name, "")))
+    print(sapply(setdiff(names(df), myfind_chr_cols_df(df)), 
+                 function(col) sum(df[, col] == Inf, na.rm=TRUE)))
+    
+    print(sprintf("numeric data w/ NaNs in %s: ", 
+                  ifelse(!is.null(df_name <- comment(df)), df_name, "")))
+    print(sapply(setdiff(names(df), myfind_chr_cols_df(df)), 
+                 function(col) sum(df[, col] == NaN, na.rm=TRUE)))
+    
+    print(sprintf("string data missing in %s: ", 
+                  ifelse(!is.null(df_name <- comment(df)), df_name, "")))
+    print(sapply(setdiff(myfind_chr_cols_df(df), ".src"), 
+                        function(col) sum(df[, col] == "")))
+}
+
+# Performed repeatedly in other chunks
+glb_chk_data <- function() {
+    # Histogram of predictor in glb_trnent_df & glb_newent_df
+    print(myplot_histogram(glb_entity_df, glb_rsp_var_raw) + facet_wrap(~ .src))
+    
+    if (glb_is_classification) 
+        dsp_class_dstrb(var=ifelse(glb_rsp_var %in% names(glb_entity_df), 
+                                   glb_rsp_var, glb_rsp_var_raw))
+    dsp_problem_data(glb_entity_df)
+}
+glb_chk_data()
+
+# Create new features that help diagnostics
+if (!is.null(glb_map_rsp_raw_to_var)) {
+    glb_entity_df[, glb_rsp_var] <- 
+        glb_map_rsp_raw_to_var(glb_entity_df[, glb_rsp_var_raw])
+    mycheck_map_results(mapd_df=glb_entity_df, 
+                        from_col_name=glb_rsp_var_raw, to_col_name=glb_rsp_var)
+        
+    if (glb_is_classification) dsp_class_dstrb(glb_rsp_var)
+}
+
+#   Convert dates to numbers 
+#       typically, dates come in as chars; 
+#           so this must be done before converting chars to factors
+myextract_dates_df <- function(df, vars) {
+    for (var in vars) {
+        dates_df <- data.frame(.date=strptime(df[, var], "%Y-%m-%d %H:%M:%S"))
+        dates_df[, paste0(var, ".year")] <- as.numeric(format(dates_df$.date, "%Y"))
+        dates_df[, paste0(var, ".month.fctr")] <- as.factor(format(dates_df$.date, "%m")) 
+        dates_df[, paste0(var, ".date.fctr")] <- cut(as.numeric(format(dates_df$.date, "%d")), 5) # by week    
+        dates_df[, paste0(var, ".wkday.fctr")] <- as.factor(format(dates_df$.date, "%w")) 
+        dates_df[, paste0(var, ".hour")] <- as.numeric(format(dates_df$.date, "%H"))
+        dates_df[, paste0(var, ".apm.fctr")] <- as.factor(ifelse(dates_df[, paste0(var, ".hour")] < 12, "am", "pm"))                                        
+        dates_df[, paste0(var, ".minute")] <- as.numeric(format(dates_df$.date, "%M"))                                                                    
+        dates_df[, paste0(var, ".second")] <- as.numeric(format(dates_df$.date, "%S")) 
+    }
+    #myprint_df(dates_df)
+    return(subset(dates_df, select=-.date))
+}
+
+if (!is.null(glb_date_vars)) {
+    glb_entity_df <- cbind(glb_entity_df, 
+                           myextract_dates_df(glb_entity_df, glb_date_vars))
+    glb_exclude_vars_as_features <- union(glb_exclude_vars_as_features, glb_date_vars)
+}
+
+# check distribution of all numeric data
+dsp_numeric_vars_dstrb <- function(vars_lst) {
+    for (var in vars_lst) {
+        gp <- myplot_box(df=glb_entity_df, ycol_names=var, xcol_name=glb_rsp_var)
+        if (inherits(glb_entity_df[, var], "factor"))
+            gp <- gp + facet_wrap(reformulate(var))
+        print(gp)
+    }    
+}
+dsp_numeric_vars_dstrb(setdiff(names(glb_entity_df), 
+                                union(myfind_chr_cols_df(glb_entity_df), 
+                                      c(glb_rsp_var_raw, glb_rsp_var))))                                      
+
+add_new_diag_feats <- function(obs_df, ref_df=glb_entity_df) {
+    require(plyr)
+    
+    obs_df <- mutate(obs_df,
+#         <col_name>.NA=is.na(<col_name>),
+
+#         <col_name>.fctr=factor(<col_name>, 
+#                     as.factor(union(obs_df$<col_name>, obs_twin_df$<col_name>))), 
+#         <col_name>.fctr=relevel(factor(<col_name>, 
+#                     as.factor(union(obs_df$<col_name>, obs_twin_df$<col_name>))),
+#                                   "<ref_val>"), 
+#         <col2_name>.fctr=relevel(factor(ifelse(<col1_name> == <val>, "<oth_val>", "<ref_val>")), 
+#                               as.factor(c("R", "<ref_val>")),
+#                               ref="<ref_val>"),
+
+          # This doesn't work - use sapply instead
+#         <col_name>.fctr_num=grep(<col_name>, levels(<col_name>.fctr)), 
+#         
+#         Date.my=as.Date(strptime(Date, "%m/%d/%y %H:%M")),
+#         Year=year(Date.my),
+#         Month=months(Date.my),
+#         Weekday=weekdays(Date.my)
+
+#         <col_name>.log=log(1 + <col.name>),        
+          WordCount.log = log(1 + WordCount),        
+#         <col_name>=<table>[as.character(<col2_name>)],
+#         <col_name>=as.numeric(<col2_name>),
+
+        .rnorm=rnorm(n=nrow(obs_df))
+                        )
+
+    # If levels of a factor are different across obs_df & glb_newent_df; predict.glm fails  
+    # Transformations not handled by mutate
+#     obs_df$<col_name>.fctr.num <- sapply(1:nrow(obs_df), 
+#         function(row_ix) grep(obs_df[row_ix, "<col_name>"],
+#                               levels(obs_df[row_ix, "<col_name>.fctr"])))
+    
+    #print(summary(obs_df))
+    #print(sapply(names(obs_df), function(col) sum(is.na(obs_df[, col]))))
+    return(obs_df)
+}
+# Add WordCount.log since WordCount is not distributed normally
+glb_entity_df <- add_new_diag_feats(glb_entity_df)
+print("Replacing WordCount with WordCount.log in potential feature set")
+glb_exclude_vars_as_features <- union(glb_exclude_vars_as_features, "WordCount")
+
+# Remove PubDate.year since all entity data is from 2014
+# Remove PubDate.month.fctr since all newent data is from December
+glb_exclude_vars_as_features <- union(glb_exclude_vars_as_features, 
+                                      c("PubDate.year", "PubDate.month.fctr"))
+
+# Check distributions of newly transformed / extracted vars
+#   Enhancement: remove vars that were displayed ealier
+dsp_numeric_vars_dstrb(setdiff(names(glb_entity_df), 
+    union(myfind_chr_cols_df(glb_entity_df), 
+        union(glb_rsp_var_raw, 
+            union(glb_rsp_var, glb_exclude_vars_as_features)))))
+
+#   Convert factors to dummy variables
+#   Build splines   require(splines); bsBasis <- bs(training$age, df=3)
+
+#pairs(subset(glb_trnent_df, select=-c(col_symbol)))
+# Check for glb_newent_df & glb_trnent_df features range mismatches
+
+# Other diagnostics:
+# print(subset(glb_trnent_df, <col1_name> == max(glb_trnent_df$<col1_name>, na.rm=TRUE) & 
+#                         <col2_name> <= mean(glb_trnent_df$<col1_name>, na.rm=TRUE)))
+
+# print(glb_trnent_df[which.max(glb_trnent_df$<col_name>),])
+
+# print(<col_name>_freq_glb_trnent_df <- mycreate_tbl_df(glb_trnent_df, "<col_name>"))
+# print(which.min(table(glb_trnent_df$<col_name>)))
+# print(which.max(table(glb_trnent_df$<col_name>)))
+# print(which.max(table(glb_trnent_df$<col1_name>, glb_trnent_df$<col2_name>)[, 2]))
+# print(table(glb_trnent_df$<col1_name>, glb_trnent_df$<col2_name>))
+# print(table(is.na(glb_trnent_df$<col1_name>), glb_trnent_df$<col2_name>))
+# print(table(sign(glb_trnent_df$<col1_name>), glb_trnent_df$<col2_name>))
+# print(mycreate_xtab_df(glb_trnent_df, <col1_name>))
+# print(mycreate_xtab_df(glb_trnent_df, c(<col1_name>, <col2_name>)))
+# print(<col1_name>_<col2_name>_xtab_glb_trnent_df <- 
+#   mycreate_xtab_df(glb_trnent_df, c("<col1_name>", "<col2_name>")))
+# <col1_name>_<col2_name>_xtab_glb_trnent_df[is.na(<col1_name>_<col2_name>_xtab_glb_trnent_df)] <- 0
+# print(<col1_name>_<col2_name>_xtab_glb_trnent_df <- 
+#   mutate(<col1_name>_<col2_name>_xtab_glb_trnent_df, 
+#             <col3_name>=(<col1_name> * 1.0) / (<col1_name> + <col2_name>))) 
+
+# print(<col2_name>_min_entity_arr <- 
+#    sort(tapply(glb_trnent_df$<col1_name>, glb_trnent_df$<col2_name>, min, na.rm=TRUE)))
+# print(<col1_name>_na_by_<col2_name>_arr <- 
+#    sort(tapply(glb_trnent_df$<col1_name>.NA, glb_trnent_df$<col2_name>, mean, na.rm=TRUE)))
+
+# Other plots:
+# print(myplot_box(df=glb_trnent_df, ycol_names="<col1_name>"))
+# print(myplot_box(df=glb_trnent_df, ycol_names="<col1_name>", xcol_name="<col2_name>"))
+# print(myplot_line(subset(glb_trnent_df, Symbol %in% c("KO", "PG")), 
+#                   "Date.my", "StockPrice", facet_row_colnames="Symbol") + 
+#     geom_vline(xintercept=as.numeric(as.Date("2003-03-01"))) +
+#     geom_vline(xintercept=as.numeric(as.Date("1983-01-01")))        
+#         )
+# print(myplot_scatter(glb_entity_df, "<col1_name>", "<col2_name>", smooth=TRUE))
+# print(myplot_scatter(glb_entity_df, "<col1_name>", "<col2_name>", colorcol_name="<Pred.fctr>") + 
+#         geom_point(data=subset(glb_entity_df, <condition>), 
+#                     mapping=aes(x=<x_var>, y=<y_var>), color="red", shape=4, size=5))
+
+glb_chunks_df <- myadd_chunk(glb_chunks_df, "cleanse.data", major.inc=FALSE)
+```
+
+### Step ``r mydsp_chunk(glb_chunks_df)``
+```{r cleanse.data, cache=FALSE}
+dsp_problem_data(glb_entity_df)
+
+warning("Forcing ", nrow(subset(glb_entity_df, WordCount.log == 0)),
+        " obs with WordCount.log 0s to NA")
+glb_entity_df[glb_entity_df$WordCount.log == 0, "WordCount.log"] <- NA
+
+dsp_problem_data(glb_entity_df)
+
+dsp_catgs <- function() {
+    print("NewsDesk:")
+    print(table(glb_entity_df$NewsDesk))
+    print("SectionName:")    
+    print(table(glb_entity_df$SectionName))
+    print("SubsectionName:")        
+    print(table(glb_entity_df$SubsectionName))
+}
+
+sel_obs <- function(Popular=NULL, 
+                    NewsDesk=NULL, SectionName=NULL, SubsectionName=NULL,
+        Headline.contains=NULL, Snippet.contains=NULL, Abstract.contains=NULL,
+        Headline.pfx=NULL, NewsDesk.nb=NULL) {
+    tmp_entity_df <- glb_entity_df
+    # Does not work for Popular == NAs ???
+    if (!is.null(Popular)) {
+        if (is.na(Popular))
+            tmp_entity_df <- tmp_entity_df[is.na(tmp_entity_df$Popular), ] else   
+            tmp_entity_df <- tmp_entity_df[tmp_entity_df$Popular == Popular, ]    
+    }    
+    if (!is.null(NewsDesk)) 
+        tmp_entity_df <- tmp_entity_df[tmp_entity_df$NewsDesk == NewsDesk, ]
+    if (!is.null(SectionName)) 
+        tmp_entity_df <- tmp_entity_df[tmp_entity_df$SectionName == SectionName, ]
+    if (!is.null(SubsectionName)) 
+        tmp_entity_df <- tmp_entity_df[tmp_entity_df$SubsectionName == SubsectionName, ]
+    if (!is.null(Headline.contains))
+        tmp_entity_df <- 
+            tmp_entity_df[grep(Headline.contains, tmp_entity_df$Headline), ]
+    if (!is.null(Snippet.contains))
+        tmp_entity_df <- 
+            tmp_entity_df[grep(Snippet.contains, tmp_entity_df$Snippet), ]
+    if (!is.null(Abstract.contains))
+        tmp_entity_df <- 
+            tmp_entity_df[grep(Abstract.contains, tmp_entity_df$Abstract), ]
+    if (!is.null(Headline.pfx)) {
+        if (length(grep("Headline.pfx", names(tmp_entity_df), fixed=TRUE, value=TRUE))
+            > 0) tmp_entity_df <- 
+                tmp_entity_df[tmp_entity_df$Headline.pfx == Headline.pfx, ] else
+        warning("glb_entity_df does not contain Headline.pfx; ignoring that filter")                    
+    }    
+    if (!is.null(NewsDesk.nb)) {
+        if (any(grepl("NewsDesk.nb", names(tmp_entity_df), fixed=TRUE)) > 0) 
+            tmp_entity_df <- 
+                tmp_entity_df[tmp_entity_df$NewsDesk.nb == NewsDesk.nb, ] else
+        warning("glb_entity_df does not contain NewsDesk.nb; ignoring that filter")                    
+    }    
+    
+    return(glb_entity_df$UniqueID %in% tmp_entity_df$UniqueID)
+}
+
+dsp_obs <- function(..., cols=c(NULL), all=FALSE) {
+    tmp_df <- glb_entity_df[sel_obs(...), 
+                            union(c("UniqueID", "Popular", "Headline"), cols), FALSE]
+    if(all) { print(tmp_df) } else { myprint_df(tmp_df) }
+}
+#dsp_obs(Popular=1, NewsDesk="", SectionName="", Headline.contains="Boehner")
+# dsp_obs(Popular=1, NewsDesk="", SectionName="")
+# dsp_obs(Popular=NA, NewsDesk="", SectionName="")
+
+dsp_tbl <- function(...) {
+    tmp_entity_df <- glb_entity_df[sel_obs(...), ]
+    tmp_tbl <- table(tmp_entity_df$NewsDesk, 
+                     tmp_entity_df$SectionName,
+                     tmp_entity_df$SubsectionName, 
+                     tmp_entity_df$Popular, useNA="ifany")
+    #print(names(tmp_tbl))
+    #print(dimnames(tmp_tbl))
+    print(tmp_tbl)
+}
+#dsp_tbl(NewsDesk="", SectionName="", Headline.contains="Boehner")
+dsp_hdlxtab <- function(str) 
+    print(mycreate_sqlxtab_df(glb_entity_df[sel_obs(Headline.contains=str), ],
+                           c("Headline.pfx", "Headline", glb_rsp_var)))
+dsp_hdlxtab("(1914)|(1939)")
+
+dsp_catxtab <- function(str) 
+    print(mycreate_sqlxtab_df(glb_entity_df[sel_obs(Headline.contains=str), ],
+        c("Headline.pfx", "NewsDesk", "SectionName", "SubsectionName", glb_rsp_var)))
+dsp_catxtab("1914)|(1939)")
+dsp_catxtab("19(14|39|64):")
+dsp_catxtab("19..:")
+
+make_prefix <- function(row_ix) {
+    if (grepl("On This Day:", glb_entity_df[row_ix, "Headline"])) 
+        return("On This Day::")
+    
+    if (grepl("Reporter('*)s Notebook", glb_entity_df[row_ix, "Headline"])) 
+        return("Reporter's Notebook::")
+    
+    # 1/17 is Popular
+    #dsp_obs(Headline.contains="Quiz(.*)([?=|]|[?=:])", cols=c("NewsDesk.nb"))
+    if (grepl("Quiz(.*)([?=|]|[?=:])", glb_entity_df[row_ix, "Headline"])) 
+        return("Quiz(.*)([?=|]|[?=:]::")
+    
+    words <- unlist(strsplit(glb_entity_df[row_ix, "Headline"], "\\s+"))
+    words <- words[words != ""]
+    
+    # Although 10/10 in trnent is Popular, all of them are contained in
+    #   NewsDesk.nb == "Styles" & does not reduce the number of blogs
+    #   with NewsDesk.nb == "myMisc::" & Popular = 1
+    #dsp_obs(Headline.contains="Quandary(.*)[?=:]", all=TRUE)
+    
+    # ^ forces match only at the beginning of ths string; [0-9] matches any number
+    # All are matched to NewsDesk=[Foreign|]; SectionName=""; SubsectionName=""
+    # None are Popular  
+    if (grepl("^19[0-9][0-9]:", words[1])) return("19[0-9][0-9]::")
+    
+    # Only 9 of these & none are Popular
+    #if (grepl("NYTLNreads", words[1])) return("NYTLNreads::")
+    
+    # 6/14 are Popular
+    if (grepl("Readers Respond", glb_entity_df[row_ix, "Headline"])) 
+        return("Readers Respond::")
+    
+    # 4/16 are Popular
+    if (grepl("Your Turn:", glb_entity_df[row_ix, "Headline"])) return("Your Turn::")
+    
+    # 9/18 are Popular
+    if (grepl("Ask Well:", glb_entity_df[row_ix, "Headline"])) return("Ask Well::")
+    
+    # Consolidate all ".*Fashion Week::" since all are Popular=0; & 
+    #      NewsDesk="TStyle|Styles|.*|Culture|Metro"; 
+    #   SectionName=              ".*|Arts   |N.Y. / Region"; SubsectionName="";
+    if (grepl("Fashion Week", glb_entity_df[row_ix, "Headline"])) 
+        return(".*Fashion Week::")
+    
+    # Keep "Daily Clip Report" & "Daily Report" separate"
+    #   None are Popular
+    #   "Daily Clip Report" -> ""::""::""
+    #   "Daily Report" -> "Business"::"Technology"::""
+    if (grepl("Daily Clip Report", glb_entity_df[row_ix, "Headline"])) 
+        return("Daily Clip Report::")
+    if (grepl("Daily Report", glb_entity_df[row_ix, "Headline"])) 
+        return("Daily Report::")
+    
+    # Keep Today in Politics & Today in Small Business separate b/c
+    #   Today in Small Business belongs to NewsDesk.nb=Business
+    if (grepl("Today in Politics", glb_entity_df[row_ix, "Headline"])) 
+        return("Today in Politics::")
+    if (grepl("Today in Small Business", glb_entity_df[row_ix, "Headline"])) 
+        return("Today in Small Business::")
+    
+    if (grepl("Pictures of the (Day|Year|.)", glb_entity_df[row_ix, "Headline"])) 
+        return("Pictures of the (Day|Year|.)::")
+    
+    if (words[1] %in% c("Verbatim:")) 
+        return(paste0(words[1], ":"))
+    if (words[1] %in% c("6", "A", "An", "At", "Daily", "First", "For", "From", 
+                        "How", "In", 
+                        "Morning", "Milan", "New", "Obama", "On",
+                        "Paris", "Pictures", "Q.",
+                        "Test", "The", "'The", "Today", 
+                        "What", "When", "Why", "Word")) {
+        words12 <- paste(words[1], words[2], collapse=" ")
+        if (words12 %in% c("Morning Agenda:")) 
+            return(paste0(words12, ":"))
+        if (words12 %in% c("First Draft", "Test Yourself", "What We're")) 
+            return(paste0(words12, "::"))
+        if (words12 %in% c("Word of")) return(paste0(words12, " the Day::"))
+        if (words12 %in% c("6 Q's")) return(paste0(words12, " About the News::"))
+
+        words123 <- paste(words12, words[3], collapse=" ")
+        if (words12 %in% c("New York")) {
+            if (words[3] == "Today:") return(paste0(words123, ":"))
+            return(words123)
+        }
+        if (words12 %in% c("The Daily")) {
+            if (words[3] %in% c("Gift:")) return(paste0(words12, " Gift::"))
+            stop("should not happen")                                                         
+        }    
+        return(words12)
+    } 
+    return(words[1])    
+}
+make_prefix(187) # First char is blank
+make_prefix(3882)
+glb_entity_df$Headline.pfx <- sapply(1:nrow(glb_entity_df), function(row_ix) make_prefix(row_ix))
+#myprint_df(glb_entity_df[, c("Headline", "Headline.pfx")])
+headline_pfx_df <- mycreate_sqlxtab_df(glb_entity_df[], c("Headline.pfx", glb_rsp_var))
+#print(myplot_histogram(headline_pfx_df, ".n"))
+print(myplot_hbar(head(headline_pfx_df, 15), "Headline.pfx", ".n", 
+                  colorcol_name=glb_rsp_var))
+#print(head(orderBy(~-.n + Headline.pfx, headline_pfx_df), 20))
+print(head(headline_pfx_df, 20))
+
+dsp_catxtab("Today in (Politics|Small Business)")
+dsp_obs(Headline.contains="Today in .", all=TRUE)
+
+sav_entity_df <- glb_entity_df
+#glb_entity_df <- sav_entity_df
+
+### Mine Headlines with myMisc for patterns & create a separate Headline.pfx category
+glb_entity_df$Headline.pfx <- sapply(1:nrow(glb_entity_df), function(row_ix) {
+    if (all(tail(unlist(strsplit(glb_entity_df[row_ix, "Headline.pfx"], "")), 2) 
+           == c(":", ":"))) return(glb_entity_df[row_ix, "Headline.pfx"])
+    
+    # myFood:: has to come before myTech:: because of "Apple" conflict
+    if (grepl("Cook|Food|Thanksgiving", glb_entity_df[row_ix, "Headline"])) 
+        return("myFood::")
+    if (grepl("Tech |Tech$|Techn[^i]", glb_entity_df[row_ix, "Headline"]))
+        return("myTech::")
+    if (grepl("Apple|Firefox|Google|Microsoft|Robot|Yahoo", 
+              glb_entity_df[row_ix, "Headline"]))
+        return("myTech::")
+    
+    if (grepl("College|School", 
+              glb_entity_df[row_ix, "Headline"]))
+        return("myEducation::")
+    if (grepl("Obama|President", 
+              glb_entity_df[row_ix, "Headline"]))
+        return("myPolitics::")
+
+    # This should be last b/c topics are probably more important than media type
+    if (grepl("Video", 
+              glb_entity_df[row_ix, "Headline"]))
+        return("myMultimedia::")
+    
+    return("myMisc::")
+})
+#print(glb_entity_df[sel_obs(Headline.pfx="myTech::"), c("UniqueID", "Headline")])
+#nrow(glb_entity_df[sel_obs(Headline.pfx="myTech::"), c("UniqueID", "Headline")])
+print(mycreate_sqlxtab_df(glb_entity_df, "Headline.pfx"))    
+
+dsp_datagrp <- function(..., from=1, to=10, all=FALSE) {
+    print((dsp_df <- orderBy(~-.n +Headline.pfx+NewsDesk+SectionName+SubsectionName,
+                       mycreate_sqlxtab_df(glb_entity_df[sel_obs(...), ],
+        c("Headline.pfx", "NewsDesk", "SectionName", "SubsectionName", 
+          glb_rsp_var))))[ifelse(all, 1, from):
+                          ifelse(all, nrow(dsp_df), min(to, nrow(dsp_df))), ])
+}
+
+dsp_datagrp(all=TRUE)
+
+glb_entity_df[, "NewsDesk.nb"] <- sapply(1:nrow(glb_entity_df), function(rix) {
+    if (glb_entity_df[rix, "Headline.pfx"] %in% 
+            c("Quiz(.*)([?=|]|[?=:]::", "On This Day::")) 
+        return("myEducation")
+    if (glb_entity_df[rix, "Headline.pfx"] == ".*Fashion Week::") return("TStyle")
+    if (glb_entity_df[rix, "Headline.pfx"] == "Pictures of the (Day|Year|.)::") 
+        return("myMultimedia")
+        
+    if (glb_entity_df[rix, "SectionName"] %in% 
+            c("Business Day", "Crosswords/Games", "Technology")) return("Business")
+    if (glb_entity_df[rix, "SectionName"] == "Arts") return("Culture")
+    if (glb_entity_df[rix, "SectionName"] == "World") return("Foreign")    
+    if ((glb_entity_df[rix, "SectionName"] == "N.Y. / Region") &
+        !(glb_entity_df[rix, "Headline.pfx"] %in% 
+              c(".*Fashion Week::", "Pictures of the (Day|Year|.)::")))    
+        return("Metro")    
+    if (glb_entity_df[rix, "SectionName"] == "Multimedia") return("myMultimedia")
+    if (glb_entity_df[rix, "SectionName"] == "Opinion") return("OpEd")
+    if (glb_entity_df[rix, "SectionName"] == "Health") return("Science")
+    
+    if ((str <- glb_entity_df[rix, "NewsDesk"]) != "") return(str)
+
+    if (glb_entity_df[rix, "SubsectionName"] == "Education") return("myEducation")
+    
+    if (glb_entity_df[rix, "Headline.pfx"] == "19[0-9][0-9]::") return("Foreign")    
+    if (glb_entity_df[rix, "Headline.pfx"] == "What We're::") return("OpEd")    
+    if (glb_entity_df[rix, "Headline.pfx"] == "Your Turn::") return("Styles")
+    
+    if (glb_entity_df[rix, "Headline.pfx"] == "myFood::") return("Styles")    
+    if (glb_entity_df[rix, "Headline.pfx"] == "myTech::") return("Business")        
+    
+    return(glb_entity_df[rix, "Headline.pfx"])
+})
+mycheck_map_results(glb_entity_df, "NewsDesk", "NewsDesk.nb", print.all=TRUE)
+glb_exclude_vars_as_features <- union(glb_exclude_vars_as_features, "NewsDesk")
+
+glb_entity_df[, "SectionName.nb"] <- sapply(1:nrow(glb_entity_df), function(rix) {
+    if (glb_entity_df[rix, "Headline.pfx"] == "Today in Small Business::")
+        return("Business Day")
+    if (glb_entity_df[rix, "Headline.pfx"] == ".*Fashion Week::") return("TStyle")    
+    if (glb_entity_df[rix, "Headline.pfx"] %in% 
+            c("On This Day::", "Quiz(.*)([?=|]|[?=:]::")) return("U.S.")            
+    if (glb_entity_df[rix, "Headline.pfx"] == "19[0-9][0-9]::") return("World")        
+    
+    str <- glb_entity_df[rix, "SectionName"]
+
+    if (str == "Style") return("Styles")
+    if (str != "") return (str)
+    
+    if (glb_entity_df[rix, "NewsDesk"] == "OpEd") return("Opinion")
+    if (glb_entity_df[rix, "NewsDesk.nb"] == "OpEd") return("Opinion")    
+    
+    if (glb_entity_df[rix, "NewsDesk"] == "Science") return("Health")
+    if (glb_entity_df[rix, "NewsDesk"] == "Foreign") return("World")
+    
+    if (glb_entity_df[rix, "Headline.pfx"] == "myTech::") return("Technology")    
+    
+    return(glb_entity_df[rix, "NewsDesk.nb"])
+})
+mycheck_map_results(glb_entity_df, "SectionName", "SectionName.nb", print.all=TRUE)
+glb_exclude_vars_as_features <- union(glb_exclude_vars_as_features, "SectionName")
+
+glb_entity_df[, "SubsectionName.nb"] <- sapply(1:nrow(glb_entity_df), function(rix) {
+    if ((str <- glb_entity_df[rix, "SubsectionName"]) != "") return(str)
+    
+    if (glb_entity_df[rix, "NewsDesk.nb"] == "Styles") return("Fashion & Style")
+    if (glb_entity_df[rix, "NewsDesk.nb"] == "myEducation") return("Education")    
+    
+    if (glb_entity_df[rix, "Headline.pfx"] == "Today in Small Business::")
+        return("Small Business")
+    
+    str <- paste(glb_entity_df[rix, "NewsDesk.nb"], 
+                 glb_entity_df[rix, "SectionName.nb"], 
+        sep=ifelse(grepl("::$", glb_entity_df[rix, "NewsDesk.nb"]), "", "::"))
+    return(str)
+})
+mycheck_map_results(glb_entity_df, "SubsectionName", "SubsectionName.nb")
+glb_exclude_vars_as_features <- union(glb_exclude_vars_as_features, "SubsectionName")
+
+hdlpfx_xtab_df <- orderBy(reformulate(c(glb_rsp_var, "-", ".n")),
+                          mycreate_sqlxtab_df(glb_entity_df,
+                                                c("Headline.pfx", glb_rsp_var)))
+write.table(hdlpfx_xtab_df, paste0(glb_out_pfx, "hdlpfx_xtab.csv"), 
+            row.names=FALSE)
+myprint_df(hdlpfx_xtab_df)
+
+newsdesk_xtab_df <- orderBy(reformulate(
+    c("NewsDesk.nb", "NewsDesk",
+      "Headline.pfx", glb_rsp_var, "-", ".n")),
+                          mycreate_sqlxtab_df(glb_entity_df,
+    c("NewsDesk.nb", "NewsDesk", 
+      "Headline.pfx", glb_rsp_var)))
+myprint_df(newsdesk_xtab_df)
+ndsection_xtab_df <- orderBy(reformulate(
+    c("NewsDesk.nb", "NewsDesk", "SectionName.nb", "SectionName", 
+      "Headline.pfx", glb_rsp_var, "-", ".n")),
+                          mycreate_sqlxtab_df(glb_entity_df,
+    c("NewsDesk.nb", "NewsDesk", "SectionName.nb", "SectionName", 
+      "Headline.pfx", glb_rsp_var)))
+print(ndsection_xtab_df)
+ndsecsub_xtab_df <- orderBy(reformulate(
+    c("NewsDesk.nb", "NewsDesk", 
+      "SectionName.nb", "SectionName", "SubsectionName.nb", "SubsectionName", 
+      "Headline.pfx", glb_rsp_var, "-", ".n")),
+                          mycreate_sqlxtab_df(glb_entity_df,
+    c("NewsDesk.nb", "NewsDesk", 
+      "SectionName.nb", "SectionName", "SubsectionName.nb", "SubsectionName", 
+      "Headline.pfx", glb_rsp_var)))
+myprint_df(ndsecsub_xtab_df)
+print(nrow(ndsecsub_xtab_df))
+write.table(ndsecsub_xtab_df, paste0(glb_out_pfx, "ndsecsub_xtab.csv"), 
+            row.names=FALSE)
+
+NDnb_Hdlpfx_xtab_df <- orderBy(reformulate(c("-", ".n", glb_rsp_var, "NewsDesk.nb")),
+                          mycreate_sqlxtab_df(glb_entity_df,
+                                c("Headline.pfx", "NewsDesk.nb", glb_rsp_var)))
+write.table(NDnb_Hdlpfx_xtab_df, paste0(glb_out_pfx, "NDnb_Hdlpfx_xtab.csv"), 
+            row.names=FALSE)
+myprint_df(NDnb_Hdlpfx_xtab_df)
+
+require(tm)
+# freq of words/symbols in myMisc::Y
+print("Patterns in myMisc::Y")
+print(nrow(glb_entity_df[sel_obs(Popular=1, NewsDesk.nb="myMisc::"),]))
+myMisc_hdl <- glb_entity_df[sel_obs(Popular=1, NewsDesk.nb="myMisc::"), "Headline"]
+myMisc_hdl_wrds <- c(NULL); rix=1
+#myMisc_hdl_wrds <- c(myMisc_hdl_wrds, unlist(strsplit(myMisc_hdl[rix], "\\W+")))
+myMisc_hdl_wrds <- unlist(sapply(myMisc_hdl, function(hdl) 
+    return(unlist(strsplit(hdl, "\\W+")))))
+names(myMisc_hdl_wrds) <- NULL
+myMisc_hdl_wrds <- setdiff(tolower(myMisc_hdl_wrds), stopwords("english"))
+print(head(sort(myMisc_hdl_wrds_tbl <- table(myMisc_hdl_wrds), decreasing=TRUE), 10))
+
+print("Patterns in myMisc::Y|N|NA")
+print(nrow(glb_entity_df[sel_obs(NewsDesk.nb="myMisc::"),]))
+myMisc_hdl <- glb_entity_df[sel_obs(NewsDesk.nb="myMisc::"), "Headline"]
+myMisc_hdl_wrds <- c(NULL); rix=1
+#myMisc_hdl_wrds <- c(myMisc_hdl_wrds, unlist(strsplit(myMisc_hdl[rix], "\\W+")))
+myMisc_hdl_wrds <- unlist(sapply(myMisc_hdl, function(hdl) 
+    return(unlist(strsplit(hdl, "\\W+")))))
+names(myMisc_hdl_wrds) <- NULL
+myMisc_hdl_wrds <- setdiff(tolower(myMisc_hdl_wrds), stopwords("english"))
+print(head(sort(myMisc_hdl_wrds_tbl <- table(myMisc_hdl_wrds), decreasing=TRUE), 10))
+
+#stop("here")
+
+# dsp_datagrp(Headline.pfx="What We're::", all=TRUE)
+# #dsp_obs(Headline.pfx="What We're::")
+# dsp_datagrp(all=TRUE)
+
+# ## Sample headlines from Daily Clip Report:: ?
+# dsp_obs(Headline.pfx="Daily Clip Report::")
+# ## Grouping Daily Clip Report:: into NewsDesk=myCollection - A new category
+# ###                                 SectionName=myCollection - A new category
+# ###                                 SubsectionName=myCollection - A new category
+# glb_entity_df[glb_entity_df$Headline.pfx == "Daily Clip Report::", "NewsDesk"] <- "myCollection"
+# glb_entity_df[glb_entity_df$Headline.pfx == "Daily Clip Report::", "SectionName"] <- "myCollection"
+# glb_entity_df[glb_entity_df$Headline.pfx == "Daily Clip Report::", "SubsectionName"] <- "myCollection"
+# 
+# ## Sample headlines from Daily Report:: ?
+# dsp_obs(Headline.pfx="Daily Report::")
+# ### What are the SubsectionNames for <>::Business::Technology ?
+# print(orderBy(~ Headline.pfx+NewsDesk+SectionName+SubsectionName,
+#         mycreate_sqlxtab_df(glb_entity_df[sel_obs(
+#             NewsDesk="Business", SectionName="Technology"), ],
+#     c(glb_rsp_var, "Headline.pfx", "NewsDesk", "SectionName", "SubsectionName"))))
+# 
+# dsp_obs(Headline.pfx="Daily Report::")
+# ## Grouping Daily Report:: into SubsectionName=myBus::Tech - A new category
+# glb_entity_df[glb_entity_df$Headline.pfx == "Daily Report::", "SubsectionName"] <- "myBus::Tech"
+# dsp_datagrp(7, 17)
+# 
+# ## Sample headlines from First Draft:: ?
+# dsp_obs(Headline.pfx="First Draft::")
+# ## Grouping First Draft:: into NewsDesk=myCollection - A new category
+# ###                                 SectionName=myCollection - A new category
+# ###                                 SubsectionName=myCollection - A new category
+# glb_entity_df[glb_entity_df$Headline.pfx == "First Draft::", "NewsDesk"] <- "myCollection"
+# glb_entity_df[glb_entity_df$Headline.pfx == "First Draft::", "SectionName"] <- "myCollection"
+# glb_entity_df[glb_entity_df$Headline.pfx == "First Draft::", "SubsectionName"] <- "myCollection"
+# dsp_datagrp(1, 20)
+# 
+# ## How are the Milan Fashion Week:: blogs categorized ?
+# print(orderBy(~ Headline.pfx+NewsDesk+SectionName+SubsectionName,
+#         mycreate_sqlxtab_df(glb_entity_df[sel_obs(
+#             Headline.contains="Fashion Week"), ],
+#     c(glb_rsp_var, "Headline.pfx", "NewsDesk", "SectionName", "SubsectionName"))))
+# print(orderBy(~ Headline.pfx+NewsDesk+SectionName+SubsectionName,
+#         mycreate_sqlxtab_df(glb_entity_df[sel_obs(
+#             NewsDesk="Styles"), ],
+#     c(glb_rsp_var, "Headline.pfx", "NewsDesk", "SectionName", "SubsectionName"))))
+# dsp_obs(Popular=1, NewsDesk="Styles")
+# 
+# print(orderBy(~ Headline.pfx+NewsDesk+SectionName+SubsectionName,
+#         mycreate_sqlxtab_df(glb_entity_df[sel_obs(
+#             NewsDesk="TStyle"), ],
+#     c(glb_rsp_var, "Headline.pfx", "NewsDesk", "SectionName", "SubsectionName"))))
+# #dsp_xtab("Fashion Week")
+# 
+# ## Sample headlines from myMisc:: ?
+# dsp_obs(Popular=1, Headline.pfx="myMisc::")
+# dsp_obs(Headline.contains="Saturday Morning Music") # only 1 obs
+# dsp_obs(Headline.pfx="myMisc::", Headline.contains=":")
+# dsp_obs(Headline.contains="Charities That Inspire Kids")
+
+dsp_chisq.test <- function(...) {
+    sel_df <- glb_entity_df[sel_obs(...) & 
+                            !is.na(glb_entity_df$Popular), ]
+    sel_df$.marker <- 1
+    ref_df <- glb_entity_df[!is.na(glb_entity_df$Popular), ]
+    mrg_df <- merge(ref_df[, c(glb_id_vars, "Popular")],
+                    sel_df[, c(glb_id_vars, ".marker")], all.x=TRUE)
+    mrg_df[is.na(mrg_df)] <- 0
+    print(mrg_tbl <- table(mrg_df$.marker, mrg_df$Popular))
+    print("Rows:Selected; Cols:Popular")
+    #print(mrg_tbl)
+    print(chisq.test(mrg_tbl))
+}
+# dsp_chisq.test(Headline.contains="[Ee]bola")
+# dsp_chisq.test(Snippet.contains="[Ee]bola")
+# dsp_chisq.test(Abstract.contains="[Ee]bola")
+
+# print(mycreate_sqlxtab_df(glb_entity_df[sel_obs(Headline.contains="[Ee]bola"), ], 
+#                           c(glb_rsp_var, "NewsDesk", "SectionName", "SubsectionName")))
+
+#dsp_NewsDesk_SectionName_obs("", "U.S.")
+
+# print(table(glb_entity_df$NewsDesk, glb_entity_df$SectionName))
+# print(table(glb_entity_df$SectionName, glb_entity_df$SubsectionName))
+# print(table(glb_entity_df$NewsDesk, glb_entity_df$SectionName, glb_entity_df$SubsectionName))
+
+# Copy Headline into Snipper & Abstract if they are empty
+print(glb_entity_df[nchar(glb_entity_df[, "Snippet"]) == 0, c("Headline", "Snippet")])
+print(glb_entity_df[glb_entity_df$Headline == glb_entity_df$Snippet, 
+                    c("UniqueID", "Headline", "Snippet")])
+glb_entity_df[nchar(glb_entity_df[, "Snippet"]) == 0, "Snippet"] <- 
+    glb_entity_df[nchar(glb_entity_df[, "Snippet"]) == 0, "Headline"]
+
+print(glb_entity_df[nchar(glb_entity_df[, "Abstract"]) == 0, c("Headline", "Abstract")])
+print(glb_entity_df[glb_entity_df$Headline == glb_entity_df$Abstract, 
+                    c("UniqueID", "Headline", "Abstract")])
+glb_entity_df[nchar(glb_entity_df[, "Abstract"]) == 0, "Abstract"] <- 
+    glb_entity_df[nchar(glb_entity_df[, "Abstract"]) == 0, "Headline"]
+
+# WordCount_0_df <- subset(glb_entity_df, WordCount == 0)
+# table(WordCount_0_df$Popular, WordCount_0_df$WordCount, useNA="ifany")
+# myprint_df(WordCount_0_df[, 
+#                 c("UniqueID", "Popular", "WordCount", "Headline")])
+
+glb_chunks_df <- myadd_chunk(glb_chunks_df, "manage.missing.data", major.inc=FALSE)
+```
+
+### Step ``r mydsp_chunk(glb_chunks_df)``
+```{r manage.missing.data, cache=FALSE}
+# print(sapply(names(glb_trnent_df), function(col) sum(is.na(glb_trnent_df[, col]))))
+# print(sapply(names(glb_newent_df), function(col) sum(is.na(glb_newent_df[, col]))))
+# glb_trnent_df <- na.omit(glb_trnent_df)
+# glb_newent_df <- na.omit(glb_newent_df)
+# df[is.na(df)] <- 0
+
+dsp_problem_data(glb_entity_df)
+
+# Not refactored into mydsutils.R since glb_*_df might be reassigned
+glb_impute_missing_data <- function() {
+    
+    require(mice)
+    set.seed(glb_mice_complete.seed)
+    inp_impent_df <- glb_entity_df[, setdiff(names(glb_entity_df), 
+                                union(glb_exclude_vars_as_features, glb_rsp_var))]
+    print("Summary before imputation: ")
+    print(summary(inp_impent_df))
+    out_impent_df <- complete(mice(inp_impent_df))
+    print(summary(out_impent_df))
+    
+    return(out_impent_df[, "WordCount.log"])
+}
+
+if (glb_impute_na_data) 
+    glb_entity_df[, "WordCount.log"] <- glb_impute_missing_data()
+    
+dsp_problem_data(glb_entity_df)
+
+glb_chunks_df <- myadd_chunk(glb_chunks_df, "encode.data", major.inc=FALSE)
+```
+
+### Step ``r mydsp_chunk(glb_chunks_df)``
+```{r encode.data, cache=FALSE}
+# map_<col_name>_df <- myimport_data(
+#     url="<map_url>", 
+#     comment="map_<col_name>_df", print_diagn=TRUE)
+# map_<col_name>_df <- read.csv(paste0(getwd(), "/data/<file_name>.csv"), strip.white=TRUE)
+
+# glb_trnent_df <- mymap_codes(glb_trnent_df, "<from_col_name>", "<to_col_name>", 
+#     map_<to_col_name>_df, map_join_col_name="<map_join_col_name>", 
+#                           map_tgt_col_name="<to_col_name>")
+# glb_newent_df <- mymap_codes(glb_newent_df, "<from_col_name>", "<to_col_name>", 
+#     map_<to_col_name>_df, map_join_col_name="<map_join_col_name>", 
+#                           map_tgt_col_name="<to_col_name>")
+    					
+# glb_trnent_df$<col_name>.fctr <- factor(glb_trnent_df$<col_name>, 
+#                     as.factor(union(glb_trnent_df$<col_name>, glb_newent_df$<col_name>)))
+# glb_newent_df$<col_name>.fctr <- factor(glb_newent_df$<col_name>, 
+#                     as.factor(union(glb_trnent_df$<col_name>, glb_newent_df$<col_name>)))
+
+glb_chunks_df <- myadd_chunk(glb_chunks_df, "extract.features", major.inc=TRUE)
+```
+
+## Step ``r mydsp_chunk(glb_chunks_df)``
+```{r extract.features, cache=FALSE}
+#```{r extract_features, cache=FALSE, eval=glb_is_textual}
+# Create new features that help prediction
+# <col_name>.lag.2 <- lag(zoo(glb_trnent_df$<col_name>), -2, na.pad=TRUE)
+# glb_trnent_df[, "<col_name>.lag.2"] <- coredata(<col_name>.lag.2)
+# <col_name>.lag.2 <- lag(zoo(glb_newent_df$<col_name>), -2, na.pad=TRUE)
+# glb_newent_df[, "<col_name>.lag.2"] <- coredata(<col_name>.lag.2)
+# 
+# glb_newent_df[1, "<col_name>.lag.2"] <- glb_trnent_df[nrow(glb_trnent_df) - 1, 
+#                                                    "<col_name>"]
+# glb_newent_df[2, "<col_name>.lag.2"] <- glb_trnent_df[nrow(glb_trnent_df), 
+#                                                    "<col_name>"]
+                                                   
+# glb_entity_df <- mutate(glb_entity_df,
+#     A.has.http=ifelse(grepl("http",Added,fixed=TRUE), 1, 0)
+#                     )
+# 
+# glb_trnent_df <- mutate(glb_trnent_df,
+#                     )
+# 
+# glb_newent_df <- mutate(glb_newent_df,
+#                     )
+
+#   Create factors of string variables
+str_vars <- sapply(names(glb_entity_df), function(var)  
+                    ifelse(class(glb_entity_df[, var]) == "character", var, ""))
+print(str_vars <- str_vars[str_vars != ""])
+if (length(str_vars <- setdiff(str_vars, 
+                               glb_exclude_vars_as_features)) > 0) {
+    glb_exclude_vars_as_features <- union(glb_exclude_vars_as_features, str_vars)
+    for (var in str_vars) {
+        warning("Creating factors of string variable: ", var, 
+                ": # of unique values: ", length(unique(glb_entity_df[, var])))
+        glb_entity_df[, paste0(var, ".fctr")] <- factor(glb_entity_df[, var], 
+                        as.factor(unique(glb_entity_df[, var])))
+#         glb_trnent_df[, paste0(var, ".fctr")] <- factor(glb_trnent_df[, var], 
+#                         as.factor(unique(glb_entity_df[, var])))
+#         glb_newent_df[, paste0(var, ".fctr")] <- factor(glb_newent_df[, var], 
+#                         as.factor(unique(glb_entity_df[, var])))
+    }
+}
+
+if (glb_is_textual) {
+    require(tm)
+    
+    glb_corpus_lst <- list(); glb_full_DTM_lst <- list(); glb_sprs_DTM_lst <- list();
+    for (txt_var in glb_txt_vars) {
+        print(sprintf("Building corpus for %s...", txt_var))
+        
+        # Combine "new york" to "newyork"
+        #   shd be created as a tm_map::content_transformer
+        txt_df <- glb_entity_df[, txt_var]
+        txt_df <- gsub("[Nn]ew [Dd]elhi",   "newdelhi",   txt_df)                        
+        txt_df <- gsub("[Nn]ew [Gg]uinea",  "newguinea",   txt_df)                                
+        txt_df <- gsub("[Nn]ew [Jj]ersey",  "newjersey",  txt_df)                
+        txt_df <- gsub("[Nn]ew [Oo]rleans", "neworleans",  txt_df)                
+        txt_df <- gsub("[Nn]ew [Yy]ear",    "newyear",    txt_df)        
+        txt_df <- gsub("[Nn]ew [Yy]ork",    "newyork",    txt_df)
+        txt_df <- gsub("[Nn]ew [Zz]ealand", "newzealand", txt_df)
+        
+        if (txt_var == "Headline") {
+#             dsp_chisq.test(Headline.contains="[Nn]ew ")
+#             print(head(txt_df[grep("[Nn]ew ", txt_df)]))
+#             print(tail(txt_df[grep("[Nn]ew ", txt_df)]))
+#             print(sample(txt_df[grep("[Nn]ew ", txt_df)], 5))
+#             print(length(txt_df[grep("[Nn]ew ", txt_df)]))
+#             print(txt_df[grep("[Nn]ew ", txt_df)][01:20])
+#             print(txt_df[grep("[Nn]ew ", txt_df)][21:40])        
+#             print(txt_df[grep("[Nn]ew ", txt_df)][41:60])                
+#             print(txt_df[grep("[Nn]ew ", txt_df)][61:80])                       
+#             print(txt_df[grep("[Nn]ew ", txt_df)][81:100])                               
+#             #print(length(txt_df[grep("[Nn]ew [Zz]ealand", txt_df)]))
+            
+#             dsp_chisq.test(Headline.contains="[Nn]ew [Yy]ork")
+#             dsp_chisq.test(Headline.contains="[Re]eport")
+#             dsp_chisq.test(Snippet.contains="[Re]eport")
+#             
+#             dsp_chisq.test(Headline.contains="[Ww]eek")
+#             dsp_chisq.test(Headline.contains="[Dd]ay")
+#             dsp_chisq.test(Headline.contains="[Ff]ashion")
+#             dsp_chisq.test(Headline.contains="[Tt]oday")
+#             dsp_chisq.test(Headline.contains="[Dd]ail")
+#             dsp_chisq.test(Headline.contains="2014")
+#             dsp_chisq.test(Headline.contains="2015")            
+            glb_append_stop_words[["Headline"]] <- c(NULL)
+        }
+
+        if (txt_var == "Snippet") {
+#             dsp_chisq.test(Snippet.contains="[Nn]ew ")
+#             print(head(txt_df[grep("[Nn]ew ", txt_df)]))
+#             print(tail(txt_df[grep("[Nn]ew ", txt_df)]))
+#             print(sample(txt_df[grep("[Nn]ew ", txt_df)], 5))
+#             print(length(txt_df[grep("[Nn]ew ", txt_df)]))
+#             print(txt_df[grep("[Nn]ew ", txt_df)][11:20])
+#             print(txt_df[grep("[Nn]ew ", txt_df)][21:30])        
+#             print(txt_df[grep("[Nn]ew ", txt_df)][31:40])                
+#             print(txt_df[grep("[Nn]ew ", txt_df)][41:50])                       
+#             print(txt_df[grep("[Nn]ew ", txt_df)][51:60])                               
+#             #print(length(txt_df[grep("[Nn]ew [Zz]ealand", txt_df)]))
+    
+#             dsp_chisq.test(Snippet.contains="[Ww]ill")
+#             dsp_chisq.test(Snippet.contains="[Tt]ime")
+#             dsp_chisq.test(Snippet.contains="[Ww]eek")
+#             dsp_chisq.test(Snippet.contains="[Yy]ear")        
+#             dsp_chisq.test(Snippet.contains="[Ne]w [Yy]ork")
+#             dsp_chisq.test(Snippet.contains="[Cc]ompan")
+#             dsp_chisq.test(Snippet.contains="[Oo]ne")
+#             dsp_chisq.test(Snippet.contains="[Rr]eport")
+#             dsp_chisq.test(Snippet.contains="[Pp]resid")
+#             dsp_chisq.test(Snippet.contains="[Ss]aid")
+#             dsp_chisq.test(Snippet.contains="[Cc]an")
+#             dsp_chisq.test(Snippet.contains="[Dd]ay")
+            
+            glb_append_stop_words[["Snippet"]] <- c(NULL)
+                #c("can")
+        }
+
+        if (txt_var == "Abstract") {
+#             dsp_chisq.test(Abstract.contains="[Nn]ew ")
+#             print(head(txt_df[grep("[Nn]ew ", txt_df)]))
+#             print(tail(txt_df[grep("[Nn]ew ", txt_df)]))
+#             print(sample(txt_df[grep("[Nn]ew ", txt_df)], 5))
+#             print(length(txt_df[grep("[Nn]ew ", txt_df)]))
+#             print(txt_df[grep("[Nn]ew ", txt_df)][11:20])
+#             print(txt_df[grep("[Nn]ew ", txt_df)][21:30])        
+#             print(txt_df[grep("[Nn]ew ", txt_df)][31:40])                
+#             print(txt_df[grep("[Nn]ew ", txt_df)][41:50])                       
+#             print(txt_df[grep("[Nn]ew ", txt_df)][51:60])                               
+#             #print(length(txt_df[grep("[Nn]ew [Zz]ealand", txt_df)]))
+#     
+#             dsp_chisq.test(Abstract.contains="[Ww]ill")
+#             dsp_chisq.test(Abstract.contains="[Tt]ime")
+#             dsp_chisq.test(Abstract.contains="[Ww]eek")
+#             dsp_chisq.test(Abstract.contains="[Yy]ear")        
+#             dsp_chisq.test(Abstract.contains="[Ne]w [Yy]ork")
+#             dsp_chisq.test(Abstract.contains="[Cc]ompan")
+#             dsp_chisq.test(Abstract.contains="[Oo]ne")
+#             dsp_chisq.test(Abstract.contains="[Rr]eport")
+#             dsp_chisq.test(Abstract.contains="[Pp]resid")
+#             
+#             dsp_chisq.test(Abstract.contains="[Ss]aid")
+#             dsp_chisq.test(Abstract.contains="[Cc]an")
+#             dsp_chisq.test(Abstract.contains="[Dd]ay")
+#             dsp_chisq.test(Abstract.contains="[Ss]tate")            
+#             dsp_chisq.test(Abstract.contains="[Mm]ake")            
+#             dsp_chisq.test(Abstract.contains="[Bb]ank")                        
+            
+            glb_append_stop_words[["Abstract"]] <- c(NULL)
+                #c("fashion", "first", "intern", "make", "newyork", "report", 
+                #  "said", "share", "show", "state", "week", "year")
+        }
+
+        txt_corpus <- Corpus(VectorSource(txt_df))
+        txt_corpus <- tm_map(txt_corpus, tolower)
+        txt_corpus <- tm_map(txt_corpus, PlainTextDocument)
+        txt_corpus <- tm_map(txt_corpus, removePunctuation)
+#         txt-corpus <- tm_map(txt_corpus, content_transformer(function(x, pattern) gsub(pattern, "", x))        
+        txt_corpus <- tm_map(txt_corpus, removeWords, 
+                             c(glb_append_stop_words[[txt_var]], 
+                               stopwords("english")))
+        txt_corpus <- tm_map(txt_corpus, stemDocument)
+        
+        full_freqs_DTM <- DocumentTermMatrix(txt_corpus)
+        print("   Full freqs:"); print(full_freqs_DTM)
+        full_freqs_vctr <- colSums(as.matrix(full_freqs_DTM))
+        names(full_freqs_vctr) <- dimnames(full_freqs_DTM)[[2]]
+        full_freqs_df <- as.data.frame(full_freqs_vctr)
+        names(full_freqs_df) <- "freq.full"
+        full_freqs_df$term <- rownames(full_freqs_df)
+        full_freqs_df <- orderBy(~ -freq.full, full_freqs_df)
+        
+        sprs_freqs_DTM <- removeSparseTerms(full_freqs_DTM, 
+                                            glb_sprs_thresholds[txt_var])
+        print("   Sparse freqs:"); print(sprs_freqs_DTM)
+        sprs_freqs_vctr <- colSums(as.matrix(sprs_freqs_DTM))
+        names(sprs_freqs_vctr) <- dimnames(sprs_freqs_DTM)[[2]]
+        sprs_freqs_df <- as.data.frame(sprs_freqs_vctr)
+        names(sprs_freqs_df) <- "freq.sprs"
+        sprs_freqs_df$term <- rownames(sprs_freqs_df)
+        sprs_freqs_df <- orderBy(~ -freq.sprs, sprs_freqs_df)
+        
+        terms_freqs_df <- merge(full_freqs_df, sprs_freqs_df, all.x=TRUE)
+        melt_freqs_df <- orderBy(~ -value, melt(terms_freqs_df, id.var="term"))
+        print(ggplot(melt_freqs_df, aes(value, color=variable)) + stat_ecdf() + 
+                  geom_hline(yintercept=glb_sprs_thresholds[txt_var], 
+                             linetype = "dotted"))
+        melt_freqs_df <- orderBy(~ -value, 
+                        melt(subset(terms_freqs_df, !is.na(freq.sprs)), id.var="term"))
+        print(myplot_hbar(melt_freqs_df, "term", "value", 
+                          colorcol_name="variable"))
+        melt_freqs_df <- orderBy(~ -value, 
+                        melt(subset(terms_freqs_df, is.na(freq.sprs)), id.var="term"))
+        print(myplot_hbar(head(melt_freqs_df, 10), "term", "value", 
+                          colorcol_name="variable"))
+        
+        glb_corpus_lst[[txt_var]] <- txt_corpus
+        glb_full_DTM_lst[[txt_var]] <- full_freqs_DTM
+        glb_sprs_DTM_lst[[txt_var]] <- sprs_freqs_DTM
+    }
+
+    # Create txt features
+    if ((length(glb_txt_vars) > 1) &&
+        (length(unique(pfxs <- sapply(glb_txt_vars, 
+                    function(txt) toupper(substr(txt, 1, 1))))) < length(glb_txt_vars)))
+            stop("Prefixes for corpus freq terms not unique: ", pfxs)
+    
+    for (txt_var in glb_txt_vars) {
+        print(sprintf("Binding DTM for %s...", txt_var))
+        txt_X_df <- as.data.frame(as.matrix(glb_sprs_DTM_lst[[txt_var]]))
+        colnames(txt_X_df) <- paste(toupper(substr(txt_var, 1, 1)), ".",
+                                    make.names(colnames(txt_X_df)), sep="")
+        rownames(txt_X_df) <- rownames(glb_entity_df) # warning otherwise
+        glb_entity_df <- cbind(glb_entity_df, txt_X_df)
+        
+        # Create <txt_var>.has.http
+        glb_entity_df[, paste(toupper(substr(txt_var, 1, 1)), ".has.http", sep="")] <- 
+            sapply(1:nrow(glb_entity_df), 
+    function(row_ix) ifelse(grepl("http", glb_entity_df[row_ix, txt_var], fixed=TRUE), 
+                            1, 0))
+    
+        # Create user-specified term vectors 
+        #   UniqueID == 4020, H.has.ebola
+#         dsp_chisq.test(Headline.contains="[Ee]bola")                            
+#         dsp_chisq.test( Snippet.contains="[Ee]bola")
+#         dsp_chisq.test(Abstract.contains="[Ee]bola")
+        if (txt_var == "Headline") {
+        glb_entity_df[, paste(toupper(substr(txt_var, 1, 1)), ".has.ebola", sep="")] <- 
+            sapply(1:nrow(glb_entity_df), 
+    function(row_ix) ifelse(grepl("[Ee]bola", glb_entity_df[row_ix, txt_var]), 
+                            1, 0))            
+        glb_entity_df[, paste(toupper(substr(txt_var, 1, 1)), ".is.question", sep="")] <- 
+            sapply(1:nrow(glb_entity_df), 
+    function(row_ix) ifelse(grepl("\\?", glb_entity_df[row_ix, txt_var]), 
+                            1, 0))           
+        }
+    
+        # Create <txt_var>.num.chars
+        glb_entity_df[, paste(toupper(substr(txt_var, 1, 1)), ".num.chars", sep="")] <- 
+            sapply(1:nrow(glb_entity_df), 
+                    function(row_ix) nchar(glb_entity_df[row_ix, txt_var]))
+
+        # Create <txt_var>.num.words & .num.words.unq
+        glb_entity_df[, paste(toupper(substr(txt_var, 1, 1)), ".num.words", sep="")] <- 
+            rowSums(as.matrix(glb_full_DTM_lst[[txt_var]]))
+        glb_entity_df[, paste(toupper(substr(txt_var, 1, 1)), ".num.words.unq", sep="")] <- 
+            rowSums(as.matrix(glb_full_DTM_lst[[txt_var]]) != 0)
+    
+        for (feat in paste(toupper(substr(txt_var, 1, 1)), 
+                            c(".num.chars", ".num.words", ".num.words.unq"), sep="")) {
+            glb_entity_df[, paste0(feat, ".log")] <- log(1 + glb_entity_df[, feat])
+            print(myplot_box(glb_entity_df, paste0(feat, ".log"), glb_rsp_var))
+            glb_exclude_vars_as_features <- union(glb_exclude_vars_as_features,
+                                                  feat)
+        }            
+    }        
+
+    # Generate summaries
+#     print(summary(glb_entity_df))
+#     print(sapply(names(glb_entity_df), function(col) sum(is.na(glb_entity_df[, col]))))
+#     print(summary(glb_trnent_df))
+#     print(sapply(names(glb_trnent_df), function(col) sum(is.na(glb_trnent_df[, col]))))
+#     print(summary(glb_newent_df))
+#     print(sapply(names(glb_newent_df), function(col) sum(is.na(glb_newent_df[, col]))))
+}
+
+# Re-partition
+glb_trnent_df <- subset(glb_entity_df, .src == "Train")
+glb_newent_df <- subset(glb_entity_df, .src == "Test")
+
+# print(sapply(names(glb_trnent_df), function(col) sum(is.na(glb_trnent_df[, col]))))
+# print(sapply(names(glb_newent_df), function(col) sum(is.na(glb_newent_df[, col]))))
+
+# print(myplot_scatter(glb_trnent_df, "<col1_name>", "<col2_name>", smooth=TRUE))
+
+replay.petrisim(pn=glb_analytics_pn, 
+    replay.trans=(glb_analytics_avl_objs <- c(glb_analytics_avl_objs, 
+        "data.training.all","data.new")), flip_coord=TRUE)
+glb_chunks_df <- myadd_chunk(glb_chunks_df, "select.features", major.inc=TRUE)
+```
+
+## Step ``r mydsp_chunk(glb_chunks_df)``
+```{r select.features, cache=FALSE}
+print(glb_feats_df <- myselect_features(entity_df=glb_trnent_df, 
+                       exclude_vars_as_features=glb_exclude_vars_as_features, 
+                       rsp_var=glb_rsp_var))
+
+print(glb_feats_df <- orderBy(~-cor.y, 
+          myfind_cor_features(feats_df=glb_feats_df, entity_df=glb_trnent_df, 
+                              rsp_var=glb_rsp_var, 
+                            checkConditionalX=(glb_is_classification && glb_is_binomial))))
+
+glb_chunks_df <- myadd_chunk(glb_chunks_df, "partition.data.training", major.inc=TRUE)
+```
+
+## Step ``r mydsp_chunk(glb_chunks_df)``
+```{r partition.data.training, cache=FALSE}
+if (all(is.na(glb_newent_df[, glb_rsp_var]))) {
+    require(caTools)
+    
+    set.seed(glb_split_sample.seed)
+    split <- sample.split(glb_trnent_df[, glb_rsp_var_raw], 
+        SplitRatio=1 - (nrow(glb_newent_df) * 1.1 / nrow(glb_trnent_df)))
+    glb_fitent_df <- glb_trnent_df[split, ] 
+    glb_OOBent_df <- glb_trnent_df[!split ,]    
+} else {
+    print(sprintf("Newdata contains non-NA data for %s; setting OOB to Newdata", 
+                  glb_rsp_var))
+    glb_fitent_df <- glb_trnent_df; glb_OOBent_df <- glb_newent_df
+}
+
+if (!is.null(glb_max_fitent_obs) && (nrow(glb_fitent_df) > glb_max_fitent_obs)) {
+    warning("glb_fitent_df restricted to glb_max_fitent_obs: ", 
+            format(glb_max_fitent_obs, big.mark=","))
+    org_fitent_df <- glb_fitent_df
+    glb_fitent_df <- 
+        org_fitent_df[split <- sample.split(org_fitent_df[, glb_rsp_var_raw], 
+                                            SplitRatio=glb_max_fitent_obs), ]
+    org_fitent_df <- NULL
+}
+
+sav_entity_df <- glb_entity_df
+glb_entity_df$.lcn <- ""
+glb_entity_df[glb_entity_df[, glb_id_vars] %in% 
+              glb_fitent_df[, glb_id_vars], ".lcn"] <- "Fit"
+glb_entity_df[glb_entity_df[, glb_id_vars] %in% 
+              glb_OOBent_df[, glb_id_vars], ".lcn"] <- "OOB"
+
+dsp_class_dstrb <- function(obs_df, location_var, partition_var) {
+    xtab_df <- mycreate_xtab_df(obs_df, c(location_var, partition_var))
+    rownames(xtab_df) <- xtab_df[, location_var]
+    xtab_df <- xtab_df[, -grepl(location_var, names(xtab_df))]
+    print(xtab_df)
+    print(xtab_df / rowSums(xtab_df, na.rm=TRUE))    
+}    
+
+# Ensure proper splits by glb_rsp_var_raw & user-specified feature for OOB vs. new
+dsp_class_dstrb(glb_entity_df, ".lcn", glb_rsp_var_raw)
+newent_ctgry_df <- mycreate_sqlxtab_df(subset(glb_entity_df, .src == "Test"), 
+                                       "NewsDesk.nb")
+OOBent_ctgry_df <- mycreate_sqlxtab_df(subset(glb_entity_df, .lcn == "OOB"), 
+                                       "NewsDesk.nb")
+glb_ctgry_df <- merge(newent_ctgry_df, OOBent_ctgry_df, by="NewsDesk.nb", all=TRUE, 
+                      suffixes=c(".Tst", ".OOB"))
+glb_ctgry_df$.freqRatio.Tst <- glb_ctgry_df$.n.Tst / sum(glb_ctgry_df$.n.Tst, na.rm=TRUE)
+glb_ctgry_df$.freqRatio.OOB <- glb_ctgry_df$.n.OOB / sum(glb_ctgry_df$.n.OOB, na.rm=TRUE)
+print(orderBy(~-.freqRatio.Tst-.freqRatio.OOB, glb_ctgry_df))
+# dsp_class_dstrb(glb_entity_df, ".src", "NewsDesk.nb")
+# dsp_class_dstrb(glb_entity_df, ".lcn", "NewsDesk.nb")
+
+# Run this line by line
+print("glb_feats_df:");   print(dim(glb_feats_df))
+sav_feats_df <- glb_feats_df
+glb_feats_df <- sav_feats_df
+
+glb_feats_df[, "rsp_var_raw"] <- FALSE
+glb_feats_df[glb_feats_df$id == glb_rsp_var_raw, "rsp_var_raw"] <- TRUE 
+glb_feats_df$exclude.as.feat <- (glb_feats_df$exclude.as.feat == 1)
+if (!is.null(glb_id_vars) && glb_id_vars != ".rownames")
+    glb_feats_df[glb_feats_df$id %in% glb_id_vars, "id_var"] <- TRUE 
+add_feats_df <- data.frame(id=glb_rsp_var, exclude.as.feat=TRUE, rsp_var=TRUE)
+row.names(add_feats_df) <- add_feats_df$id; print(add_feats_df)
+glb_feats_df <- myrbind_df(glb_feats_df, add_feats_df)
+print(subset(glb_feats_df, rsp_var_raw | rsp_var | id_var))
+
+print("glb_feats_df vs. glb_entity_df: "); 
+print(setdiff(glb_feats_df$id, names(glb_entity_df)))
+print("glb_entity_df vs. glb_feats_df: "); 
+# Ensure these are only chr vars
+print(setdiff(setdiff(names(glb_entity_df), glb_feats_df$id), 
+                myfind_chr_cols_df(glb_entity_df)))
+#print(setdiff(setdiff(names(glb_entity_df), glb_exclude_vars_as_features), 
+#                glb_feats_df$id))
+
+print("glb_entity_df: "); print(dim(glb_entity_df))
+print("glb_trnent_df: "); print(dim(glb_trnent_df))
+print("glb_fitent_df: "); print(dim(glb_fitent_df))
+print("glb_OOBent_df: "); print(dim(glb_OOBent_df))
+print("glb_newent_df: "); print(dim(glb_newent_df))
+# sav_entity_df <- glb_entity_df
+# glb_entity_df <- sav_entity_df
+# # Does not handle NULL or length(glb_id_vars) > 1
+# glb_entity_df$.src.trn <- 0
+# glb_entity_df[glb_entity_df[, glb_id_vars] %in% glb_trnent_df[, glb_id_vars], 
+#                 ".src.trn"] <- 1 
+# glb_entity_df$.src.fit <- 0
+# glb_entity_df[glb_entity_df[, glb_id_vars] %in% glb_fitent_df[, glb_id_vars], 
+#                 ".src.fit"] <- 1 
+# glb_entity_df$.src.OOB <- 0
+# glb_entity_df[glb_entity_df[, glb_id_vars] %in% glb_OOBent_df[, glb_id_vars], 
+#                 ".src.OOB"] <- 1 
+# glb_entity_df$.src.new <- 0
+# glb_entity_df[glb_entity_df[, glb_id_vars] %in% glb_newent_df[, glb_id_vars], 
+#                 ".src.new"] <- 1 
+# #print(unique(glb_entity_df[, ".src.trn"]))
+# write_cols <- c(glb_feats_df$id, 
+#                 ".src.trn", ".src.fit", ".src.OOB", ".src.new")
+# glb_entity_df <- glb_entity_df[, write_cols]
+# 
+# tmp_feats_df <- glb_feats_df
+# tmp_entity_df <- glb_entity_df
+
+save(glb_feats_df, 
+     glb_entity_df, #glb_trnent_df, glb_fitent_df, glb_OOBent_df, glb_newent_df,
+     file=paste0(glb_out_pfx, "blddfs_dsk.RData"))
+# load(paste0(glb_out_pfx, "blddfs_dsk.RData"))
+
+# if (!all.equal(tmp_feats_df, glb_feats_df))
+#     stop("glb_feats_df r/w not working")
+# if (!all.equal(tmp_entity_df, glb_entity_df))
+#     stop("glb_entity_df r/w not working")
+
+glb_chunks_df <- myadd_chunk(glb_chunks_df, "fit.models", major.inc=TRUE)
+```
+
+## Step ``r mydsp_chunk(glb_chunks_df)``
+```{r fit.models_0, cache=FALSE}
+# load(paste0(glb_out_pfx, "dsk.RData"))
+# keep_cols <- setdiff(names(glb_entity_df), 
+#                      grep("^.src", names(glb_entity_df), value=TRUE))
+# glb_trnent_df <- glb_entity_df[glb_entity_df$.src.trn == 1, keep_cols]
+# glb_fitent_df <- glb_entity_df[glb_entity_df$.src.fit == 1, keep_cols]
+# glb_OOBent_df <- glb_entity_df[glb_entity_df$.src.OOB == 1, keep_cols]
+# glb_newent_df <- glb_entity_df[glb_entity_df$.src.new == 1, keep_cols]
+# 
+# glb_models_lst <- list(); glb_models_df <- data.frame()
+# 
+if (glb_is_classification && glb_is_binomial && 
+        (length(unique(glb_fitent_df[, glb_rsp_var])) < 2))
+    stop("glb_fitent_df$", glb_rsp_var, ": contains less than 2 unique values: ",
+         paste0(unique(glb_fitent_df[, glb_rsp_var]), collapse=", "))
+
+max_cor_y_x_var <- orderBy(~ -cor.y.abs, 
+        subset(glb_feats_df, (exclude.as.feat == 0) & !is.cor.y.abs.low))[1, "id"]
+if (!is.null(glb_Baseline_mdl_var)) {
+    if ((max_cor_y_x_var != glb_Baseline_mdl_var) & 
+        (glb_feats_df[max_cor_y_x_var, "cor.y.abs"] > 
+         glb_feats_df[glb_Baseline_mdl_var, "cor.y.abs"]))
+        stop(max_cor_y_x_var, " has a lower correlation with ", glb_rsp_var, 
+             " than the Baseline var: ", glb_Baseline_mdl_var)
+}
+
+glb_model_type <- ifelse(glb_is_regression, "regression", "classification")
+    
+# Baseline
+if (!is.null(glb_Baseline_mdl_var)) 
+    ret_lst <- myfit_mdl_fn(model_id="Baseline", model_method="mybaseln_classfr",
+                            indep_vars_vctr=glb_Baseline_mdl_var,
+                            rsp_var=glb_rsp_var, rsp_var_out=glb_rsp_var_out,
+                            fit_df=glb_fitent_df, OOB_df=glb_OOBent_df)
+
+# Most Frequent Outcome "MFO" model: mean(y) for regression
+#   Not using caret's nullModel since model stats not avl
+#   Cannot use rpart for multinomial classification since it predicts non-MFO
+ret_lst <- myfit_mdl(model_id="MFO", 
+                     model_method=ifelse(glb_is_regression, "lm", "myMFO_classfr"), 
+                     model_type=glb_model_type,
+                        indep_vars_vctr=".rnorm",
+                        rsp_var=glb_rsp_var, rsp_var_out=glb_rsp_var_out,
+                        fit_df=glb_fitent_df, OOB_df=glb_OOBent_df)
+
+if (glb_is_classification)
+    # "random" model - only for classification; 
+    #   none needed for regression since it is same as MFO
+    ret_lst <- myfit_mdl(model_id="Random", model_method="myrandom_classfr",
+                            model_type=glb_model_type,                         
+                            indep_vars_vctr=".rnorm",
+                            rsp_var=glb_rsp_var, rsp_var_out=glb_rsp_var_out,
+                            fit_df=glb_fitent_df, OOB_df=glb_OOBent_df)
+
+# Any models that have tuning parameters has "better" results with cross-validation
+#   (except rf) & "different" results for different outcome metrics
+
+# Max.cor.Y
+#   Check impact of cv
+#       rpart is not a good candidate since caret does not optimize cp (only tuning parameter of rpart) well
+ret_lst <- myfit_mdl(model_id="Max.cor.Y.cv.0", 
+                        model_method="rpart",
+                     model_type=glb_model_type,
+                        indep_vars_vctr=max_cor_y_x_var,
+                        rsp_var=glb_rsp_var, rsp_var_out=glb_rsp_var_out,
+                        fit_df=glb_fitent_df, OOB_df=glb_OOBent_df)
+
+ret_lst <- myfit_mdl(model_id="Max.cor.Y.cv.0.cp.0", 
+                        model_method="rpart",
+                     model_type=glb_model_type,
+                        indep_vars_vctr=max_cor_y_x_var,
+                        rsp_var=glb_rsp_var, rsp_var_out=glb_rsp_var_out,
+                        fit_df=glb_fitent_df, OOB_df=glb_OOBent_df,
+                        n_cv_folds=0, 
+            tune_models_df=data.frame(parameter="cp", min=0.0, max=0.0, by=0.1))
+
+if (glb_is_regression || glb_is_binomial) # For multinomials this model will be run next by default
+ret_lst <- myfit_mdl(model_id="Max.cor.Y", 
+                        model_method="rpart",
+                     model_type=glb_model_type,
+                        indep_vars_vctr=max_cor_y_x_var,
+                        rsp_var=glb_rsp_var, rsp_var_out=glb_rsp_var_out,
+                        fit_df=glb_fitent_df, OOB_df=glb_OOBent_df,
+                        n_cv_folds=glb_n_cv_folds, tune_models_df=NULL)
+
+# Used to compare vs. Interactions.High.cor.Y 
+ret_lst <- myfit_mdl(model_id="Max.cor.Y", 
+                        model_method=ifelse(glb_is_regression, "lm", 
+                                        ifelse(glb_is_binomial, "glm", "rpart")),
+                     model_type=glb_model_type,
+                        indep_vars_vctr=max_cor_y_x_var,
+                        rsp_var=glb_rsp_var, rsp_var_out=glb_rsp_var_out,
+                        fit_df=glb_fitent_df, OOB_df=glb_OOBent_df,
+                        n_cv_folds=glb_n_cv_folds, tune_models_df=NULL)
+
+# Interactions.High.cor.Y
+if (length(int_feats <- setdiff(unique(glb_feats_df$cor.high.X), NA)) > 0) {
+    # lm & glm handle interaction terms; rpart & rf do not
+    if (glb_is_regression || glb_is_binomial) {
+        indep_vars_vctr <- 
+            c(max_cor_y_x_var, paste(max_cor_y_x_var, int_feats, sep=":"))       
+    } else { indep_vars_vctr <- union(max_cor_y_x_var, int_feats) }
+    
+    ret_lst <- myfit_mdl(model_id="Interact.High.cor.Y", 
+                            model_method=ifelse(glb_is_regression, "lm", 
+                                        ifelse(glb_is_binomial, "glm", "rpart")),
+                         model_type=glb_model_type,
+                            indep_vars_vctr,
+                            glb_rsp_var, glb_rsp_var_out,
+                            fit_df=glb_fitent_df, OOB_df=glb_OOBent_df,
+                            n_cv_folds=glb_n_cv_folds, tune_models_df=NULL)                        
+}    
+
+# Low.cor.X
+if (glb_is_classification && glb_is_binomial)
+    indep_vars_vctr <- subset(glb_feats_df, is.na(cor.high.X) & 
+                                            is.ConditionalX.y & 
+                                            (exclude.as.feat != 1))[, "id"] else
+    indep_vars_vctr <- subset(glb_feats_df, is.na(cor.high.X) & 
+                                            (exclude.as.feat != 1))[, "id"]  
+ret_lst <- myfit_mdl(model_id="Low.cor.X", 
+                        model_method=ifelse(glb_is_regression, "lm", 
+                                        ifelse(glb_is_binomial, "glm", "rpart")),
+                        indep_vars_vctr=indep_vars_vctr,
+                        model_type=glb_model_type,                     
+                        glb_rsp_var, glb_rsp_var_out,
+                        fit_df=glb_fitent_df, OOB_df=glb_OOBent_df,
+                        n_cv_folds=glb_n_cv_folds, tune_models_df=NULL)
+
+glb_chunks_df <- myadd_chunk(glb_chunks_df, "fit.models", major.inc=FALSE)
+```
+
+```{r fit.models_1, cache=FALSE, fig.height=10, fig.width=15}
+# All X that is not user excluded
+if (glb_is_classification && glb_is_binomial) {
+    model_id_pfx <- "Conditional.X"
+# indep_vars_vctr <- setdiff(names(glb_fitent_df), union(glb_rsp_var, glb_exclude_vars_as_features))
+    indep_vars_vctr <- subset(glb_feats_df, is.ConditionalX.y & 
+                                            (exclude.as.feat != 1))[, "id"]
+} else {
+    model_id_pfx <- "All.X"
+    indep_vars_vctr <- subset(glb_feats_df, 
+                                            (exclude.as.feat != 1))[, "id"]
+}
+for (method in glb_models_method_vctr) {
+    if (method %in% c("rpart", "rf")) {
+        # rpart:    fubar's the tree
+        # rf:       skip the scenario w/ .rnorm for speed
+        indep_vars_vctr <- setdiff(indep_vars_vctr, c(".rnorm"))
+        model_id <- paste0(model_id_pfx, ".no.rnorm")
+    } else model_id <- model_id_pfx
+        
+    ret_lst <- myfit_mdl(model_id=model_id, model_method=method,
+                            indep_vars_vctr=indep_vars_vctr,
+                            model_type=glb_model_type,
+                            rsp_var=glb_rsp_var, rsp_var_out=glb_rsp_var_out,
+                            fit_df=glb_fitent_df, OOB_df=glb_OOBent_df,
+                n_cv_folds=glb_n_cv_folds, tune_models_df=glb_tune_models_df)
+    
+    # Since caret does not optimize rpart well
+#     if (method == "rpart")
+#         ret_lst <- myfit_mdl(model_id=paste0(model_id_pfx, ".cp.0"), model_method=method,
+#                                 indep_vars_vctr=indep_vars_vctr,
+#                                 model_type=glb_model_type,
+#                                 rsp_var=glb_rsp_var, rsp_var_out=glb_rsp_var_out,
+#                                 fit_df=glb_fitent_df, OOB_df=glb_OOBent_df,        
+#             n_cv_folds=0, tune_models_df=data.frame(parameter="cp", min=0.0, max=0.0, by=0.1))
+}
+
+# User specified
+    # easier to exclude features
+#model_id_pfx <- "";
+# indep_vars_vctr <- setdiff(names(glb_fitent_df), 
+#                         union(union(glb_rsp_var, glb_exclude_vars_as_features), 
+#                                 c("<feat1_name>", "<feat2_name>")))
+# method <- ""                                
+
+    # easier to include features
+#model_id_pfx <- ""; indep_vars_vctr <- c("<feat1_name>", "<feat1_name>"); method <- ""
+
+    # User specified bivariate models
+#     indep_vars_vctr_lst <- list()
+#     for (feat in setdiff(names(glb_fitent_df), 
+#                          union(glb_rsp_var, glb_exclude_vars_as_features)))
+#         indep_vars_vctr_lst[["feat"]] <- feat
+
+    # User specified combinatorial models
+#     indep_vars_vctr_lst <- list()
+#     combn_mtrx <- combn(c("<feat1_name>", "<feat2_name>", "<featn_name>"), 
+#                           <num_feats_to_choose>)
+#     for (combn_ix in 1:ncol(combn_mtrx))
+#         #print(combn_mtrx[, combn_ix])
+#         indep_vars_vctr_lst[[combn_ix]] <- combn_mtrx[, combn_ix]
+    
+    # template for myfit_mdl
+    #   rf is hard-coded in caret to recognize only Accuracy / Kappa evaluation metrics
+    #       only for OOB in trainControl ?
+    
+#     ret_lst <- myfit_mdl_fn(model_id=paste0(model_id_pfx, ""), model_method=method,
+#                             indep_vars_vctr=indep_vars_vctr,
+#                             rsp_var=glb_rsp_var, rsp_var_out=glb_rsp_var_out,
+#                             fit_df=glb_fitent_df, OOB_df=glb_OOBent_df,
+#                             n_cv_folds=glb_n_cv_folds, tune_models_df=glb_tune_models_df,
+#                             model_loss_mtrx=glb_model_metric_terms,
+#                             model_summaryFunction=glb_model_metric_smmry,
+#                             model_metric=glb_model_metric,
+#                             model_metric_maximize=glb_model_metric_maximize)
+
+# Simplify a model
+# fit_df <- glb_fitent_df; glb_mdl <- step(<complex>_mdl)
+
+# Non-caret models
+#     rpart_area_mdl <- rpart(reformulate("Area", response=glb_rsp_var), 
+#                                data=glb_fitent_df, #method="class", 
+#                                control=rpart.control(cp=0.12),
+#                            parms=list(loss=glb_model_metric_terms))
+#     print("rpart_sel_wlm_mdl"); prp(rpart_sel_wlm_mdl)
+# 
+
+print(glb_models_df)
+
+glb_chunks_df <- myadd_chunk(glb_chunks_df, "fit.models", major.inc=FALSE)
+```
+
+```{r fit.models_2, cache=FALSE, fig.height=10, fig.width=15}
+if (!is.null(glb_model_metric_smmry)) {
+    stats_df <- glb_models_df[, "model_id", FALSE]
+
+    stats_mdl_df <- data.frame()
+    for (model_id in stats_df$model_id) {
+        stats_mdl_df <- rbind(stats_mdl_df, 
+            mypredict_mdl(glb_models_lst[[model_id]], glb_fitent_df, glb_rsp_var, 
+                          glb_rsp_var_out, model_id, "fit",
+        						glb_model_metric_smmry, glb_model_metric, 
+        						glb_model_metric_maximize, ret_type="stats"))
+    }
+    stats_df <- merge(stats_df, stats_mdl_df, all.x=TRUE)
+    
+    stats_mdl_df <- data.frame()
+    for (model_id in stats_df$model_id) {
+        stats_mdl_df <- rbind(stats_mdl_df, 
+            mypredict_mdl(glb_models_lst[[model_id]], glb_OOBent_df, glb_rsp_var, 
+                          glb_rsp_var_out, model_id, "OOB",
+            					glb_model_metric_smmry, glb_model_metric, 
+        						glb_model_metric_maximize, ret_type="stats"))
+    }
+    stats_df <- merge(stats_df, stats_mdl_df, all.x=TRUE)
+    
+#     tmp_models_df <- orderBy(~model_id, glb_models_df)
+#     rownames(tmp_models_df) <- seq(1, nrow(tmp_models_df))
+#     all.equal(subset(tmp_models_df[, names(stats_df)], model_id != "Random.myrandom_classfr"),
+#               subset(stats_df, model_id != "Random.myrandom_classfr"))
+#     print(subset(tmp_models_df[, names(stats_df)], model_id != "Random.myrandom_classfr")[, c("model_id", "max.Accuracy.fit")])
+#     print(subset(stats_df, model_id != "Random.myrandom_classfr")[, c("model_id", "max.Accuracy.fit")])
+
+    print("Merging following data into glb_models_df:")
+    print(stats_mrg_df <- stats_df[, c(1, grep(glb_model_metric, names(stats_df)))])
+    print(tmp_models_df <- orderBy(~model_id, glb_models_df[, c("model_id", grep(glb_model_metric, names(stats_df), value=TRUE))]))
+
+    tmp2_models_df <- glb_models_df[, c("model_id", setdiff(names(glb_models_df), grep(glb_model_metric, names(stats_df), value=TRUE)))]
+    tmp3_models_df <- merge(tmp2_models_df, stats_mrg_df, all.x=TRUE, sort=FALSE)
+    print(tmp3_models_df)
+    print(names(tmp3_models_df))
+    print(glb_models_df <- subset(tmp3_models_df, select=-model_id.1))
+}
+
+plt_models_df <- glb_models_df[, -grep("SD|Upper|Lower", names(glb_models_df))]
+for (var in grep("^min.", names(plt_models_df), value=TRUE)) {
+    plt_models_df[, sub("min.", "inv.", var)] <- 
+        #ifelse(all(is.na(tmp <- plt_models_df[, var])), NA, 1.0 / tmp)
+        1.0 / plt_models_df[, var]
+    plt_models_df <- plt_models_df[ , -grep(var, names(plt_models_df))]
+}
+print(plt_models_df)
+print(myplot_radar(radar_inp_df=plt_models_df))
+# print(myplot_radar(radar_inp_df=subset(plt_models_df, 
+#         !(model_id %in% grep("random|MFO", plt_models_df$model_id, value=TRUE)))))
+
+# Compute CI for <metric>SD
+glb_models_df <- mutate(glb_models_df, 
+                max.df = ifelse(max.nTuningRuns > 1, max.nTuningRuns - 1, NA),
+                min.sd2ci.scaler = ifelse(is.na(max.df), NA, qt(0.975, max.df)))
+for (var in grep("SD", names(glb_models_df), value=TRUE)) {
+    # Does CI alredy exist ?
+    var_components <- unlist(strsplit(var, "SD"))
+    varActul <- paste0(var_components[1],          var_components[2])
+    varUpper <- paste0(var_components[1], "Upper", var_components[2])
+    varLower <- paste0(var_components[1], "Lower", var_components[2])
+    if (varUpper %in% names(glb_models_df)) {
+        warning(varUpper, " already exists in glb_models_df")
+        # Assuming Lower also exists
+        next
+    }    
+    print(sprintf("var:%s", var))
+    # CI is dependent on sample size in t distribution; df=n-1
+    glb_models_df[, varUpper] <- glb_models_df[, varActul] + 
+        glb_models_df[, "min.sd2ci.scaler"] * glb_models_df[, var]
+    glb_models_df[, varLower] <- glb_models_df[, varActul] - 
+        glb_models_df[, "min.sd2ci.scaler"] * glb_models_df[, var]
+}
+
+# Plot metrics with CI
+plt_models_df <- glb_models_df[, "model_id", FALSE]
+pltCI_models_df <- glb_models_df[, "model_id", FALSE]
+for (var in grep("Upper", names(glb_models_df), value=TRUE)) {
+    var_components <- unlist(strsplit(var, "Upper"))
+    col_name <- unlist(paste(var_components, collapse=""))
+    plt_models_df[, col_name] <- glb_models_df[, col_name]
+    for (name in paste0(var_components[1], c("Upper", "Lower"), var_components[2]))
+        pltCI_models_df[, name] <- glb_models_df[, name]
+}
+
+build_statsCI_data <- function(plt_models_df) {
+    mltd_models_df <- melt(plt_models_df, id.vars="model_id")
+    mltd_models_df$data <- sapply(1:nrow(mltd_models_df), 
+        function(row_ix) tail(unlist(strsplit(as.character(
+            mltd_models_df[row_ix, "variable"]), "[.]")), 1))
+    mltd_models_df$label <- sapply(1:nrow(mltd_models_df), 
+        function(row_ix) head(unlist(strsplit(as.character(
+            mltd_models_df[row_ix, "variable"]), 
+            paste0(".", mltd_models_df[row_ix, "data"]))), 1))
+    #print(mltd_models_df)
+    
+    return(mltd_models_df)
+}
+mltd_models_df <- build_statsCI_data(plt_models_df)
+
+mltdCI_models_df <- melt(pltCI_models_df, id.vars="model_id")
+for (row_ix in 1:nrow(mltdCI_models_df)) {
+    for (type in c("Upper", "Lower")) {
+        if (length(var_components <- unlist(strsplit(
+                as.character(mltdCI_models_df[row_ix, "variable"]), type))) > 1) {
+            #print(sprintf("row_ix:%d; type:%s; ", row_ix, type))
+            mltdCI_models_df[row_ix, "label"] <- var_components[1]
+            mltdCI_models_df[row_ix, "data"] <- 
+                unlist(strsplit(var_components[2], "[.]"))[2]
+            mltdCI_models_df[row_ix, "type"] <- type
+            break
+        }
+    }    
+}
+#print(mltdCI_models_df)
+# castCI_models_df <- dcast(mltdCI_models_df, value ~ type, fun.aggregate=sum)
+# print(castCI_models_df)
+wideCI_models_df <- reshape(subset(mltdCI_models_df, select=-variable), 
+                            timevar="type", 
+        idvar=setdiff(names(mltdCI_models_df), c("type", "value", "variable")), 
+                            direction="wide")
+#print(wideCI_models_df)
+mrgdCI_models_df <- merge(wideCI_models_df, mltd_models_df, all.x=TRUE)
+#print(mrgdCI_models_df)
+
+# Merge stats back in if CIs don't exist
+goback_vars <- c()
+for (var in unique(mltd_models_df$label)) {
+    for (type in unique(mltd_models_df$data)) {
+        var_type <- paste0(var, ".", type)
+        # if this data is already present, next
+        if (var_type %in% unique(paste(mltd_models_df$label, mltd_models_df$data,
+                                       sep=".")))
+            next
+        #print(sprintf("var_type:%s", var_type))
+        goback_vars <- c(goback_vars, var_type)
+    }
+}
+
+if (length(goback_vars) > 0) {
+    mltd_goback_df <- build_statsCI_data(glb_models_df[, c("model_id", goback_vars)])
+    mltd_models_df <- rbind(mltd_models_df, mltd_goback_df)
+}
+
+mltd_models_df <- merge(mltd_models_df, glb_models_df[, c("model_id", "model_method")], 
+                        all.x=TRUE)
+
+png(paste0(glb_out_pfx, "models_bar.png"), width=480*3, height=480*2)
+print(gp <- myplot_bar(mltd_models_df, "model_id", "value", colorcol_name="model_method") + 
+        geom_errorbar(data=mrgdCI_models_df, 
+            mapping=aes(x=model_id, ymax=value.Upper, ymin=value.Lower), width=0.5) + 
+          facet_grid(label ~ data, scales="free") + 
+          theme(axis.text.x = element_text(angle = 90,vjust = 0.5)))
+dev.off()
+print(gp)
+
+# used for console inspection
+model_evl_terms <- c(NULL)
+for (metric in glb_model_evl_criteria)
+    model_evl_terms <- c(model_evl_terms, 
+                         ifelse(length(grep("max", metric)) > 0, "-", "+"), metric)
+if (glb_is_classification && glb_is_binomial)
+    model_evl_terms <- c(model_evl_terms, "-", "opt.prob.threshold.OOB")
+model_sel_frmla <- as.formula(paste(c("~ ", model_evl_terms), collapse=" "))
+print(dsp_models_df <- orderBy(model_sel_frmla, glb_models_df)
+      [, c("model_id", glb_model_evl_criteria, 
+           ifelse(glb_is_classification && glb_is_binomial, 
+                  "opt.prob.threshold.OOB", NULL))])
+print(myplot_radar(radar_inp_df=dsp_models_df))
+print("Metrics used for model selection:"); print(model_sel_frmla)
+print(sprintf("Best model id: %s", dsp_models_df[1, "model_id"]))
+    
+if (is.null(glb_sel_mdl_id)) 
+    { glb_sel_mdl_id <- dsp_models_df[1, "model_id"] } else 
+        print(sprintf("User specified selection: %s", glb_sel_mdl_id))   
+    
+myprint_mdl(glb_sel_mdl <- glb_models_lst[[glb_sel_mdl_id]])
+
+# From here to save(), this should all be in one function
+#   these are executed in the same seq twice more:
+#       fit.data.training & predict.data.new chunks
+glb_get_predictions <- function(df, mdl_id, rsp_var_out, prob_threshold_def=NULL) {
+    mdl <- glb_models_lst[[mdl_id]]
+    rsp_var_out <- paste0(rsp_var_out, mdl_id)
+
+    if (glb_is_regression) {
+        df[, rsp_var_out] <- predict(mdl, newdata=df, type="raw")
+        print(myplot_scatter(df, glb_rsp_var, rsp_var_out, smooth=TRUE))
+        df[, paste0(rsp_var_out, ".err")] <- 
+            abs(df[, rsp_var_out] - df[, glb_rsp_var])
+        print(head(orderBy(reformulate(c("-", paste0(glb_rsp_var_out, ".err"))), 
+                           df)))                             
+    }
+
+    if (glb_is_classification && glb_is_binomial) {
+        prob_threshold <- glb_models_df[glb_models_df$model_id == mdl_id, 
+                                        "opt.prob.threshold.OOB"]
+        if (is.null(prob_threshold) || is.na(prob_threshold)) {
+            warning("Using default probability threshold: ", prob_threshold_def)
+            if (is.null(prob_threshold <- prob_threshold_def))
+                stop("Default probability threshold is NULL")
+        }
+        
+        df[, paste0(rsp_var_out, ".prob")] <- 
+            predict(mdl, newdata=df, type="prob")[, 2]
+        df[, rsp_var_out] <- 
+        		factor(levels(df[, glb_rsp_var])[
+    				(df[, paste0(rsp_var_out, ".prob")] >=
+    					prob_threshold) * 1 + 1], levels(df[, glb_rsp_var]))
+    
+        # prediction stats already reported by myfit_mdl ???
+    }    
+    
+    if (glb_is_classification && !glb_is_binomial) {
+        df[, rsp_var_out] <- predict(mdl, newdata=df, type="raw")
+    }
+
+    return(df)
+}    
+glb_OOBent_df <- glb_get_predictions(df=glb_OOBent_df, glb_sel_mdl_id, glb_rsp_var_out)
+predct_accurate_var_name <- paste0(glb_rsp_var_out, glb_sel_mdl_id, ".accurate")
+glb_OOBent_df[, predct_accurate_var_name] <-
+                    (glb_OOBent_df[, glb_rsp_var] == 
+                     glb_OOBent_df[, paste0(glb_rsp_var_out, glb_sel_mdl_id)])
+
+glb_feats_df <- 
+    mymerge_feats_importance(feats_df=glb_feats_df, sel_mdl=glb_sel_mdl, glb_fitent_df)
+glb_feats_df[, paste0(glb_sel_mdl_id, ".importance")] <- glb_feats_df$importance
+print(glb_feats_df)
+# Used again in fit.data.training & predict.data.new chunks
+glb_analytics_diag_plots <- function(obs_df, mdl_id, prob_threshold=NULL) {
+    if (length(vars <- subset(glb_feats_df, importance > 0)$id) > 5) {
+        warning("Limiting important feature scatter plots to 5 out of ", length(vars))
+        vars <- vars[1:5]
+    }
+    require(reshape2)
+    rsp_var_out <- paste0(glb_rsp_var_out, mdl_id)
+    for (var in vars) {
+        plot_df <- melt(obs_df, id.vars=var, 
+                        measure.vars=c(glb_rsp_var, rsp_var_out))
+#         if (var == "<feat_name>") print(myplot_scatter(plot_df, var, "value", 
+#                                              facet_colcol_name="variable") + 
+#                       geom_vline(xintercept=<divider_val>, linetype="dotted")) else     
+            print(myplot_scatter(plot_df, var, "value", colorcol_name="variable",
+                                 facet_colcol_name="variable", jitter=TRUE) + 
+                      guides(color=FALSE))
+    }
+    
+    if (glb_is_regression) {
+#         plot_vars_df <- subset(glb_feats_df, importance > 
+#                         glb_feats_df[glb_feats_df$id == ".rnorm", "importance"])
+        plot_vars_df <- orderBy(~ -importance, glb_feats_df)
+        if (nrow(plot_vars_df) == 0)
+            warning("No important features in glb_fin_mdl") else
+            print(myplot_prediction_regression(df=obs_df, 
+                        feat_x=ifelse(nrow(plot_vars_df) > 1, plot_vars_df$id[2],
+                                      ".rownames"), 
+                                               feat_y=plot_vars_df$id[1],
+                        rsp_var=glb_rsp_var, rsp_var_out=rsp_var_out,
+                        id_vars=glb_id_vars)
+    #               + facet_wrap(reformulate(plot_vars_df$id[2])) # if [1 or 2] is a factor                                                         
+    #               + geom_point(aes_string(color="<col_name>.fctr")) #  to color the plot
+                  )
+    }    
+    
+    if (glb_is_classification) {
+        if (nrow(plot_vars_df <- subset(glb_feats_df, importance > 0)) == 0)
+            warning("No features in selected model are statistically important")
+        else print(myplot_prediction_classification(df=obs_df, 
+                feat_x=ifelse(nrow(plot_vars_df) > 1, plot_vars_df$id[2], 
+                              ".rownames"),
+                                               feat_y=plot_vars_df$id[1],
+                     rsp_var=glb_rsp_var, 
+                     rsp_var_out=rsp_var_out, 
+                     id_vars=glb_id_vars,
+                    prob_threshold=prob_threshold)
+#               + geom_hline(yintercept=<divider_val>, linetype = "dotted")
+                )
+    }    
+}
+glb_analytics_diag_plots(obs_df=glb_OOBent_df, mdl_id=glb_sel_mdl_id, 
+            prob_threshold=ifelse(glb_is_classification && glb_is_binomial, 
+                              glb_models_df[glb_models_df$model_id == glb_sel_mdl_id, 
+                                      "opt.prob.threshold.OOB"], NULL))
+
+# gather predictions from models better than MFO.*
+#mdl_id <- "Conditional.X.rf"
+#mdl_id <- "Conditional.X.cp.0.rpart"
+#mdl_id <- "Conditional.X.rpart"
+# glb_OOBent_df <- glb_get_predictions(df=glb_OOBent_df, mdl_id,
+#                                      glb_rsp_var_out)
+# print(t(confusionMatrix(glb_OOBent_df[, paste0(glb_rsp_var_out, mdl_id)], 
+#                         glb_OOBent_df[, glb_rsp_var])$table))
+FN_OOB_ids <- c(4721, 4020, 693, 92)
+print(glb_OOBent_df[glb_OOBent_df$UniqueID %in% FN_OOB_ids, 
+                    grep(glb_rsp_var, names(glb_OOBent_df), value=TRUE)])
+print(glb_OOBent_df[glb_OOBent_df$UniqueID %in% FN_OOB_ids, 
+                    glb_feats_df$id[1:5]])
+print(glb_OOBent_df[glb_OOBent_df$UniqueID %in% FN_OOB_ids, 
+                    glb_txt_vars])
+write.csv(glb_OOBent_df[, c("UniqueID", 
+                grep(glb_rsp_var, names(glb_OOBent_df), fixed=TRUE, value=TRUE))], 
+    paste0(gsub(".", "_", paste0(glb_out_pfx, glb_sel_mdl_id), fixed=TRUE), 
+           "_OOBent.csv"), row.names=FALSE)
+
+# print(glb_entity_df[glb_entity_df$UniqueID %in% FN_OOB_ids, 
+#                     glb_txt_vars])
+# dsp_tbl(Headline.contains="[Ee]bola")
+# sum(sel_obs(Headline.contains="[Ee]bola"))
+# ftable(xtabs(Popular ~ NewsDesk.fctr, data=glb_entity_df[sel_obs(Headline.contains="[Ee]bola") ,]))
+# xtabs(NewsDesk ~ Popular, #Popular ~ NewsDesk.fctr, 
+#       data=glb_entity_df[sel_obs(Headline.contains="[Ee]bola") ,],
+#       exclude=NULL)
+# print(mycreate_xtab_df(df=glb_entity_df[sel_obs(Headline.contains="[Ee]bola") ,], c("Popular", "NewsDesk", "SectionName", "SubsectionName")))
+# print(mycreate_tbl_df(df=glb_entity_df[sel_obs(Headline.contains="[Ee]bola") ,], c("Popular", "NewsDesk", "SectionName", "SubsectionName")))
+# print(mycreate_tbl_df(df=glb_entity_df[sel_obs(Headline.contains="[Ee]bola") ,], c("Popular")))
+# print(mycreate_tbl_df(df=glb_entity_df[sel_obs(Headline.contains="[Ee]bola") ,], 
+#                       tbl_col_names=c("Popular", "NewsDesk")))
+
+glb_chunks_df <- myadd_chunk(glb_chunks_df, "fit.models", major.inc=FALSE)
+```
+
+```{r fit.models_3, cache=FALSE, fig.height=10, fig.width=15}
+sav_entity_df <- glb_entity_df
+print(setdiff(names(glb_trnent_df), names(glb_entity_df)))
+print(setdiff(names(glb_fitent_df), names(glb_entity_df)))
+print(setdiff(names(glb_OOBent_df), names(glb_entity_df)))
+for (col in setdiff(names(glb_OOBent_df), names(glb_entity_df)))
+    # Merge or cbind ?
+    glb_entity_df[glb_entity_df$.lcn == "OOB", col] <- glb_OOBent_df[, col]
+    
+print(setdiff(names(glb_newent_df), names(glb_entity_df)))
+
+save(glb_feats_df, 
+     glb_entity_df, #glb_trnent_df, glb_fitent_df, glb_OOBent_df, glb_newent_df,
+     glb_models_df, dsp_models_df, glb_models_lst, glb_sel_mdl, glb_sel_mdl_id,
+     glb_model_type,
+    file=paste0(glb_out_pfx, "selmdl_dsk.RData"))
+#load(paste0(glb_out_pfx, "selmdl_dsk.RData"))
+
+replay.petrisim(pn=glb_analytics_pn, 
+    replay.trans=(glb_analytics_avl_objs <- c(glb_analytics_avl_objs, 
+        "model.selected")), flip_coord=TRUE)
+glb_chunks_df <- myadd_chunk(glb_chunks_df, "fit.data.training", major.inc=TRUE)
+```
+
+## Step ``r mydsp_chunk(glb_chunks_df)``
+```{r fit.data.training_0, cache=FALSE}
+#load(paste0(glb_inp_pfx, "dsk.RData"))
+
+# To create specific models
+# glb_fin_mdl_id <- NULL; glb_fin_mdl <- NULL; 
+# glb_sel_mdl_id <- "Conditional.X.cp.0.rpart"; 
+# glb_sel_mdl <- glb_models_lst[[glb_sel_mdl_id]]; print(glb_sel_mdl)
+    
+if (!is.null(glb_fin_mdl_id) && (glb_fin_mdl_id %in% names(glb_models_lst))) {
+    warning("Final model same as user selected model")
+    glb_fin_mdl <- glb_sel_mdl
+} else {    
+    print(mdl_feats_df <- myextract_mdl_feats(sel_mdl=glb_sel_mdl, 
+                                              entity_df=glb_fitent_df))
+    
+    if ((model_method <- glb_sel_mdl$method) == "custom")
+        # get actual method from the model_id
+        model_method <- tail(unlist(strsplit(glb_sel_mdl_id, "[.]")), 1)
+        
+    tune_finmdl_df <- NULL
+    if (nrow(glb_sel_mdl$bestTune) > 0) {
+        for (param in names(glb_sel_mdl$bestTune)) {
+            #print(sprintf("param: %s", param))
+            if (glb_sel_mdl$bestTune[1, param] != "none")
+                tune_finmdl_df <- rbind(tune_finmdl_df, 
+                    data.frame(parameter=param, 
+                               min=glb_sel_mdl$bestTune[1, param], 
+                               max=glb_sel_mdl$bestTune[1, param], 
+                               by=1)) # by val does not matter
+        }
+    } 
+    
+    # Sync with parameters in mydsutils.R
+    ret_lst <- myfit_mdl(model_id="Final", model_method=model_method,
+                            indep_vars_vctr=mdl_feats_df$id, model_type=glb_model_type,
+                            rsp_var=glb_rsp_var, rsp_var_out=glb_rsp_var_out, 
+                            fit_df=glb_trnent_df, OOB_df=NULL,
+                            n_cv_folds=glb_n_cv_folds, tune_models_df=tune_finmdl_df,
+                         # Automate from here
+                         #  Issues if glb_sel_mdl$method == "rf" b/c trainControl is "oob"; not "cv"
+                            model_loss_mtrx=glb_model_metric_terms,
+                            model_summaryFunction=glb_sel_mdl$control$summaryFunction,
+                            model_metric=glb_sel_mdl$metric,
+                            model_metric_maximize=glb_sel_mdl$maximize)
+    glb_fin_mdl <- glb_models_lst[[length(glb_models_lst)]] 
+    glb_fin_mdl_id <- glb_models_df[length(glb_models_lst), "model_id"]
+}
+
+glb_chunks_df <- myadd_chunk(glb_chunks_df, "fit.data.training", major.inc=FALSE)
+```
+
+```{r fit.data.training_1, cache=FALSE}
+glb_trnent_df <- glb_get_predictions(df=glb_trnent_df, mdl_id=glb_fin_mdl_id, 
+                                     rsp_var_out=glb_rsp_var_out,
+    prob_threshold_def=ifelse(glb_is_classification && glb_is_binomial, 
+        glb_models_df[glb_models_df$model_id == glb_sel_mdl_id, "opt.prob.threshold.OOB"], NULL))
+
+glb_feats_df <- mymerge_feats_importance(feats_df=glb_feats_df, sel_mdl=glb_fin_mdl, 
+                                               entity_df=glb_trnent_df)
+glb_feats_df[, paste0(glb_fin_mdl_id, ".importance")] <- glb_feats_df$importance
+print(glb_feats_df)
+glb_analytics_diag_plots(obs_df=glb_trnent_df, mdl_id=glb_fin_mdl_id, 
+            prob_threshold=ifelse(glb_is_classification && glb_is_binomial, 
+                              glb_models_df[glb_models_df$model_id == glb_sel_mdl_id, 
+                                      "opt.prob.threshold.OOB"], NULL))
+dsp_feats_vctr <- c(NULL)
+for(var in grep(".importance", names(glb_feats_df), fixed=TRUE, value=TRUE))
+    dsp_feats_vctr <- union(dsp_feats_vctr, 
+                            glb_feats_df[!is.na(glb_feats_df[, var]), "id"])
+
+print(glb_trnent_df[glb_trnent_df$UniqueID %in% FN_OOB_ids, 
+                    grep(glb_rsp_var, names(glb_trnent_df), value=TRUE)])
+
+sav_entity_df <- glb_entity_df
+print(setdiff(names(glb_trnent_df), names(glb_entity_df)))
+for (col in setdiff(names(glb_trnent_df), names(glb_entity_df)))
+    # Merge or cbind ?
+    glb_entity_df[glb_entity_df$.src == "Train", col] <- glb_trnent_df[, col]
+
+print(setdiff(names(glb_fitent_df), names(glb_entity_df)))
+print(setdiff(names(glb_OOBent_df), names(glb_entity_df)))
+for (col in setdiff(names(glb_OOBent_df), names(glb_entity_df)))
+    # Merge or cbind ?
+    glb_entity_df[glb_entity_df$.lcn == "OOB", col] <- glb_OOBent_df[, col]
+    
+print(setdiff(names(glb_newent_df), names(glb_entity_df)))
+
+save(glb_feats_df, glb_entity_df, 
+     #glb_trnent_df, glb_fitent_df, glb_OOBent_df, glb_newent_df,
+     glb_models_df, dsp_models_df, glb_models_lst, glb_model_type,
+     glb_sel_mdl, glb_sel_mdl_id,
+     glb_fin_mdl, glb_fin_mdl_id,
+    file=paste0(glb_out_pfx, "dsk.RData"))
+
+replay.petrisim(pn=glb_analytics_pn, 
+    replay.trans=(glb_analytics_avl_objs <- c(glb_analytics_avl_objs, 
+        "data.training.all.prediction","model.final")), flip_coord=TRUE)
+glb_chunks_df <- myadd_chunk(glb_chunks_df, "predict.data.new", major.inc=TRUE)
+```
+
+## Step ``r mydsp_chunk(glb_chunks_df)``
+```{r predict.data.new, cache=FALSE}
+# Compute final model predictions
+glb_newent_df <- glb_get_predictions(glb_newent_df, mdl_id=glb_fin_mdl_id, 
+                                     rsp_var_out=glb_rsp_var_out,
+    prob_threshold_def=ifelse(glb_is_classification && glb_is_binomial, 
+        glb_models_df[glb_models_df$model_id == glb_sel_mdl_id, 
+                      "opt.prob.threshold.OOB"], NULL))
+glb_analytics_diag_plots(obs_df=glb_newent_df, mdl_id=glb_fin_mdl_id, 
+            prob_threshold=ifelse(glb_is_classification && glb_is_binomial, 
+                              glb_models_df[glb_models_df$model_id == glb_sel_mdl_id, 
+                                      "opt.prob.threshold.OOB"], NULL))
+
+submit_df <- glb_newent_df[, c(glb_id_vars, 
+                               paste0(glb_rsp_var_out, glb_fin_mdl_id, ".prob"))]
+names(submit_df)[2] <- "Probability1"
+write.csv(submit_df, 
+    paste0(gsub(".", "_", paste0(glb_out_pfx, glb_fin_mdl_id), fixed=TRUE), 
+           "_submit.csv"), row.names=FALSE)
+
+# print(orderBy(~ -max.auc.OOB, glb_models_df[, c("model_id", 
+#             "max.auc.OOB", "max.Accuracy.OOB")]))
+print(glb_models_df[glb_models_df$model_id == glb_sel_mdl_id, 
+                    "opt.prob.threshold.OOB"])
+print(sprintf("glb_sel_mdl_id: %s", glb_sel_mdl_id))
+print(sprintf("glb_fin_mdl_id: %s", glb_fin_mdl_id))
+print(dim(glb_fitent_df))
+print(dsp_models_df)
+print(sprintf("%s OOB confusion matrix & accuracy: ", glb_sel_mdl_id))
+print(t(confusionMatrix(glb_OOBent_df[, paste0(glb_rsp_var_out, glb_sel_mdl_id)], 
+                        glb_OOBent_df[, glb_rsp_var])$table))
+# nOOB_ctgry_df <- mycreate_sqlxtab_df(glb_OOBent_df, c("NewsDesk.nb"))
+tmp_OOBent_df <- glb_OOBent_df[, c("NewsDesk.nb", predct_accurate_var_name)]
+names(tmp_OOBent_df)[2] <- "accurate.OOB"
+aOOB_ctgry_df <- mycreate_xtab_df(tmp_OOBent_df, names(tmp_OOBent_df)) 
+aOOB_ctgry_df[is.na(aOOB_ctgry_df)] <- 0
+aOOB_ctgry_df <- mutate(aOOB_ctgry_df, 
+                        .n.OOB = accurate.OOB.FALSE + accurate.OOB.TRUE,
+                        max.accuracy.OOB = accurate.OOB.TRUE / .n.OOB)
+intersect(names(glb_ctgry_df), names(aOOB_ctgry_df))
+glb_ctgry_df <- merge(glb_ctgry_df, aOOB_ctgry_df, all=TRUE)
+print(orderBy(~-accurate.OOB.FALSE, glb_ctgry_df))
+# OOB_ctgry_df <- mycreate_sqlxtab_df(glb_OOBent_df, c("NewsDesk.nb"))
+# print(sum(glb_OOBent_df[, predct_accurate_var_name]) / nrow(glb_OOBent_df))
+# print(tapply(glb_OOBent_df[, predct_accurate_var_name], 
+#              glb_OOBent_df[, "NewsDesk.nb"], sum) / 
+#       tapply(glb_OOBent_df[, predct_accurate_var_name], 
+#              glb_OOBent_df[, "NewsDesk.nb"], length))
+# acc_df <- as.data.frame(
+#       tapply(glb_OOBent_df[, predct_accurate_var_name], 
+#              glb_OOBent_df[, "NewsDesk.nb"], sum) / 
+#       tapply(glb_OOBent_df[, predct_accurate_var_name], 
+#              glb_OOBent_df[, "NewsDesk.nb"], length))
+# names(acc_df) <- c("max.accuracy.OOB")
+# print(orderBy(~-max.accuracy.OOB, acc_df))
+
+dsp_NewsDesk.nb_conf_mtrx <- function(NewsDesk.nb) {
+    print(sprintf("%s OOB::NewsDesk.nb=%s confusion matrix & accuracy: ", 
+                  glb_sel_mdl_id, NewsDesk.nb))
+    print(t(confusionMatrix(
+        glb_OOBent_df[glb_OOBent_df$NewsDesk.nb == NewsDesk.nb, 
+                      paste0(glb_rsp_var_out, glb_sel_mdl_id)], 
+        glb_OOBent_df[glb_OOBent_df$NewsDesk.nb == NewsDesk.nb, glb_rsp_var])$table))
+    print(sum(glb_OOBent_df[glb_OOBent_df$NewsDesk.nb == NewsDesk.nb, 
+                            predct_accurate_var_name]) / 
+         nrow(glb_OOBent_df[glb_OOBent_df$NewsDesk.nb == NewsDesk.nb, ]))
+    err_ids <- glb_OOBent_df[(glb_OOBent_df$NewsDesk.nb == NewsDesk.nb) & 
+                             (!glb_OOBent_df[, predct_accurate_var_name]), glb_id_vars]
+    print(sprintf("%s OOB::NewsDesk.nb=%s errors: ", glb_sel_mdl_id, NewsDesk.nb))
+    print(glb_OOBent_df[glb_OOBent_df$UniqueID %in% err_ids, 
+                        c("Headline.pfx", "Headline", "Popular")])
+}
+#dsp_NewsDesk.nb_conf_mtrx(NewsDesk.nb="Culture")
+#dsp_NewsDesk.nb_conf_mtrx(NewsDesk.nb="Foreign")
+#dsp_NewsDesk.nb_conf_mtrx(NewsDesk.nb="Metro")
+#dsp_NewsDesk.nb_conf_mtrx(NewsDesk.nb="Science")
+#dsp_NewsDesk.nb_conf_mtrx(NewsDesk.nb="Styles")
+#dsp_NewsDesk.nb_conf_mtrx(NewsDesk.nb="TStyle")
+#dsp_NewsDesk.nb_conf_mtrx(NewsDesk.nb="myEducation")
+dsp_NewsDesk.nb_conf_mtrx(NewsDesk.nb="myMultimedia")
+
+print(nrow(glb_entity_df[sel_obs(Popular=1, NewsDesk.nb="myMisc::"),]))
+dsp_obs(Popular=1, NewsDesk.nb="myMisc::", all=TRUE)
+
+print("FN_OOB_ids:")
+print(glb_OOBent_df[glb_OOBent_df$UniqueID %in% FN_OOB_ids, 
+                    grep(glb_rsp_var, names(glb_OOBent_df), value=TRUE)])
+print(glb_OOBent_df[glb_OOBent_df$UniqueID %in% FN_OOB_ids, 
+                    glb_txt_vars])
+print(dsp_vctr <- colSums(glb_OOBent_df[glb_OOBent_df$UniqueID %in% FN_OOB_ids, 
+                    setdiff(grep("[HSA].", names(glb_OOBent_df), value=TRUE),
+                            union(myfind_chr_cols_df(glb_OOBent_df),
+                grep(".fctr", names(glb_OOBent_df), fixed=TRUE, value=TRUE)))]))
+
+dsp_hdlpfx_results <- function(hdlpfx) {
+    print(hdlpfx)
+    print(glb_OOBent_df[glb_OOBent_df$Headline.pfx %in% c(hdlpfx), 
+                        grep(glb_rsp_var, names(glb_OOBent_df), value=TRUE)])
+    print(glb_newent_df[glb_newent_df$Headline.pfx %in% c(hdlpfx), 
+                        grep(glb_rsp_var, names(glb_newent_df), value=TRUE)])
+    print(dsp_vctr <- colSums(glb_newent_df[glb_newent_df$Headline.pfx %in% c(hdlpfx), 
+                        setdiff(grep("[HSA].", names(glb_newent_df), value=TRUE),
+                                union(myfind_chr_cols_df(glb_newent_df),
+                    grep(".fctr", names(glb_newent_df), fixed=TRUE, value=TRUE)))]))
+    print(dsp_vctr <- dsp_vctr[dsp_vctr != 0])
+    print(glb_newent_df[glb_newent_df$Headline.pfx %in% c(hdlpfx), 
+                        union(names(dsp_vctr), myfind_chr_cols_df(glb_newent_df))])
+}
+dsp_hdlpfx_results("Ask Well::")
+
+print("myMisc::|OpEd|blank|blank|1:")
+print(glb_OOBent_df[glb_OOBent_df$UniqueID %in% c(6446), 
+                    grep(glb_rsp_var, names(glb_OOBent_df), value=TRUE)])
+
+# print(glb_OOBent_df[glb_OOBent_df$UniqueID %in% FN_OOB_ids, 
+#                     c("WordCount", "WordCount.log", "myMultimedia",
+#                       "NewsDesk", "SectionName", "SubsectionName")])
+# print(mycreate_sqlxtab_df(glb_entity_df[sel_obs(Headline.contains="[Vv]ideo"), ], 
+#                           c(glb_rsp_var, "myMultimedia")))
+# dsp_chisq.test(Headline.contains="[Vi]deo")
+# print(glb_entity_df[sel_obs(Headline.contains="[Vv]ideo"), 
+#                           c(glb_rsp_var, "Popular", "myMultimedia", "Headline")])
+# print(glb_entity_df[sel_obs(Headline.contains="[Ee]bola", Popular=1), 
+#                           c(glb_rsp_var, "Popular", "myMultimedia", "Headline",
+#                             "NewsDesk", "SectionName", "SubsectionName")])
+print(subset(glb_feats_df, !is.na(importance))[,
+    c("is.ConditionalX.y", 
+      grep("importance", names(glb_feats_df), fixed=TRUE, value=TRUE))])
+print(subset(glb_feats_df, is.ConditionalX.y & is.na(importance))[,
+    c("is.ConditionalX.y", 
+      grep("importance", names(glb_feats_df), fixed=TRUE, value=TRUE))])
+
+sav_entity_df <- glb_entity_df
+print(setdiff(names(glb_trnent_df), names(glb_entity_df)))
+for (col in setdiff(names(glb_trnent_df), names(glb_entity_df)))
+    # Merge or cbind ?
+    glb_entity_df[glb_entity_df$.src == "Train", col] <- glb_trnent_df[, col]
+
+print(setdiff(names(glb_fitent_df), names(glb_entity_df)))
+print(setdiff(names(glb_OOBent_df), names(glb_entity_df)))
+for (col in setdiff(names(glb_OOBent_df), names(glb_entity_df)))
+    # Merge or cbind ?
+    glb_entity_df[glb_entity_df$.lcn == "OOB", col] <- glb_OOBent_df[, col]
+    
+print(setdiff(names(glb_newent_df), names(glb_entity_df)))
+
+save(glb_feats_df, glb_entity_df, 
+     #glb_trnent_df, glb_fitent_df, glb_OOBent_df, glb_newent_df,
+     glb_models_df, dsp_models_df, glb_models_lst, glb_model_type,
+     glb_sel_mdl, glb_sel_mdl_id,
+     glb_fin_mdl, glb_fin_mdl_id,
+    file=paste0(glb_out_pfx, "prdnew_dsk.RData"))
+
+# tmp_replay_lst <- replay.petrisim(pn=glb_analytics_pn, 
+#     replay.trans=(glb_analytics_avl_objs <- c(glb_analytics_avl_objs, 
+#         "data.new.prediction")), flip_coord=TRUE)
+# print(ggplot.petrinet(tmp_replay_lst[["pn"]]) + coord_flip())
+
+glb_chunks_df <- myadd_chunk(glb_chunks_df, "display.session.info", major.inc=TRUE)
+```
+
+Null Hypothesis ($\sf{H_{0}}$): mpg is not impacted by am_fctr.  
+The variance by am_fctr appears to be independent. 
+#```{r q1, cache=FALSE}
+# print(t.test(subset(cars_df, am_fctr == "automatic")$mpg, 
+#              subset(cars_df, am_fctr == "manual")$mpg, 
+#              var.equal=FALSE)$conf)
+#```
+We reject the null hypothesis i.e. we have evidence to conclude that am_fctr impacts mpg (95% confidence). Manual transmission is better for miles per gallon versus automatic transmission.
+
+```{r display.session.info, echo=FALSE}
+## remove nearZeroVar features (not much variance)
+#require(reshape)
+#var_features_df <- melt(summaryBy(. ~ factor(0), data=glb_trnent_df[, features_lst], 
+#                             FUN=var, keep.names=TRUE), 
+#                             variable_name=c("feature"))
+#names(var_features_df)[2] <- "var"
+#print(var_features_df[order(var_features_df$var), ])
+# summaryBy ignores factors whereas nearZeroVar inspects factors
+
+# k_fold <- 5
+# glb_trnent_df[order(glb_trnent_df$classe, 
+#                   glb_trnent_df$user_name, 
+#                   glb_trnent_df$my.rnorm),"my.cv_ix"] <- 
+#     rep(1:k_fold, length.out=nrow(glb_trnent_df))
+# summaryBy(X ~ my.cv_ix, data=glb_trnent_df, FUN=length)
+# tapply(glb_trnent_df$X, list(glb_trnent_df$classe, glb_trnent_df$user_name, 
+#                            glb_trnent_df$my.cv_ix), length)
+
+#rnorm.glm <- glm(classe.proper ~ rnorm, family=binomial, data=glb_trnent_df)
+#cv.binary(rnorm.glm, nfolds=k_fold, print.details=TRUE)
+#result <- cv.lm(df=glb_trnent_df, form.lm=formula(classe ~ rnorm), 
+#                    m=k_fold, seed=12345, printit=TRUE)
+
+print(orderBy(~ -duration, 
+              (glb_chunks_df <- head(mutate(glb_chunks_df, duration=end-bgn), -1))))
+print(sprintf("Total Elapsed Time: %s secs", 
+              format(max(glb_chunks_df$end), big.mark=',')))
+tmp_chunks_df <- subset(glb_chunks_df, (step_minor == 0) & 
+                                        (label != "display.session.info"), 
+                        select=c(label, step_major))
+names(tmp_chunks_df)[1] <- "label_major"
+plt_chunks_df <- merge(glb_chunks_df, tmp_chunks_df, all.x=TRUE)
+plt_chunks_df$step_major_desc <- max(plt_chunks_df$step_major) - 
+                                            plt_chunks_df$step_major
+print(ggplot(plt_chunks_df, aes(x=reorder(label_major, step_major_desc), 
+                                 y=duration, fill=factor(step_minor))) + 
+                 geom_bar(stat="identity") + coord_flip())
+
+sessionInfo()
+```
