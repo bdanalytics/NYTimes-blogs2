@@ -436,14 +436,12 @@ if (!is.null(glb_map_rsp_raw_to_var)) {
 #   Convert dates to numbers 
 #       typically, dates come in as chars; 
 #           so this must be done before converting chars to factors
-# stop("here")
-# sav_entity_df <- glb_entity_df
-# glb_entity_df <- sav_entity_df
 myextract_dates_df <- function(df, vars, rsp_var) {
     keep_feats <- c(NULL)
     for (var in vars) {
         dates_df <- data.frame(.date=strptime(df[, var], "%Y-%m-%d %H:%M:%S"))
         dates_df[, rsp_var] <- df[, rsp_var]
+        dates_df[, paste0(var, ".POSIX")] <- dates_df$.date
         dates_df[, paste0(var, ".year")] <- as.numeric(format(dates_df$.date, "%Y"))
         dates_df[, paste0(var, ".year.fctr")] <- as.factor(format(dates_df$.date, "%Y")) 
         dates_df[, paste0(var, ".month")] <- as.numeric(format(dates_df$.date, "%m"))
@@ -484,7 +482,7 @@ myextract_dates_df <- function(df, vars, rsp_var) {
         print(gp <- myplot_bar(df=dates_df, ycol_names="PubDate.second.fctr", 
                                xcol_name=rsp_var, colorcol_name="PubDate.second.fctr"))                
         keep_feats <- union(keep_feats, paste(var, 
-            c(".year.fctr", ".month.fctr", ".date.fctr", ".wkday.fctr", 
+            c(".POSIX", ".year.fctr", ".month.fctr", ".date.fctr", ".wkday.fctr", 
               ".wkend", ".hour.fctr", ".minute.fctr", ".second.fctr"), sep=""))        
     }
     #myprint_df(dates_df)
@@ -494,17 +492,61 @@ myextract_dates_df <- function(df, vars, rsp_var) {
 if (!is.null(glb_date_vars)) {
     glb_entity_df <- cbind(glb_entity_df, 
         myextract_dates_df(df=glb_entity_df, vars=glb_date_vars, rsp_var=glb_rsp_var))
-    glb_exclude_vars_as_features <- union(glb_exclude_vars_as_features, glb_date_vars)
+    glb_exclude_vars_as_features <- union(glb_exclude_vars_as_features, 
+                                          paste(glb_date_vars, c("", ".POSIX"), sep=""))
 }
-print(head(glb_entity_df))
+#stop("here")
+# sav_entity_df <- glb_entity_df
+# glb_entity_df <- sav_entity_df
+
+srt_entity_df <- orderBy(~PubDate.POSIX, glb_entity_df)
+print(myplot_scatter(subset(srt_entity_df, 
+                            PubDate.POSIX < strptime("2014-09-02", "%Y-%m-%d")), 
+                            xcol_name="PubDate.POSIX", ycol_name=glb_rsp_var,
+                           colorcol_name=glb_rsp_var
+                     ))
 # Create features that measure the gap between previous timestamp in the data
-# pd = as.POSIXlt(glb_entity_df$PubDate )
-# z = zoo(as.numeric(pd))
-# plot(z)
-# n = nrow(glb_entity_df)
-# b = zoo(, seq(n))
-# 
-# last1 = as.numeric(merge(z-lag(z, -1), b, all = TRUE))
+require(zoo)
+pd = as.POSIXlt(srt_entity_df$PubDate)
+z = zoo(as.numeric(pd))
+srt_entity_df[, "PubDate.zoo"] <- z
+print(head(srt_entity_df))
+print(myplot_scatter(subset(srt_entity_df, 
+                            PubDate.POSIX < strptime("2014-09-02", "%Y-%m-%d")), 
+                            xcol_name="PubDate.zoo", ycol_name=glb_rsp_var,
+                           colorcol_name=glb_rsp_var
+                     ))
+n = nrow(srt_entity_df)
+b = zoo(, seq(n))
+
+last1 = as.numeric(merge(z-lag(z, -1), b, all = TRUE))
+srt_entity_df[, "PubDate.last1"] <- last1
+srt_entity_df[is.na(srt_entity_df$PubDate.last1), "PubDate.last1"] <- 0
+srt_entity_df[, "PubDate.last1.log"] <- log(1 + srt_entity_df[, "PubDate.last1"])
+print(gp <- myplot_box(df=subset(srt_entity_df, PubDate.last1.log > 0), 
+                       ycol_names="PubDate.last1.log", 
+                       xcol_name=glb_rsp_var))
+
+last10 = as.numeric(merge(z-lag(z, -10), b, all = TRUE))
+srt_entity_df[, "PubDate.last10"] <- last10
+srt_entity_df[is.na(srt_entity_df$PubDate.last10), "PubDate.last10"] <- 0
+srt_entity_df[, "PubDate.last10.log"] <- log(1 + srt_entity_df[, "PubDate.last10"])
+print(gp <- myplot_box(df=subset(srt_entity_df, PubDate.last10.log > 0), 
+                       ycol_names="PubDate.last10.log", 
+                       xcol_name=glb_rsp_var))
+
+last100 = as.numeric(merge(z-lag(z, -100), b, all = TRUE))
+srt_entity_df[, "PubDate.last100"] <- last100
+srt_entity_df[is.na(srt_entity_df$PubDate.last100), "PubDate.last100"] <- 0
+srt_entity_df[, "PubDate.last100.log"] <- log(1 + srt_entity_df[, "PubDate.last100"])
+print(gp <- myplot_box(df=subset(srt_entity_df, PubDate.last100.log > 0), 
+                       ycol_names="PubDate.last100.log", 
+                       xcol_name=glb_rsp_var))
+
+sav_entity_df <- glb_entity_df
+glb_entity_df <- srt_entity_df
+glb_exclude_vars_as_features <- union(glb_exclude_vars_as_features, 
+    c("PubDate.zoo", "PubDate.last1", "PubDate.last10", "PubDate.last100"))
 # all2$last3 = as.numeric(merge(z-lag(z, -3), b, all = TRUE))
 # all2$last5 = as.numeric(merge(z-lag(z, -5), b, all = TRUE))
 # all2$last10 = as.numeric(merge(z-lag(z, -10), b, all = TRUE))
@@ -546,9 +588,9 @@ dsp_numeric_vars_dstrb <- function(vars_lst) {
         print(gp)
     }    
 }
-dsp_numeric_vars_dstrb(setdiff(names(glb_entity_df), 
-                                union(myfind_chr_cols_df(glb_entity_df), 
-                                      c(glb_rsp_var_raw, glb_rsp_var))))                                      
+# dsp_numeric_vars_dstrb(setdiff(names(glb_entity_df), 
+#                                 union(myfind_chr_cols_df(glb_entity_df), 
+#                                       c(glb_rsp_var_raw, glb_rsp_var))))                                      
 
 add_new_diag_feats <- function(obs_df, ref_df=glb_entity_df) {
     require(plyr)
@@ -661,6 +703,7 @@ glb_chunks_df <- myadd_chunk(glb_chunks_df, "cleanse.data", major.inc=FALSE)
 ```{r cleanse.data, cache=FALSE}
 dsp_problem_data(glb_entity_df)
 
+#stop("here")
 warning("Forcing ", nrow(subset(glb_entity_df, WordCount.log == 0)),
         " obs with WordCount.log 0s to NA")
 glb_entity_df[glb_entity_df$WordCount.log == 0, "WordCount.log"] <- NA
@@ -1159,6 +1202,7 @@ glb_chunks_df <- myadd_chunk(glb_chunks_df, "manage.missing.data", major.inc=FAL
 # glb_newent_df <- na.omit(glb_newent_df)
 # df[is.na(df)] <- 0
 
+#stop("here")
 dsp_problem_data(glb_entity_df)
 
 # Not refactored into mydsutils.R since glb_*_df might be reassigned
@@ -1230,13 +1274,11 @@ glb_chunks_df <- myadd_chunk(glb_chunks_df, "extract.features", major.inc=TRUE)
 # glb_newent_df <- mutate(glb_newent_df,
 #                     )
 
+#stop("here")
 #   Create factors of string variables
-str_vars <- sapply(names(glb_entity_df), function(var)  
-                    ifelse(class(glb_entity_df[, var]) == "character", var, ""))
-print(str_vars <- str_vars[str_vars != ""])
+print(str_vars <- myfind_chr_cols_df(glb_entity_df))
 if (length(str_vars <- setdiff(str_vars, 
                                glb_exclude_vars_as_features)) > 0) {
-    glb_exclude_vars_as_features <- union(glb_exclude_vars_as_features, str_vars)
     for (var in str_vars) {
         warning("Creating factors of string variable: ", var, 
                 ": # of unique values: ", length(unique(glb_entity_df[, var])))
@@ -1247,6 +1289,7 @@ if (length(str_vars <- setdiff(str_vars,
 #         glb_newent_df[, paste0(var, ".fctr")] <- factor(glb_newent_df[, var], 
 #                         as.factor(unique(glb_entity_df[, var])))
     }
+    glb_exclude_vars_as_features <- union(glb_exclude_vars_as_features, str_vars)
 }
 
 if (glb_is_textual) {
@@ -2021,9 +2064,14 @@ print(myplot_radar(radar_inp_df=dsp_models_df))
 print("Metrics used for model selection:"); print(model_sel_frmla)
 print(sprintf("Best model id: %s", dsp_models_df[1, "model_id"]))
     
-if (is.null(glb_sel_mdl_id)) 
-    { glb_sel_mdl_id <- dsp_models_df[1, "model_id"] } else 
-        print(sprintf("User specified selection: %s", glb_sel_mdl_id))   
+if (is.null(glb_sel_mdl_id)) { 
+    glb_sel_mdl_id <- dsp_models_df[1, "model_id"]
+    if (glb_sel_mdl_id == "Interact.High.cor.Y.glm") {
+        warning("glb_sel_mdl_id: Interact.High.cor.Y.glm; myextract_mdl_feats does not currently support interaction terms")
+        glb_sel_mdl_id <- dsp_models_df[2, "model_id"]
+    }
+} else 
+    print(sprintf("User specified selection: %s", glb_sel_mdl_id))   
     
 myprint_mdl(glb_sel_mdl <- glb_models_lst[[glb_sel_mdl_id]])
 
@@ -2397,14 +2445,14 @@ dsp_hdlpfx_results <- function(hdlpfx) {
     print(glb_newent_df[glb_newent_df$Headline.pfx %in% c(hdlpfx), 
                         grep(glb_rsp_var, names(glb_newent_df), value=TRUE)])
     print(dsp_vctr <- colSums(glb_newent_df[glb_newent_df$Headline.pfx %in% c(hdlpfx), 
-                        setdiff(grep("[HSA].", names(glb_newent_df), value=TRUE),
+                        setdiff(grep("[HSA]\\.", names(glb_newent_df), value=TRUE),
                                 union(myfind_chr_cols_df(glb_newent_df),
                     grep(".fctr", names(glb_newent_df), fixed=TRUE, value=TRUE)))]))
     print(dsp_vctr <- dsp_vctr[dsp_vctr != 0])
     print(glb_newent_df[glb_newent_df$Headline.pfx %in% c(hdlpfx), 
                         union(names(dsp_vctr), myfind_chr_cols_df(glb_newent_df))])
 }
-dsp_hdlpfx_results("Ask Well::")
+dsp_hdlpfx_results(hdlpfx="Ask Well::")
 
 print("myMisc::|OpEd|blank|blank|1:")
 print(glb_OOBent_df[glb_OOBent_df$UniqueID %in% c(6446), 
