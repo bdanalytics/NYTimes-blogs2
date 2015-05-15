@@ -106,7 +106,8 @@ source("~/Dropbox/datascience/R/mydsutils.R")
 source("~/Dropbox/datascience/R/myplot.R")
 source("~/Dropbox/datascience/R/mypetrinet.R")
 # Gather all package requirements here
-#suppressPackageStartupMessages(require())
+suppressPackageStartupMessages(require(doMC))
+registerDoMC(4)
 #packageVersion("snow")
 
 #require(sos); findFn("pinv", maxPages=2, sortby="MaxScore")
@@ -236,7 +237,8 @@ glb_tune_models_df <-
    rbind(
     #data.frame(parameter="cp", min=0.00005, max=0.00005, by=0.000005),
                             #seq(from=0.01,  to=0.01, by=0.01)
-    #data.frame(parameter="mtry", min=2, max=4, by=1),
+    #data.frame(parameter="mtry",  min=080, max=100, by=10),
+    #data.frame(parameter="mtry",  min=08, max=10, by=1),    
     data.frame(parameter="dummy", min=2, max=4, by=1)
         ) 
 # or NULL
@@ -694,6 +696,7 @@ dsp_numeric_vars_dstrb(setdiff(names(glb_entity_df),
 #         geom_point(data=subset(glb_entity_df, <condition>), 
 #                     mapping=aes(x=<x_var>, y=<y_var>), color="red", shape=4, size=5))
 
+rm(srt_entity_df)
 glb_chunks_df <- myadd_chunk(glb_chunks_df, "cleanse.data", major.inc=FALSE)
 ```
 
@@ -1295,12 +1298,8 @@ if (glb_is_textual) {
                 log(1 + mycount_pattern_occ(punct_vctr[punct_ix], 
                                             glb_entity_df[, txt_var]))
         }
-#         print(head(glb_entity_df[glb_entity_df[, "H.npnct.log09"] > 0, 
-#                                     c("UniqueID", "Headline", "A.npnct.log09")]))    
-#         print(head(glb_entity_df[glb_entity_df[, "A.npnct.log14"] > 0, 
-#                                     c("UniqueID", "Abstract", "A.npnct.log14")]))    
-#         print(head(glb_entity_df[glb_entity_df[, "A.npnct.log21"] > 0, 
-#                                     c("UniqueID", "Abstract", "A.npnct.log21")]))
+#         print(head(glb_entity_df[glb_entity_df[, "A.npnct23.log"] > 0, 
+#                                     c("UniqueID", "Popular", "Abstract", "A.npnct23.log")]))    
 
         # Create <txt_var>.has.year.colon
 #         mycount_pattern_occ("[0-9]{4}:", glb_entity_df$Headline[13:19])
@@ -1320,6 +1319,8 @@ if (glb_is_textual) {
 #     print(sapply(names(glb_trnent_df), function(col) sum(is.na(glb_trnent_df[, col]))))
 #     print(summary(glb_newent_df))
 #     print(sapply(names(glb_newent_df), function(col) sum(is.na(glb_newent_df[, col]))))
+
+    rm(full_freqs_df, melt_freqs_df, terms_freqs_df, log_X_df, txt_X_df)
 }
 
 # Re-partition
@@ -1343,9 +1344,18 @@ print(glb_feats_df <- myselect_features(entity_df=glb_trnent_df,
                        exclude_vars_as_features=glb_exclude_vars_as_features, 
                        rsp_var=glb_rsp_var))
 
+# stop("here")
+# sav_feats_df <- glb_feats_df
 print(glb_feats_df <- orderBy(~-cor.y, 
           myfind_cor_features(feats_df=glb_feats_df, entity_df=glb_trnent_df, 
                               rsp_var=glb_rsp_var)))
+print(myplot_scatter(glb_feats_df, "percentUnique", "freqRatio", 
+                     colorcol_name="myNearZV", jitter=TRUE) + 
+          geom_point(aes(shape=nzv)) + xlim(-5, 25))
+print(subset(glb_feats_df, myNearZV))
+
+glb_entity_df <- glb_entity_df[, setdiff(names(glb_entity_df), 
+                                         subset(glb_feats_df, myNearZV)$id)]
 
 glb_chunks_df <- myadd_chunk(glb_chunks_df, "partition.data.training", major.inc=TRUE)
 ```
@@ -1588,7 +1598,7 @@ if (length(int_feats <- setdiff(unique(glb_feats_df$cor.high.X), NA)) > 0) {
 #     indep_vars_vctr <- subset(glb_feats_df, is.na(cor.high.X) & 
 #                                             is.ConditionalX.y & 
 #                                             (exclude.as.feat != 1))[, "id"] else
-indep_vars_vctr <- subset(glb_feats_df, is.na(cor.high.X) & !zeroVar & 
+indep_vars_vctr <- subset(glb_feats_df, is.na(cor.high.X) & !myNearZV & 
                               (exclude.as.feat != 1))[, "id"]  
 ret_lst <- myfit_mdl(model_id="Low.cor.X", 
                         model_method=ifelse(glb_is_regression, "lm", 
@@ -1603,6 +1613,11 @@ glb_chunks_df <- myadd_chunk(glb_chunks_df, "fit.models", major.inc=FALSE)
 ```
 
 ```{r fit.models_1, cache=FALSE, fig.height=10, fig.width=15}
+fit.models_1_chunk_df <- myadd_chunk(NULL, "fit.models_1_bgn")
+# Options:
+#   1. rpart & rf manual tuning
+#   2. rf without pca (default: with pca)
+
 # All X that is not user excluded
 # if (glb_is_classification && glb_is_binomial) {
 #     model_id_pfx <- "Conditional.X"
@@ -1611,10 +1626,13 @@ glb_chunks_df <- myadd_chunk(glb_chunks_df, "fit.models", major.inc=FALSE)
 #                                             (exclude.as.feat != 1))[, "id"]
 # } else {
     model_id_pfx <- "All.X"
-    indep_vars_vctr <- subset(glb_feats_df, !zeroVar &
+    indep_vars_vctr <- subset(glb_feats_df, !myNearZV &
                                             (exclude.as.feat != 1))[, "id"]
 # }
+
 for (method in glb_models_method_vctr) {
+    fit.models_1_chunk_df <- myadd_chunk(fit.models_1_chunk_df, 
+                                paste0("fit.models_1_", method), major.inc=TRUE)
     if (method %in% c("rpart", "rf")) {
         # rpart:    fubar's the tree
         # rf:       skip the scenario w/ .rnorm for speed
@@ -1691,6 +1709,8 @@ for (method in glb_models_method_vctr) {
 
 print(glb_models_df)
 
+fit.models_1_chunk_df <- myadd_chunk(fit.models_1_chunk_df, "fit.models_1_end", 
+                                     major.inc=TRUE)
 glb_chunks_df <- myadd_chunk(glb_chunks_df, "fit.models", major.inc=FALSE)
 ```
 
@@ -2260,10 +2280,10 @@ dsp_hdlpfx_results <- function(hdlpfx) {
 #     c("is.ConditionalX.y", 
 #       grep("importance", names(glb_feats_df), fixed=TRUE, value=TRUE))])
 print(subset(glb_feats_df, !is.na(importance))[,
-    c("zeroVar", "nzv", 
+    c("zeroVar", "nzv", "myNearZV", 
       grep("importance", names(glb_feats_df), fixed=TRUE, value=TRUE))])
 print(subset(glb_feats_df, is.na(importance))[,
-    c("zeroVar", "nzv",  
+    c("zeroVar", "nzv", "myNearZV", 
       grep("importance", names(glb_feats_df), fixed=TRUE, value=TRUE))])
 
 sav_entity_df <- glb_entity_df
@@ -2306,15 +2326,6 @@ The variance by am_fctr appears to be independent.
 We reject the null hypothesis i.e. we have evidence to conclude that am_fctr impacts mpg (95% confidence). Manual transmission is better for miles per gallon versus automatic transmission.
 
 ```{r display.session.info, echo=FALSE}
-## remove nearZeroVar features (not much variance)
-#require(reshape)
-#var_features_df <- melt(summaryBy(. ~ factor(0), data=glb_trnent_df[, features_lst], 
-#                             FUN=var, keep.names=TRUE), 
-#                             variable_name=c("feature"))
-#names(var_features_df)[2] <- "var"
-#print(var_features_df[order(var_features_df$var), ])
-# summaryBy ignores factors whereas nearZeroVar inspects factors
-
 # k_fold <- 5
 # glb_trnent_df[order(glb_trnent_df$classe, 
 #                   glb_trnent_df$user_name, 
@@ -2329,20 +2340,7 @@ We reject the null hypothesis i.e. we have evidence to conclude that am_fctr imp
 #result <- cv.lm(df=glb_trnent_df, form.lm=formula(classe ~ rnorm), 
 #                    m=k_fold, seed=12345, printit=TRUE)
 
-print(orderBy(~ -duration, 
-              (glb_chunks_df <- head(mutate(glb_chunks_df, duration=end-bgn), -1))))
-print(sprintf("Total Elapsed Time: %s secs", 
-              format(max(glb_chunks_df$end), big.mark=',')))
-tmp_chunks_df <- subset(glb_chunks_df, (step_minor == 0) & 
-                                        (label != "display.session.info"), 
-                        select=c(label, step_major))
-names(tmp_chunks_df)[1] <- "label_major"
-plt_chunks_df <- merge(glb_chunks_df, tmp_chunks_df, all.x=TRUE)
-plt_chunks_df$step_major_desc <- max(plt_chunks_df$step_major) - 
-                                            plt_chunks_df$step_major
-print(ggplot(plt_chunks_df, aes(x=reorder(label_major, step_major_desc), 
-                                 y=duration, fill=factor(step_minor))) + 
-                 geom_bar(stat="identity") + coord_flip())
-
+myplt_chunk(glb_chunks_df)
+myplt_chunk(fit.models_1_chunk_df)
 sessionInfo()
 ```

@@ -2,7 +2,7 @@
 bdanalytics  
 
 **  **    
-**Date: (Thu) May 14, 2015**    
+**Date: (Fri) May 15, 2015**    
 
 # Introduction:  
 
@@ -87,7 +87,8 @@ source("~/Dropbox/datascience/R/mydsutils.R")
 source("~/Dropbox/datascience/R/myplot.R")
 source("~/Dropbox/datascience/R/mypetrinet.R")
 # Gather all package requirements here
-#suppressPackageStartupMessages(require())
+suppressPackageStartupMessages(require(doMC))
+registerDoMC(4)
 #packageVersion("snow")
 
 #require(sos); findFn("pinv", maxPages=2, sortby="MaxScore")
@@ -232,7 +233,8 @@ glb_tune_models_df <-
    rbind(
     #data.frame(parameter="cp", min=0.00005, max=0.00005, by=0.000005),
                             #seq(from=0.01,  to=0.01, by=0.01)
-    #data.frame(parameter="mtry", min=2, max=4, by=1),
+    #data.frame(parameter="mtry",  min=080, max=100, by=10),
+    #data.frame(parameter="mtry",  min=08, max=10, by=1),    
     data.frame(parameter="dummy", min=2, max=4, by=1)
         ) 
 # or NULL
@@ -297,8 +299,8 @@ glb_chunks_df <- myadd_chunk(NULL, "import.data")
 ```
 
 ```
-##         label step_major step_minor    bgn end elapsed
-## 1 import.data          1          0 11.135  NA      NA
+##         label step_major step_minor   bgn end elapsed
+## 1 import.data          1          0 8.129  NA      NA
 ```
 
 ## Step `1.0: import data`
@@ -346,41 +348,41 @@ glb_trnent_df <- myimport_data(url=glb_trnng_url, comment="glb_trnent_df",
 ## 4      1405 2014-09-01 20:43:34       1        4
 ## 5       181 2014-09-01 18:58:51       1        5
 ## 6       245 2014-09-01 18:52:22       1        6
-##      NewsDesk SectionName SubsectionName
-## 226    Styles                           
-## 995                                     
-## 2124   TStyle                           
-## 3326   TStyle                           
-## 4752 Business  Technology               
-## 6462  Foreign                           
+##      NewsDesk      SectionName SubsectionName
+## 226    Styles                                
+## 995                                          
+## 3327                                         
+## 4753                Multimedia               
+## 4802 Business Crosswords/Games               
+## 6463   TStyle                                
 ##                                                   Headline
 ## 226  For Tavi Gevinson, Fashion Takes a Back Seat, for Now
 ## 995          Reconsidering What to Call an Extremist Group
-## 2124          Paris Fashion Week: Kenzo Spring/Summer 2015
-## 3326                              The Portable Blue Bottle
-## 4752     Monster Moves to Restore a Faded Job Search Brand
-## 6462      1889: Priest Questions the Meridian of Greenwich
-##                                                                                                                                                                                 Snippet
-## 226                                                     Tavi Gevinson, the teenage fashion star turned Broadway actress, wont be much of a player at New York Fashion Week this season.
-## 995                                                         Editors have decided to adjust how The Times refer to an Islamic extremist group that controls territory in Syria and Iraq.
-## 2124                                                                                                                 Scenes from the Paris Fashion Week photo diary of Nina Westervelt.
-## 3326                                                                           The coffee purveyor has teamed up with its fellow Bay Area-based company Timbuk2 to create a travel kit.
-## 4752 Monster, which revolutionized online job hunting in the 1990s, is trying to reinvent itself for the era of Twitter and Facebook with new products that capitalize on social media.
-## 6462                                                                                From the International Herald Tribune archives: Priest Questions the Meridian of Greenwich in 1889.
-##                                                                                                                                                                                Abstract
-## 226                                                     Tavi Gevinson, the teenage fashion star turned Broadway actress, wont be much of a player at New York Fashion Week this season.
-## 995                                                         Editors have decided to adjust how The Times refer to an Islamic extremist group that controls territory in Syria and Iraq.
-## 2124                                                                                                                 Scenes from the Paris Fashion Week photo diary of Nina Westervelt.
-## 3326                                                                           The coffee purveyor has teamed up with its fellow Bay Area-based company Timbuk2 to create a travel kit.
-## 4752 Monster, which revolutionized online job hunting in the 1990s, is trying to reinvent itself for the era of Twitter and Facebook with new products that capitalize on social media.
-## 6462                                                                                From the International Herald Tribune archives: Priest Questions the Meridian of Greenwich in 1889.
+## 3327     Clinton's Diagnosis of What's Wrong With Politics
+## 4753       'Off Color' and on Target About Race in America
+## 4802                      Daniel Finkel's Circle-Toss Game
+## 6463                                     Entering the Void
+##                                                                                                                                                                            Snippet
+## 226                                                Tavi Gevinson, the teenage fashion star turned Broadway actress, wont be much of a player at New York Fashion Week this season.
+## 995                                                    Editors have decided to adjust how The Times refer to an Islamic extremist group that controls territory in Syria and Iraq.
+## 3327 Hillary Rodham Clinton continued to laugh off questions about her presidential aspirations on Tuesday, but she did shed some light on what she thinks is wrong in Washington.
+## 4753              Off Color, a New York Times video series, looks at how artists of color are making sharp social commentary about race in America through comedy and performance.
+## 4802                                                                                            By math educator Daniel Finkel, a puzzle thats childs play. Can you figure it out?
+## 6463                      The Spanish artist Miquel Barcel closely examines the basic materials of life in response to Edward Hirsch questioning his own belief in a higher power.
+##                                                                                                                                                                           Abstract
+## 226                                                Tavi Gevinson, the teenage fashion star turned Broadway actress, wont be much of a player at New York Fashion Week this season.
+## 995                                                    Editors have decided to adjust how The Times refer to an Islamic extremist group that controls territory in Syria and Iraq.
+## 3327 Hillary Rodham Clinton continued to laugh off questions about her presidential aspirations on Tuesday, but she did shed some light on what she thinks is wrong in Washington.
+## 4753              Off Color, a New York Times video series, looks at how artists of color are making sharp social commentary about race in America through comedy and performance.
+## 4802                                                                                            By math educator Daniel Finkel, a puzzle thats childs play. Can you figure it out?
+## 6463                      The Spanish artist Miquel Barcel closely examines the basic materials of life in response to Edward Hirsch questioning his own belief in a higher power.
 ##      WordCount             PubDate Popular UniqueID
 ## 226        459 2014-09-04 16:55:57       0      226
 ## 995        301 2014-09-15 16:05:13       0      995
-## 2124        59 2014-09-28 11:20:02       0     2124
-## 3326       248 2014-10-14 14:45:55       0     3326
-## 4752       995 2014-11-02 07:00:31       0     4752
-## 6462       110 2014-11-27 12:00:34       0     6462
+## 3327       236 2014-10-14 14:45:51       0     3327
+## 4753       393 2014-11-02 05:00:13       0     4753
+## 4802      1628 2014-11-03 12:00:04       1     4802
+## 6463       264 2014-11-27 12:00:09       0     6463
 ##      NewsDesk SectionName  SubsectionName
 ## 6527  Foreign                            
 ## 6528              Opinion Room For Debate
@@ -516,41 +518,41 @@ if (glb_is_separate_newent_dataset) {
 ## 4       915 2014-12-01 21:04:13     6536
 ## 5       213 2014-12-01 19:13:20     6537
 ## 6       938 2014-12-01 19:05:12     6538
-##      NewsDesk      SectionName SubsectionName
-## 3    Business Crosswords/Games               
-## 725    TStyle                                
-## 731  Business     Business Day       Dealbook
-## 751    TStyle                                
-## 864                                          
-## 1376 Business     Business Day Small Business
-##                                                                           Headline
-## 3                                                      Drinking Buddy For Falstaff
-## 725                                              Ansel Elgort Buttons Up in Brioni
-## 731                    Didi Dache, a Chinese Ride-Hailing App, Raises $700 Million
-## 751        The Daily Gift: A Soft, Colorful Quilt From a Brooklyn Fashion Favorite
-## 864                                                              Today in Politics
-## 1376 As Health Insurance Evolves, Traditional Brokers Claim They Still Have a Role
-##                                                                                                                                                                                            Snippet
-## 3                                                                                                                                                  In which Timothy Polin reveals his potty mouth.
-## 725                                                                                                   The actor brought a tinge of youthfulness to the classic Italian houses retro-tailored look.
-## 731  The Singapore investor Temasek and the Chinese social network operator Tencent are among the leaders of the fund-raising round for a company that says it has 10 times the ridership of Uber.
-## 751                                                                                                                      Each day until Christmas, the editors of T share a new holiday gift idea.
-## 864                                                     The 113th Congress is concluding with partisan brinksmanship and one last mad scramble for votes to pass a $1.1 trillion spending package.
-## 1376                       Its complex picking insurance for yourself and your family, said a health care policy director for a small-business organization. Its even more complex for a business.
-##                                                                                                                                                                                           Abstract
-## 3                                                                                                                                                  In which Timothy Polin reveals his potty mouth.
-## 725                                                                                                   The actor brought a tinge of youthfulness to the classic Italian houses retro-tailored look.
-## 731  The Singapore investor Temasek and the Chinese social network operator Tencent are among the leaders of the fund-raising round for a company that says it has 10 times the ridership of Uber.
-## 751                                                                                                                      Each day until Christmas, the editors of T share a new holiday gift idea.
-## 864                                                     The 113th Congress is concluding with partisan brinksmanship and one last mad scramble for votes to pass a $1.1 trillion spending package.
-## 1376                       Its complex picking insurance for yourself and your family, said a health care policy director for a small-business organization. Its even more complex for a business.
-##      WordCount             PubDate UniqueID
-## 3          788 2014-12-01 22:00:26     6535
-## 725         89 2014-12-10 12:30:47     7257
-## 731        724 2014-12-10 12:06:32     7263
-## 751         85 2014-12-10 09:00:38     7283
-## 864       1544 2014-12-11 07:09:25     7396
-## 1376      1250 2014-12-18 07:00:05     7908
+##     NewsDesk      SectionName SubsectionName
+## 3   Business Crosswords/Games               
+## 334     OpEd          Opinion               
+## 725   TStyle                                
+## 732 Business     Business Day       Dealbook
+## 752 Business     Business Day       Dealbook
+## 864                                         
+##                                                            Headline
+## 3                                       Drinking Buddy For Falstaff
+## 334 Facts & Figures: America&rsquo;s Unique Take on Maternity Leave
+## 725                               Ansel Elgort Buttons Up in Brioni
+## 732      A Shake-Up as the Financial World Infiltrates Philanthropy
+## 752    Coupang, a South Korean E-Commerce Site, Raises $300 Million
+## 864                                               Today in Politics
+##                                                                                                                                                 Snippet
+## 3                                                                                                       In which Timothy Polin reveals his potty mouth.
+## 334                                                                                In the U.S., paid parental leave is more of a perk than a guarantee.
+## 725                                                        The actor brought a tinge of youthfulness to the classic Italian houses retro-tailored look.
+## 732 Donor-advised funds help investors get deductions for charitable donations in one year, but society doesnt get the benefit of the money right away.
+## 752                                 The latest financing round underscores Coupangs maturity and its ambitions to one day be a publicly traded company.
+## 864          The 113th Congress is concluding with partisan brinksmanship and one last mad scramble for votes to pass a $1.1 trillion spending package.
+##                                                                                                                                                Abstract
+## 3                                                                                                       In which Timothy Polin reveals his potty mouth.
+## 334                                                                                In the U.S., paid parental leave is more of a perk than a guarantee.
+## 725                                                        The actor brought a tinge of youthfulness to the classic Italian houses retro-tailored look.
+## 732 Donor-advised funds help investors get deductions for charitable donations in one year, but society doesnt get the benefit of the money right away.
+## 752                                 The latest financing round underscores Coupangs maturity and its ambitions to one day be a publicly traded company.
+## 864          The 113th Congress is concluding with partisan brinksmanship and one last mad scramble for votes to pass a $1.1 trillion spending package.
+##     WordCount             PubDate UniqueID
+## 3         788 2014-12-01 22:00:26     6535
+## 334       160 2014-12-04 11:45:20     6866
+## 725        89 2014-12-10 12:30:47     7257
+## 732      1172 2014-12-10 12:00:38     7264
+## 752       353 2014-12-10 08:30:41     7284
+## 864      1544 2014-12-11 07:09:25     7396
 ##      NewsDesk   SectionName SubsectionName
 ## 1865                                      
 ## 1866 Business    Technology               
@@ -634,9 +636,9 @@ glb_chunks_df <- myadd_chunk(glb_chunks_df, "inspect.data", major.inc=TRUE)
 ```
 
 ```
-##          label step_major step_minor    bgn    end elapsed
-## 1  import.data          1          0 11.135 12.185    1.05
-## 2 inspect.data          2          0 12.185     NA      NA
+##          label step_major step_minor   bgn   end elapsed
+## 1  import.data          1          0 8.129 9.043   0.915
+## 2 inspect.data          2          0 9.044    NA      NA
 ```
 
 ## Step `2.0: inspect data`
@@ -1246,13 +1248,14 @@ dsp_numeric_vars_dstrb(setdiff(names(glb_entity_df),
 #         geom_point(data=subset(glb_entity_df, <condition>), 
 #                     mapping=aes(x=<x_var>, y=<y_var>), color="red", shape=4, size=5))
 
+rm(srt_entity_df)
 glb_chunks_df <- myadd_chunk(glb_chunks_df, "cleanse.data", major.inc=FALSE)
 ```
 
 ```
 ##          label step_major step_minor    bgn    end elapsed
-## 2 inspect.data          2          0 12.185 30.473  18.288
-## 3 cleanse.data          2          1 30.474     NA      NA
+## 2 inspect.data          2          0  9.044 27.361  18.317
+## 3 cleanse.data          2          1 27.362     NA      NA
 ```
 
 ### Step `2.1: cleanse data`
@@ -1744,13 +1747,20 @@ myprint_df(ctgry_cast_df)
 ## 11   19 103  38
 ## 40   77 100  62
 ## 7   864  88 291
-##              myCategory NewsDesk SectionName  SubsectionName   N Y NA
-## 35      Science#Health#  Science                               0 2  2
-## 5       #U.S.#Education                 U.S.       Education 325 0 90
-## 16        Culture#Arts#                 Arts                   0 0 11
-## 13 Business#Technology#           Technology                   0 0  1
-## 27              myOther National                               2 0  0
-## 39      Styles##Fashion   Styles       Style Fashion & Style   2 0  0
+##                              myCategory NewsDesk  SectionName
+## 35                      Science#Health#  Science             
+## 17                        Culture#Arts#  Culture             
+## 16                        Culture#Arts#                  Arts
+## 8  Business#Business Day#Small Business          Business Day
+## 13                 Business#Technology#            Technology
+## 28                              myOther National         U.S.
+##    SubsectionName N Y NA
+## 35                0 2  2
+## 17                1 0 70
+## 16                0 0 11
+## 8  Small Business 1 0  4
+## 13                0 0  1
+## 28       Politics 2 0  0
 ##         myCategory NewsDesk SectionName  SubsectionName N Y NA
 ## 27         myOther National                             2 0  0
 ## 28         myOther National        U.S.        Politics 2 0  0
@@ -1936,8 +1946,8 @@ glb_chunks_df <- myadd_chunk(glb_chunks_df, "manage.missing.data", major.inc=FAL
 
 ```
 ##                 label step_major step_minor    bgn    end elapsed
-## 3        cleanse.data          2          1 30.474 34.314    3.84
-## 4 manage.missing.data          2          2 34.314     NA      NA
+## 3        cleanse.data          2          1 27.362 31.544   4.182
+## 4 manage.missing.data          2          2 31.544     NA      NA
 ```
 
 ### Step `2.2: manage missing data`
@@ -2082,12 +2092,12 @@ if (glb_impute_na_data)
 ##  Max.   :10.875    Max.   :11.744     Max.   :12.95       Max.   :9.2977  
 ##                                                           NA's   :109     
 ##      .rnorm           myCategory       
-##  Min.   :-3.881663   Length:8402       
-##  1st Qu.:-0.665043   Class :character  
-##  Median :-0.004510   Mode  :character  
-##  Mean   :-0.006807                     
-##  3rd Qu.: 0.664125                     
-##  Max.   : 3.356092                     
+##  Min.   :-3.281785   Length:8402       
+##  1st Qu.:-0.681275   Class :character  
+##  Median : 0.007735   Mode  :character  
+##  Mean   :-0.000264                     
+##  3rd Qu.: 0.673409                     
+##  Max.   : 3.987726                     
 ##                                        
 ## 
 ##  iter imp variable
@@ -2134,19 +2144,19 @@ if (glb_impute_na_data)
 ##                                                                     
 ##  PubDate.last1.log PubDate.last10.log PubDate.last100.log WordCount.log   
 ##  Min.   : 0.000    Min.   : 0.000     Min.   : 0.00       Min.   :0.6931  
-##  1st Qu.: 5.263    1st Qu.: 8.516     1st Qu.:11.37       1st Qu.:5.2679  
-##  Median : 6.292    Median : 8.868     Median :11.43       Median :5.9506  
-##  Mean   : 6.094    Mean   : 9.048     Mean   :11.49       Mean   :5.8273  
+##  1st Qu.: 5.263    1st Qu.: 8.516     1st Qu.:11.37       1st Qu.:5.2730  
+##  Median : 6.292    Median : 8.868     Median :11.43       Median :5.9480  
+##  Mean   : 6.094    Mean   : 9.048     Mean   :11.49       Mean   :5.8267  
 ##  3rd Qu.: 7.126    3rd Qu.: 9.424     3rd Qu.:11.78       3rd Qu.:6.6067  
 ##  Max.   :10.875    Max.   :11.744     Max.   :12.95       Max.   :9.2977  
 ##                                                                           
 ##      .rnorm           myCategory       
-##  Min.   :-3.881663   Length:8402       
-##  1st Qu.:-0.665043   Class :character  
-##  Median :-0.004510   Mode  :character  
-##  Mean   :-0.006807                     
-##  3rd Qu.: 0.664125                     
-##  Max.   : 3.356092                     
+##  Min.   :-3.281785   Length:8402       
+##  1st Qu.:-0.681275   Class :character  
+##  Median : 0.007735   Mode  :character  
+##  Mean   :-0.000264                     
+##  3rd Qu.: 0.673409                     
+##  Max.   : 3.987726                     
 ## 
 ```
 
@@ -2236,8 +2246,8 @@ glb_chunks_df <- myadd_chunk(glb_chunks_df, "encode.data", major.inc=FALSE)
 
 ```
 ##                 label step_major step_minor    bgn    end elapsed
-## 4 manage.missing.data          2          2 34.314 38.998   4.684
-## 5         encode.data          2          3 38.998     NA      NA
+## 4 manage.missing.data          2          2 31.544 36.532   4.989
+## 5         encode.data          2          3 36.533     NA      NA
 ```
 
 ### Step `2.3: encode data`
@@ -2264,9 +2274,9 @@ glb_chunks_df <- myadd_chunk(glb_chunks_df, "extract.features", major.inc=TRUE)
 ```
 
 ```
-##              label step_major step_minor    bgn    end elapsed
-## 5      encode.data          2          3 38.998 39.054   0.056
-## 6 extract.features          3          0 39.055     NA      NA
+##              label step_major step_minor    bgn   end elapsed
+## 5      encode.data          2          3 36.533 36.59   0.057
+## 6 extract.features          3          0 36.591    NA      NA
 ```
 
 ## Step `3.0: extract features`
@@ -2556,12 +2566,8 @@ if (glb_is_textual) {
                 log(1 + mycount_pattern_occ(punct_vctr[punct_ix], 
                                             glb_entity_df[, txt_var]))
         }
-#         print(head(glb_entity_df[glb_entity_df[, "H.npnct.log09"] > 0, 
-#                                     c("UniqueID", "Headline", "A.npnct.log09")]))    
-#         print(head(glb_entity_df[glb_entity_df[, "A.npnct.log14"] > 0, 
-#                                     c("UniqueID", "Abstract", "A.npnct.log14")]))    
-#         print(head(glb_entity_df[glb_entity_df[, "A.npnct.log21"] > 0, 
-#                                     c("UniqueID", "Abstract", "A.npnct.log21")]))
+#         print(head(glb_entity_df[glb_entity_df[, "A.npnct23.log"] > 0, 
+#                                     c("UniqueID", "Popular", "Abstract", "A.npnct23.log")]))    
 
         # Create <txt_var>.has.year.colon
 #         mycount_pattern_occ("[0-9]{4}:", glb_entity_df$Headline[13:19])
@@ -2581,6 +2587,8 @@ if (glb_is_textual) {
 #     print(sapply(names(glb_trnent_df), function(col) sum(is.na(glb_trnent_df[, col]))))
 #     print(summary(glb_newent_df))
 #     print(sapply(names(glb_newent_df), function(col) sum(is.na(glb_newent_df[, col]))))
+
+    rm(full_freqs_df, melt_freqs_df, terms_freqs_df, log_X_df, txt_X_df)
 }
 ```
 
@@ -2698,8 +2706,8 @@ glb_chunks_df <- myadd_chunk(glb_chunks_df, "select.features", major.inc=TRUE)
 
 ```
 ##              label step_major step_minor     bgn     end elapsed
-## 6 extract.features          3          0  39.055 148.235  109.18
-## 7  select.features          4          0 148.235      NA      NA
+## 6 extract.features          3          0  36.591 147.378 110.787
+## 7  select.features          4          0 147.378      NA      NA
 ```
 
 ## Step `4.0: select features`
@@ -2720,7 +2728,7 @@ print(glb_feats_df <- myselect_features(entity_df=glb_trnent_df,
 ## Popular                         Popular  1.000000e+00               1
 ## A.nuppr.log                 A.nuppr.log -2.720962e-01               0
 ## S.nuppr.log                 S.nuppr.log -2.718459e-01               0
-## WordCount.log             WordCount.log  2.649604e-01               0
+## WordCount.log             WordCount.log  2.656836e-01               0
 ## WordCount                     WordCount  2.575265e-01               1
 ## S.nwrds.unq.log         S.nwrds.unq.log -2.507969e-01               0
 ## A.nwrds.unq.log         A.nwrds.unq.log -2.506012e-01               0
@@ -2831,7 +2839,6 @@ print(glb_feats_df <- myselect_features(entity_df=glb_trnent_df,
 ## S.npnct22.log             S.npnct22.log -1.923169e-02               0
 ## A.npnct22.log             A.npnct22.log -1.923169e-02               0
 ## PubDate.month.fctr   PubDate.month.fctr  1.914874e-02               1
-## .rnorm                           .rnorm  1.756172e-02               0
 ## S.has.year.colon       S.has.year.colon -1.755336e-02               0
 ## A.has.year.colon       A.has.year.colon -1.755336e-02               0
 ## PubDate.POSIX             PubDate.POSIX  1.568326e-02               1
@@ -2856,6 +2863,7 @@ print(glb_feats_df <- myselect_features(entity_df=glb_trnent_df,
 ## PubDate.date.fctr     PubDate.date.fctr -1.164756e-02               0
 ## H.npnct05.log             H.npnct05.log -9.653967e-03               0
 ## H.npnct03.log             H.npnct03.log  9.533020e-03               0
+## .rnorm                           .rnorm -8.244230e-03               0
 ## PubDate.last100.log PubDate.last100.log -7.663322e-03               0
 ## S.state.log                 S.state.log  7.050791e-03               0
 ## A.state.log                 A.state.log  6.668101e-03               0
@@ -2915,7 +2923,7 @@ print(glb_feats_df <- myselect_features(entity_df=glb_trnent_df,
 ## Popular             1.000000e+00
 ## A.nuppr.log         2.720962e-01
 ## S.nuppr.log         2.718459e-01
-## WordCount.log       2.649604e-01
+## WordCount.log       2.656836e-01
 ## WordCount           2.575265e-01
 ## S.nwrds.unq.log     2.507969e-01
 ## A.nwrds.unq.log     2.506012e-01
@@ -3026,7 +3034,6 @@ print(glb_feats_df <- myselect_features(entity_df=glb_trnent_df,
 ## S.npnct22.log       1.923169e-02
 ## A.npnct22.log       1.923169e-02
 ## PubDate.month.fctr  1.914874e-02
-## .rnorm              1.756172e-02
 ## S.has.year.colon    1.755336e-02
 ## A.has.year.colon    1.755336e-02
 ## PubDate.POSIX       1.568326e-02
@@ -3051,6 +3058,7 @@ print(glb_feats_df <- myselect_features(entity_df=glb_trnent_df,
 ## PubDate.date.fctr   1.164756e-02
 ## H.npnct05.log       9.653967e-03
 ## H.npnct03.log       9.533020e-03
+## .rnorm              8.244230e-03
 ## PubDate.last100.log 7.663322e-03
 ## S.state.log         7.050791e-03
 ## A.state.log         6.668101e-03
@@ -3109,6 +3117,8 @@ print(glb_feats_df <- myselect_features(entity_df=glb_trnent_df,
 ```
 
 ```r
+# stop("here")
+# sav_feats_df <- glb_feats_df
 print(glb_feats_df <- orderBy(~-cor.y, 
           myfind_cor_features(feats_df=glb_feats_df, entity_df=glb_trnent_df, 
                               rsp_var=glb_rsp_var)))
@@ -3158,6 +3168,18 @@ print(glb_feats_df <- orderBy(~-cor.y,
 ## Warning in myfind_cor_features(feats_df = glb_feats_df, entity_df =
 ## glb_trnent_df, : Identified S.first.log as highly correlated with
 ## A.first.log
+```
+
+```
+## [1] "cor(A.has.year.colon, S.has.year.colon)=1.0000"
+## [1] "cor(Popular.fctr, A.has.year.colon)=-0.0176"
+## [1] "cor(Popular.fctr, S.has.year.colon)=-0.0176"
+```
+
+```
+## Warning in myfind_cor_features(feats_df = glb_feats_df, entity_df =
+## glb_trnent_df, : Identified S.has.year.colon as highly correlated with
+## A.has.year.colon
 ```
 
 ```
@@ -3233,6 +3255,30 @@ print(glb_feats_df <- orderBy(~-cor.y,
 ```
 
 ```
+## [1] "cor(A.npnct07.log, S.npnct07.log)=1.0000"
+## [1] "cor(Popular.fctr, A.npnct07.log)=-0.0121"
+## [1] "cor(Popular.fctr, S.npnct07.log)=-0.0121"
+```
+
+```
+## Warning in myfind_cor_features(feats_df = glb_feats_df, entity_df =
+## glb_trnent_df, : Identified S.npnct07.log as highly correlated with
+## A.npnct07.log
+```
+
+```
+## [1] "cor(A.npnct18.log, A.npnct20.log)=1.0000"
+## [1] "cor(Popular.fctr, A.npnct18.log)=-0.0145"
+## [1] "cor(Popular.fctr, A.npnct20.log)=-0.0145"
+```
+
+```
+## Warning in myfind_cor_features(feats_df = glb_feats_df, entity_df =
+## glb_trnent_df, : Identified A.npnct20.log as highly correlated with
+## A.npnct18.log
+```
+
+```
 ## [1] "cor(A.npnct22.log, S.npnct22.log)=1.0000"
 ## [1] "cor(Popular.fctr, A.npnct22.log)=-0.0192"
 ## [1] "cor(Popular.fctr, S.npnct22.log)=-0.0192"
@@ -3242,6 +3288,18 @@ print(glb_feats_df <- orderBy(~-cor.y,
 ## Warning in myfind_cor_features(feats_df = glb_feats_df, entity_df =
 ## glb_trnent_df, : Identified S.npnct22.log as highly correlated with
 ## A.npnct22.log
+```
+
+```
+## [1] "cor(A.npnct23.log, A.npnct25.log)=1.0000"
+## [1] "cor(Popular.fctr, A.npnct23.log)=0.0154"
+## [1] "cor(Popular.fctr, A.npnct25.log)=0.0154"
+```
+
+```
+## Warning in myfind_cor_features(feats_df = glb_feats_df, entity_df =
+## glb_trnent_df, : Identified A.npnct25.log as highly correlated with
+## A.npnct23.log
 ```
 
 ```
@@ -3590,6 +3648,42 @@ print(glb_feats_df <- orderBy(~-cor.y,
 ```
 
 ```
+## [1] "cor(A.has.http, A.npnct19.log)=0.9356"
+## [1] "cor(Popular.fctr, A.has.http)=-0.0136"
+## [1] "cor(Popular.fctr, A.npnct19.log)=-0.0127"
+```
+
+```
+## Warning in myfind_cor_features(feats_df = glb_feats_df, entity_df =
+## glb_trnent_df, : Identified A.npnct19.log as highly correlated with
+## A.has.http
+```
+
+```
+## [1] "cor(A.has.http, A.npnct02.log)=0.9247"
+## [1] "cor(Popular.fctr, A.has.http)=-0.0136"
+## [1] "cor(Popular.fctr, A.npnct02.log)=-0.0145"
+```
+
+```
+## Warning in myfind_cor_features(feats_df = glb_feats_df, entity_df =
+## glb_trnent_df, : Identified A.has.http as highly correlated with
+## A.npnct02.log
+```
+
+```
+## [1] "cor(A.npnct03.log, S.npnct03.log)=0.9128"
+## [1] "cor(Popular.fctr, A.npnct03.log)=-0.0136"
+## [1] "cor(Popular.fctr, S.npnct03.log)=-0.0124"
+```
+
+```
+## Warning in myfind_cor_features(feats_df = glb_feats_df, entity_df =
+## glb_trnent_df, : Identified S.npnct03.log as highly correlated with
+## A.npnct03.log
+```
+
+```
 ## [1] "cor(H.nchrs.log, H.nwrds.unq.log)=0.8881"
 ## [1] "cor(Popular.fctr, H.nchrs.log)=-0.1711"
 ## [1] "cor(Popular.fctr, H.nwrds.unq.log)=-0.2045"
@@ -3611,6 +3705,18 @@ print(glb_feats_df <- orderBy(~-cor.y,
 ## Warning in myfind_cor_features(feats_df = glb_feats_df, entity_df =
 ## glb_trnent_df, : Identified H.npnct15.log as highly correlated with
 ## H.X2015.log
+```
+
+```
+## [1] "cor(A.npnct02.log, A.npnct18.log)=0.8771"
+## [1] "cor(Popular.fctr, A.npnct02.log)=-0.0145"
+## [1] "cor(Popular.fctr, A.npnct18.log)=-0.0145"
+```
+
+```
+## Warning in myfind_cor_features(feats_df = glb_feats_df, entity_df =
+## glb_trnent_df, : Identified A.npnct18.log as highly correlated with
+## A.npnct02.log
 ```
 
 ```
@@ -3662,9 +3768,33 @@ print(glb_feats_df <- orderBy(~-cor.y,
 ```
 
 ```
+## [1] "cor(A.npnct23.log, S.npnct23.log)=0.7461"
+## [1] "cor(Popular.fctr, A.npnct23.log)=0.0154"
+## [1] "cor(Popular.fctr, S.npnct23.log)=0.0276"
+```
+
+```
+## Warning in myfind_cor_features(feats_df = glb_feats_df, entity_df =
+## glb_trnent_df, : Identified A.npnct23.log as highly correlated with
+## S.npnct23.log
+```
+
+```
+## [1] "cor(A.npnct02.log, A.npnct15.log)=0.7324"
+## [1] "cor(Popular.fctr, A.npnct02.log)=-0.0145"
+## [1] "cor(Popular.fctr, A.npnct15.log)=-0.0241"
+```
+
+```
+## Warning in myfind_cor_features(feats_df = glb_feats_df, entity_df =
+## glb_trnent_df, : Identified A.npnct02.log as highly correlated with
+## A.npnct15.log
+```
+
+```
 ##                                      id         cor.y exclude.as.feat
 ## Popular                         Popular  1.000000e+00               1
-## WordCount.log             WordCount.log  2.649604e-01               0
+## WordCount.log             WordCount.log  2.656836e-01               0
 ## WordCount                     WordCount  2.575265e-01               1
 ## PubDate.hour.fctr     PubDate.hour.fctr  1.354368e-01               0
 ## H.npnct21.log             H.npnct21.log  1.283641e-01               0
@@ -3691,7 +3821,6 @@ print(glb_feats_df <- orderBy(~-cor.y,
 ## S.make.log                   S.make.log  2.334962e-02               0
 ## H.npnct01.log             H.npnct01.log  2.271577e-02               0
 ## PubDate.month.fctr   PubDate.month.fctr  1.914874e-02               1
-## .rnorm                           .rnorm  1.756172e-02               0
 ## PubDate.POSIX             PubDate.POSIX  1.568326e-02               1
 ## PubDate.zoo                 PubDate.zoo  1.568326e-02               1
 ## A.npnct23.log             A.npnct23.log  1.537569e-02               0
@@ -3722,6 +3851,7 @@ print(glb_feats_df <- orderBy(~-cor.y,
 ## S.npnct02.log             S.npnct02.log -5.547032e-03               0
 ## S.npnct11.log             S.npnct11.log -5.547032e-03               0
 ## PubDate.last100.log PubDate.last100.log -7.663322e-03               0
+## .rnorm                           .rnorm -8.244230e-03               0
 ## H.npnct05.log             H.npnct05.log -9.653967e-03               0
 ## PubDate.date.fctr     PubDate.date.fctr -1.164756e-02               0
 ## PubDate.second.fctr PubDate.second.fctr -1.187946e-02               0
@@ -3857,406 +3987,585 @@ print(glb_feats_df <- orderBy(~-cor.y,
 ## S.npnct29.log             S.npnct29.log            NA               0
 ## S.npnct31.log             S.npnct31.log            NA               0
 ## S.npnct32.log             S.npnct32.log            NA               0
-##                        cor.y.abs    cor.high.X   freqRatio percentUnique
-## Popular             1.000000e+00          <NA>    4.976212    0.03061849
-## WordCount.log       2.649604e-01          <NA>    1.266667   24.15799143
-## WordCount           2.575265e-01          <NA>    2.315789   24.15799143
-## PubDate.hour.fctr   1.354368e-01          <NA>    1.835040    0.04592774
-## H.npnct21.log       1.283641e-01          <NA>   14.995098    0.06123699
-## PubDate.wkend       1.067288e-01          <NA>    9.095827    0.03061849
-## S.npnct21.log       5.503894e-02 A.npnct21.log   12.862366    0.07654623
-## A.npnct21.log       5.482747e-02          <NA>   12.798715    0.07654623
-## PubDate.last10      5.398093e-02          <NA>    1.666667   79.05695040
-## H.npnct08.log       5.375262e-02 H.npnct09.log  111.620690    0.03061849
-## H.npnct09.log       5.375262e-02          <NA>  111.620690    0.03061849
-## PubDate.last10.log  4.931702e-02          <NA>    1.666667   79.05695040
-## PubDate.last1.log   4.635751e-02          <NA>    1.142857   36.49724434
-## PubDate.last100     3.989229e-02          <NA>   25.000000   92.52908757
-## PubDate.last1       3.592267e-02          <NA>    1.142857   36.49724434
-## H.npnct06.log       3.190718e-02 H.npnct17.log   68.935484    0.06123699
-## A.can.log           3.169296e-02     S.can.log   26.166667    0.04592774
-## A.npnct01.log       3.093101e-02 S.npnct01.log  309.952381    0.06123699
-## S.npnct01.log       3.093101e-02          <NA>  309.952381    0.06123699
-## S.can.log           3.077833e-02          <NA>   26.058091    0.04592774
-## H.npnct17.log       3.039622e-02          <NA>   96.104478    0.06123699
-## S.npnct23.log       2.760321e-02 S.npnct25.log 6531.000000    0.03061849
-## S.npnct25.log       2.760321e-02          <NA> 6531.000000    0.03061849
-## H.has.ebola         2.588140e-02          <NA>   73.227273    0.03061849
-## A.make.log          2.334962e-02    S.make.log   27.378261    0.04592774
-## S.make.log          2.334962e-02          <NA>   27.378261    0.04592774
-## H.npnct01.log       2.271577e-02          <NA>  282.913043    0.04592774
-## PubDate.month.fctr  1.914874e-02          <NA>    1.017514    0.04592774
-## .rnorm              1.756172e-02          <NA>    1.000000  100.00000000
-## PubDate.POSIX       1.568326e-02          <NA>    1.000000   99.86221678
-## PubDate.zoo         1.568326e-02          <NA>    1.000000   99.86221678
-## A.npnct23.log       1.537569e-02          <NA> 3264.500000    0.04592774
-## A.npnct25.log       1.537569e-02          <NA> 3264.500000    0.04592774
-## H.npnct12.log       1.333613e-02          <NA>    4.937442    0.07654623
-## myCategory.fctr     1.234541e-02          <NA>    1.337185    0.30618494
-## UniqueID            1.182492e-02          <NA>    1.000000  100.00000000
-## H.npnct03.log       9.533020e-03          <NA> 2176.333333    0.03061849
-## S.state.log         7.050791e-03          <NA>   30.655340    0.04592774
-## A.state.log         6.668101e-03          <NA>   30.502415    0.04592774
-## S.one.log           4.891059e-03          <NA>   22.777372    0.04592774
-## A.one.log           4.368856e-03          <NA>   22.773723    0.04592774
-## A.said.log          3.735051e-04          <NA>   25.212851    0.04592774
-## S.said.log          3.735051e-04          <NA>   25.212851    0.04592774
-## A.npnct26.log       9.890046e-19          <NA>    0.000000    0.01530925
-## H.npnct26.log       9.890046e-19          <NA>    0.000000    0.01530925
-## S.npnct26.log       9.890046e-19          <NA>    0.000000    0.01530925
-## A.npnct17.log       1.587454e-03          <NA>  434.133333    0.04592774
-## S.npnct17.log       1.587454e-03          <NA>  434.133333    0.04592774
-## S.npnct08.log       2.413868e-03          <NA>  175.513514    0.04592774
-## A.npnct08.log       3.258100e-03          <NA>  170.868421    0.04592774
-## S.npnct09.log       3.986882e-03          <NA>  175.486486    0.06123699
-## A.npnct09.log       4.775988e-03          <NA>  170.842105    0.06123699
-## A.npnct27.log       5.547032e-03          <NA> 6531.000000    0.03061849
-## A.npnct11.log       5.547032e-03          <NA> 6531.000000    0.03061849
-## H.npnct11.log       5.547032e-03          <NA> 6531.000000    0.03061849
-## H.npnct22.log       5.547032e-03          <NA> 6531.000000    0.03061849
-## S.npnct02.log       5.547032e-03          <NA> 6531.000000    0.03061849
-## S.npnct11.log       5.547032e-03          <NA> 6531.000000    0.03061849
-## PubDate.last100.log 7.663322e-03          <NA>   25.000000   92.19228414
-## H.npnct05.log       9.653967e-03          <NA>  543.333333    0.03061849
-## PubDate.date.fctr   1.164756e-02          <NA>    1.021394    0.07654623
-## PubDate.second.fctr 1.187946e-02          <NA>    1.018204    0.06123699
-## H.npnct07.log       1.201741e-02          <NA>    5.437234    0.12247397
-## A.npnct07.log       1.214357e-02          <NA> 1631.750000    0.04592774
-## S.npnct07.log       1.214357e-02          <NA> 1631.750000    0.04592774
-## S.npnct03.log       1.240734e-02          <NA> 1305.400000    0.03061849
-## A.npnct19.log       1.271661e-02          <NA> 1631.500000    0.06123699
-## H.npnct13.log       1.305305e-02          <NA>   13.126638    0.09185548
-## A.has.http          1.359260e-02          <NA> 1087.666667    0.03061849
-## A.npnct03.log       1.359260e-02          <NA> 1087.666667    0.03061849
-## A.npnct02.log       1.451467e-02          <NA> 1087.500000    0.04592774
-## A.npnct18.log       1.451467e-02          <NA> 1087.500000    0.04592774
-## A.npnct20.log       1.451467e-02          <NA> 1087.500000    0.04592774
-## A.has.year.colon    1.755336e-02          <NA>  652.200000    0.03061849
-## S.has.year.colon    1.755336e-02          <NA>  652.200000    0.03061849
-## A.npnct22.log       1.923169e-02 S.npnct22.log  543.333333    0.03061849
-## S.npnct22.log       1.923169e-02          <NA>  543.333333    0.03061849
-## H.npnct02.log       2.001851e-02          <NA>  501.461538    0.03061849
-## A.presid.log        2.014404e-02  S.presid.log   26.854701    0.06123699
-## S.presid.log        2.014404e-02          <NA>   26.854701    0.06123699
-## S.npnct15.log       2.121844e-02          <NA>  203.062500    0.04592774
-## A.npnct06.log       2.389145e-02 S.npnct06.log  115.642857    0.03061849
-## S.npnct06.log       2.389145e-02          <NA>  115.642857    0.03061849
-## A.npnct15.log       2.407715e-02          <NA>  196.696970    0.10716473
-## H.npnct14.log       2.524770e-02          <NA>   22.802326    0.12247397
-## S.take.log          2.569295e-02          <NA>   29.376744    0.04592774
-## A.take.log          2.601772e-02    S.take.log   29.236111    0.04592774
-## PubDate.minute.fctr 3.407385e-02          <NA>    1.483365    0.06123699
-## S.new.log           3.483189e-02          <NA>   10.124573    0.04592774
-## A.new.log           3.524871e-02     S.new.log   10.086735    0.04592774
-## S.npnct13.log       3.638891e-02          <NA>    5.706263    0.09185548
-## A.npnct13.log       3.760012e-02 S.npnct13.log    5.715368    0.12247397
-## PubDate.wkday.fctr  3.980129e-02          <NA>    1.003268    0.10716473
-## S.npnct30.log       4.370037e-02          <NA>  134.791667    0.04592774
-## A.npnct30.log       4.373349e-02 S.npnct30.log  126.862745    0.04592774
-## S.day.log           4.555421e-02          <NA>   24.692913    0.04592774
-## A.day.log           4.581783e-02     S.day.log   24.592157    0.04592774
-## H.X2014.log         4.620638e-02          <NA>   63.673267    0.03061849
-## A.show.log          4.897915e-02    S.show.log   30.512077    0.06123699
-## S.show.log          4.897915e-02          <NA>   30.512077    0.06123699
-## A.npnct14.log       4.999563e-02          <NA>    4.603330    0.16840171
-## A.report.log        5.032801e-02  S.report.log   24.204633    0.06123699
-## S.report.log        5.032801e-02          <NA>   24.204633    0.06123699
-## A.year.log          5.094457e-02    S.year.log   18.456716    0.06123699
-## S.year.log          5.094457e-02          <NA>   18.456716    0.06123699
-## H.npnct04.log       5.126277e-02          <NA>   38.325301    0.04592774
-## A.share.log         5.138139e-02   S.share.log   32.654639    0.04592774
-## S.share.log         5.138139e-02          <NA>   32.654639    0.04592774
-## S.compani.log       5.261812e-02          <NA>   18.093842    0.04592774
-## A.compani.log       5.268413e-02 S.compani.log   18.147059    0.04592774
-## H.new.log           5.313316e-02          <NA>   25.228916    0.04592774
-## S.npnct14.log       5.332519e-02 A.npnct14.log    4.672000    0.16840171
-## A.first.log         5.345938e-02   S.first.log   29.509346    0.04592774
-## S.first.log         5.345938e-02          <NA>   29.509346    0.04592774
-## S.time.log          5.759227e-02          <NA>   13.483296    0.04592774
-## A.time.log          5.779371e-02    S.time.log   13.451111    0.04592774
-## H.newyork.log       5.797009e-02          <NA>   26.795745    0.03061849
-## A.articl.log        5.952055e-02  S.articl.log   30.863415    0.03061849
-## S.articl.log        5.952055e-02          <NA>   30.863415    0.03061849
-## S.will.log          6.103349e-02          <NA>   11.237288    0.06123699
-## A.will.log          6.147068e-02    S.will.log   11.212406    0.06123699
-## H.npnct15.log       6.158577e-02          <NA>   52.983471    0.03061849
-## A.newyork.log       6.219997e-02 S.newyork.log   15.153465    0.06123699
-## S.newyork.log       6.219997e-02          <NA>   15.153465    0.06123699
-## H.day.log           6.272898e-02          <NA>   29.801887    0.04592774
-## A.npnct04.log       6.294642e-02 S.npnct04.log   28.536364    0.07654623
-## S.npnct04.log       6.294642e-02          <NA>   28.536364    0.07654623
-## H.today.log         6.372306e-02          <NA>   36.757225    0.03061849
-## H.report.log        6.494810e-02          <NA>   30.403846    0.03061849
-## H.X2015.log         6.658489e-02 H.npnct15.log   45.326241    0.03061849
-## S.npnct16.log       6.770952e-02          <NA>   13.647191    0.04592774
-## A.intern.log        6.864274e-02  S.intern.log   29.801887    0.04592774
-## S.intern.log        6.864274e-02          <NA>   29.801887    0.04592774
-## A.npnct16.log       6.893301e-02 S.npnct16.log   13.482222    0.04592774
-## H.daili.log         6.919298e-02          <NA>   41.973684    0.03061849
-## H.week.log          7.510522e-02          <NA>   24.818182    0.03061849
-## H.has.year.colon    7.842875e-02  A.intern.log   32.670103    0.03061849
-## H.fashion.log       8.204998e-02    H.week.log   28.542986    0.04592774
-## H.npnct16.log       8.273237e-02          <NA>    3.914910    0.04592774
-## A.fashion.log       8.724932e-02 S.fashion.log   25.737705    0.04592774
-## S.fashion.log       8.724932e-02          <NA>   25.737705    0.04592774
-## A.week.log          8.840293e-02    S.week.log   13.278509    0.04592774
-## S.week.log          8.840293e-02          <NA>   13.278509    0.04592774
-## H.npnct30.log       8.917338e-02          <NA>   24.123077    0.03061849
-## S.npnct12.log       9.158156e-02          <NA>    1.660473    0.13778322
-## A.npnct12.log       9.183870e-02 S.npnct12.log    1.660473    0.13778322
-## H.ndgts.log         1.196633e-01          <NA>   13.616137    0.18371096
-## S.ndgts.log         1.242046e-01          <NA>   10.511247    0.26025720
-## A.ndgts.log         1.249484e-01   S.ndgts.log   10.501022    0.29087569
-## H.nuppr.log         1.278085e-01          <NA>    1.033930    0.29087569
-## H.nchrs.log         1.710624e-01          <NA>    1.023810    1.57685242
-## H.nwrds.log         2.006864e-01          <NA>    1.019119    0.21432945
-## H.nwrds.unq.log     2.044964e-01   H.nuppr.log    1.019071    0.21432945
-## A.nchrs.log         2.245488e-01          <NA>    1.328571    4.39375383
-## S.nchrs.log         2.246930e-01   A.nchrs.log    1.328571    3.72014697
-## A.nwrds.log         2.450733e-01          <NA>    1.029183    0.59706062
-## S.nwrds.log         2.453541e-01   A.nwrds.log    1.029183    0.45927740
-## A.nwrds.unq.log     2.506012e-01          <NA>    1.061567    0.55113288
-## S.nwrds.unq.log     2.507969e-01   S.nchrs.log    1.061567    0.44396816
-## S.nuppr.log         2.718459e-01          <NA>    1.152620    0.33680343
-## A.nuppr.log         2.720962e-01   S.nuppr.log    1.151308    0.33680343
-## A.npnct05.log                 NA          <NA>    0.000000    0.01530925
-## A.npnct10.log                 NA          <NA>    0.000000    0.01530925
-## A.npnct24.log                 NA          <NA>    0.000000    0.01530925
-## A.npnct28.log                 NA          <NA>    0.000000    0.01530925
-## A.npnct29.log                 NA          <NA>    0.000000    0.01530925
-## A.npnct31.log                 NA          <NA>    0.000000    0.01530925
-## A.npnct32.log                 NA          <NA>    0.000000    0.01530925
-## H.has.http                    NA          <NA>    0.000000    0.01530925
-## H.npnct10.log                 NA          <NA>    0.000000    0.01530925
-## H.npnct18.log                 NA          <NA>    0.000000    0.01530925
-## H.npnct19.log                 NA          <NA>    0.000000    0.01530925
-## H.npnct20.log                 NA          <NA>    0.000000    0.01530925
-## H.npnct23.log                 NA          <NA>    0.000000    0.01530925
-## H.npnct24.log                 NA          <NA>    0.000000    0.01530925
-## H.npnct25.log                 NA          <NA>    0.000000    0.01530925
-## H.npnct27.log                 NA          <NA>    0.000000    0.01530925
-## H.npnct28.log                 NA          <NA>    0.000000    0.01530925
-## H.npnct29.log                 NA          <NA>    0.000000    0.01530925
-## H.npnct31.log                 NA          <NA>    0.000000    0.01530925
-## H.npnct32.log                 NA          <NA>    0.000000    0.01530925
-## PubDate.year.fctr             NA          <NA>    0.000000    0.01530925
-## S.has.http                    NA          <NA>    0.000000    0.01530925
-## S.npnct05.log                 NA          <NA>    0.000000    0.01530925
-## S.npnct10.log                 NA          <NA>    0.000000    0.01530925
-## S.npnct18.log                 NA          <NA>    0.000000    0.01530925
-## S.npnct19.log                 NA          <NA>    0.000000    0.01530925
-## S.npnct20.log                 NA          <NA>    0.000000    0.01530925
-## S.npnct24.log                 NA          <NA>    0.000000    0.01530925
-## S.npnct27.log                 NA          <NA>    0.000000    0.01530925
-## S.npnct28.log                 NA          <NA>    0.000000    0.01530925
-## S.npnct29.log                 NA          <NA>    0.000000    0.01530925
-## S.npnct31.log                 NA          <NA>    0.000000    0.01530925
-## S.npnct32.log                 NA          <NA>    0.000000    0.01530925
-##                     zeroVar   nzv is.cor.y.abs.low
-## Popular               FALSE FALSE            FALSE
-## WordCount.log         FALSE FALSE            FALSE
-## WordCount             FALSE FALSE            FALSE
-## PubDate.hour.fctr     FALSE FALSE            FALSE
-## H.npnct21.log         FALSE FALSE            FALSE
-## PubDate.wkend         FALSE FALSE            FALSE
-## S.npnct21.log         FALSE FALSE            FALSE
-## A.npnct21.log         FALSE FALSE            FALSE
-## PubDate.last10        FALSE FALSE            FALSE
-## H.npnct08.log         FALSE  TRUE            FALSE
-## H.npnct09.log         FALSE  TRUE            FALSE
-## PubDate.last10.log    FALSE FALSE            FALSE
-## PubDate.last1.log     FALSE FALSE            FALSE
-## PubDate.last100       FALSE FALSE            FALSE
-## PubDate.last1         FALSE FALSE            FALSE
-## H.npnct06.log         FALSE  TRUE            FALSE
-## A.can.log             FALSE  TRUE            FALSE
-## A.npnct01.log         FALSE  TRUE            FALSE
-## S.npnct01.log         FALSE  TRUE            FALSE
-## S.can.log             FALSE  TRUE            FALSE
-## H.npnct17.log         FALSE  TRUE            FALSE
-## S.npnct23.log         FALSE  TRUE            FALSE
-## S.npnct25.log         FALSE  TRUE            FALSE
-## H.has.ebola           FALSE  TRUE            FALSE
-## A.make.log            FALSE  TRUE            FALSE
-## S.make.log            FALSE  TRUE            FALSE
-## H.npnct01.log         FALSE  TRUE            FALSE
-## PubDate.month.fctr    FALSE FALSE            FALSE
-## .rnorm                FALSE FALSE            FALSE
-## PubDate.POSIX         FALSE FALSE             TRUE
-## PubDate.zoo           FALSE FALSE             TRUE
-## A.npnct23.log         FALSE  TRUE             TRUE
-## A.npnct25.log         FALSE  TRUE             TRUE
-## H.npnct12.log         FALSE FALSE             TRUE
-## myCategory.fctr       FALSE FALSE             TRUE
-## UniqueID              FALSE FALSE             TRUE
-## H.npnct03.log         FALSE  TRUE             TRUE
-## S.state.log           FALSE  TRUE             TRUE
-## A.state.log           FALSE  TRUE             TRUE
-## S.one.log             FALSE  TRUE             TRUE
-## A.one.log             FALSE  TRUE             TRUE
-## A.said.log            FALSE  TRUE             TRUE
-## S.said.log            FALSE  TRUE             TRUE
-## A.npnct26.log          TRUE  TRUE             TRUE
-## H.npnct26.log          TRUE  TRUE             TRUE
-## S.npnct26.log          TRUE  TRUE             TRUE
-## A.npnct17.log         FALSE  TRUE             TRUE
-## S.npnct17.log         FALSE  TRUE             TRUE
-## S.npnct08.log         FALSE  TRUE             TRUE
-## A.npnct08.log         FALSE  TRUE             TRUE
-## S.npnct09.log         FALSE  TRUE             TRUE
-## A.npnct09.log         FALSE  TRUE             TRUE
-## A.npnct27.log         FALSE  TRUE             TRUE
-## A.npnct11.log         FALSE  TRUE             TRUE
-## H.npnct11.log         FALSE  TRUE             TRUE
-## H.npnct22.log         FALSE  TRUE             TRUE
-## S.npnct02.log         FALSE  TRUE             TRUE
-## S.npnct11.log         FALSE  TRUE             TRUE
-## PubDate.last100.log   FALSE FALSE             TRUE
-## H.npnct05.log         FALSE  TRUE             TRUE
-## PubDate.date.fctr     FALSE FALSE             TRUE
-## PubDate.second.fctr   FALSE FALSE             TRUE
-## H.npnct07.log         FALSE FALSE             TRUE
-## A.npnct07.log         FALSE  TRUE             TRUE
-## S.npnct07.log         FALSE  TRUE             TRUE
-## S.npnct03.log         FALSE  TRUE             TRUE
-## A.npnct19.log         FALSE  TRUE             TRUE
-## H.npnct13.log         FALSE FALSE             TRUE
-## A.has.http            FALSE  TRUE             TRUE
-## A.npnct03.log         FALSE  TRUE             TRUE
-## A.npnct02.log         FALSE  TRUE             TRUE
-## A.npnct18.log         FALSE  TRUE             TRUE
-## A.npnct20.log         FALSE  TRUE             TRUE
-## A.has.year.colon      FALSE  TRUE             TRUE
-## S.has.year.colon      FALSE  TRUE             TRUE
-## A.npnct22.log         FALSE  TRUE            FALSE
-## S.npnct22.log         FALSE  TRUE            FALSE
-## H.npnct02.log         FALSE  TRUE            FALSE
-## A.presid.log          FALSE  TRUE            FALSE
-## S.presid.log          FALSE  TRUE            FALSE
-## S.npnct15.log         FALSE  TRUE            FALSE
-## A.npnct06.log         FALSE  TRUE            FALSE
-## S.npnct06.log         FALSE  TRUE            FALSE
-## A.npnct15.log         FALSE  TRUE            FALSE
-## H.npnct14.log         FALSE  TRUE            FALSE
-## S.take.log            FALSE  TRUE            FALSE
-## A.take.log            FALSE  TRUE            FALSE
-## PubDate.minute.fctr   FALSE FALSE            FALSE
-## S.new.log             FALSE FALSE            FALSE
-## A.new.log             FALSE FALSE            FALSE
-## S.npnct13.log         FALSE FALSE            FALSE
-## A.npnct13.log         FALSE FALSE            FALSE
-## PubDate.wkday.fctr    FALSE FALSE            FALSE
-## S.npnct30.log         FALSE  TRUE            FALSE
-## A.npnct30.log         FALSE  TRUE            FALSE
-## S.day.log             FALSE  TRUE            FALSE
-## A.day.log             FALSE  TRUE            FALSE
-## H.X2014.log           FALSE  TRUE            FALSE
-## A.show.log            FALSE  TRUE            FALSE
-## S.show.log            FALSE  TRUE            FALSE
-## A.npnct14.log         FALSE FALSE            FALSE
-## A.report.log          FALSE  TRUE            FALSE
-## S.report.log          FALSE  TRUE            FALSE
-## A.year.log            FALSE FALSE            FALSE
-## S.year.log            FALSE FALSE            FALSE
-## H.npnct04.log         FALSE  TRUE            FALSE
-## A.share.log           FALSE  TRUE            FALSE
-## S.share.log           FALSE  TRUE            FALSE
-## S.compani.log         FALSE FALSE            FALSE
-## A.compani.log         FALSE FALSE            FALSE
-## H.new.log             FALSE  TRUE            FALSE
-## S.npnct14.log         FALSE FALSE            FALSE
-## A.first.log           FALSE  TRUE            FALSE
-## S.first.log           FALSE  TRUE            FALSE
-## S.time.log            FALSE FALSE            FALSE
-## A.time.log            FALSE FALSE            FALSE
-## H.newyork.log         FALSE  TRUE            FALSE
-## A.articl.log          FALSE  TRUE            FALSE
-## S.articl.log          FALSE  TRUE            FALSE
-## S.will.log            FALSE FALSE            FALSE
-## A.will.log            FALSE FALSE            FALSE
-## H.npnct15.log         FALSE  TRUE            FALSE
-## A.newyork.log         FALSE FALSE            FALSE
-## S.newyork.log         FALSE FALSE            FALSE
-## H.day.log             FALSE  TRUE            FALSE
-## A.npnct04.log         FALSE  TRUE            FALSE
-## S.npnct04.log         FALSE  TRUE            FALSE
-## H.today.log           FALSE  TRUE            FALSE
-## H.report.log          FALSE  TRUE            FALSE
-## H.X2015.log           FALSE  TRUE            FALSE
-## S.npnct16.log         FALSE FALSE            FALSE
-## A.intern.log          FALSE  TRUE            FALSE
-## S.intern.log          FALSE  TRUE            FALSE
-## A.npnct16.log         FALSE FALSE            FALSE
-## H.daili.log           FALSE  TRUE            FALSE
-## H.week.log            FALSE  TRUE            FALSE
-## H.has.year.colon      FALSE  TRUE            FALSE
-## H.fashion.log         FALSE  TRUE            FALSE
-## H.npnct16.log         FALSE FALSE            FALSE
-## A.fashion.log         FALSE  TRUE            FALSE
-## S.fashion.log         FALSE  TRUE            FALSE
-## A.week.log            FALSE FALSE            FALSE
-## S.week.log            FALSE FALSE            FALSE
-## H.npnct30.log         FALSE  TRUE            FALSE
-## S.npnct12.log         FALSE FALSE            FALSE
-## A.npnct12.log         FALSE FALSE            FALSE
-## H.ndgts.log           FALSE FALSE            FALSE
-## S.ndgts.log           FALSE FALSE            FALSE
-## A.ndgts.log           FALSE FALSE            FALSE
-## H.nuppr.log           FALSE FALSE            FALSE
-## H.nchrs.log           FALSE FALSE            FALSE
-## H.nwrds.log           FALSE FALSE            FALSE
-## H.nwrds.unq.log       FALSE FALSE            FALSE
-## A.nchrs.log           FALSE FALSE            FALSE
-## S.nchrs.log           FALSE FALSE            FALSE
-## A.nwrds.log           FALSE FALSE            FALSE
-## S.nwrds.log           FALSE FALSE            FALSE
-## A.nwrds.unq.log       FALSE FALSE            FALSE
-## S.nwrds.unq.log       FALSE FALSE            FALSE
-## S.nuppr.log           FALSE FALSE            FALSE
-## A.nuppr.log           FALSE FALSE            FALSE
-## A.npnct05.log          TRUE  TRUE               NA
-## A.npnct10.log          TRUE  TRUE               NA
-## A.npnct24.log          TRUE  TRUE               NA
-## A.npnct28.log          TRUE  TRUE               NA
-## A.npnct29.log          TRUE  TRUE               NA
-## A.npnct31.log          TRUE  TRUE               NA
-## A.npnct32.log          TRUE  TRUE               NA
-## H.has.http             TRUE  TRUE               NA
-## H.npnct10.log          TRUE  TRUE               NA
-## H.npnct18.log          TRUE  TRUE               NA
-## H.npnct19.log          TRUE  TRUE               NA
-## H.npnct20.log          TRUE  TRUE               NA
-## H.npnct23.log          TRUE  TRUE               NA
-## H.npnct24.log          TRUE  TRUE               NA
-## H.npnct25.log          TRUE  TRUE               NA
-## H.npnct27.log          TRUE  TRUE               NA
-## H.npnct28.log          TRUE  TRUE               NA
-## H.npnct29.log          TRUE  TRUE               NA
-## H.npnct31.log          TRUE  TRUE               NA
-## H.npnct32.log          TRUE  TRUE               NA
-## PubDate.year.fctr      TRUE  TRUE               NA
-## S.has.http             TRUE  TRUE               NA
-## S.npnct05.log          TRUE  TRUE               NA
-## S.npnct10.log          TRUE  TRUE               NA
-## S.npnct18.log          TRUE  TRUE               NA
-## S.npnct19.log          TRUE  TRUE               NA
-## S.npnct20.log          TRUE  TRUE               NA
-## S.npnct24.log          TRUE  TRUE               NA
-## S.npnct27.log          TRUE  TRUE               NA
-## S.npnct28.log          TRUE  TRUE               NA
-## S.npnct29.log          TRUE  TRUE               NA
-## S.npnct31.log          TRUE  TRUE               NA
-## S.npnct32.log          TRUE  TRUE               NA
+##                        cor.y.abs       cor.high.X   freqRatio
+## Popular             1.000000e+00             <NA>    4.976212
+## WordCount.log       2.656836e-01             <NA>    1.300000
+## WordCount           2.575265e-01             <NA>    2.315789
+## PubDate.hour.fctr   1.354368e-01             <NA>    1.835040
+## H.npnct21.log       1.283641e-01             <NA>   14.995098
+## PubDate.wkend       1.067288e-01             <NA>    9.095827
+## S.npnct21.log       5.503894e-02    A.npnct21.log   12.862366
+## A.npnct21.log       5.482747e-02             <NA>   12.798715
+## PubDate.last10      5.398093e-02             <NA>    1.666667
+## H.npnct08.log       5.375262e-02    H.npnct09.log  111.620690
+## H.npnct09.log       5.375262e-02             <NA>  111.620690
+## PubDate.last10.log  4.931702e-02             <NA>    1.666667
+## PubDate.last1.log   4.635751e-02             <NA>    1.142857
+## PubDate.last100     3.989229e-02             <NA>   25.000000
+## PubDate.last1       3.592267e-02             <NA>    1.142857
+## H.npnct06.log       3.190718e-02    H.npnct17.log   68.935484
+## A.can.log           3.169296e-02        S.can.log   26.166667
+## A.npnct01.log       3.093101e-02    S.npnct01.log  309.952381
+## S.npnct01.log       3.093101e-02             <NA>  309.952381
+## S.can.log           3.077833e-02             <NA>   26.058091
+## H.npnct17.log       3.039622e-02             <NA>   96.104478
+## S.npnct23.log       2.760321e-02    A.npnct23.log 6531.000000
+## S.npnct25.log       2.760321e-02             <NA> 6531.000000
+## H.has.ebola         2.588140e-02             <NA>   73.227273
+## A.make.log          2.334962e-02       S.make.log   27.378261
+## S.make.log          2.334962e-02             <NA>   27.378261
+## H.npnct01.log       2.271577e-02             <NA>  282.913043
+## PubDate.month.fctr  1.914874e-02             <NA>    1.017514
+## PubDate.POSIX       1.568326e-02             <NA>    1.000000
+## PubDate.zoo         1.568326e-02             <NA>    1.000000
+## A.npnct23.log       1.537569e-02    A.npnct25.log 3264.500000
+## A.npnct25.log       1.537569e-02             <NA> 3264.500000
+## H.npnct12.log       1.333613e-02             <NA>    4.937442
+## myCategory.fctr     1.234541e-02             <NA>    1.337185
+## UniqueID            1.182492e-02             <NA>    1.000000
+## H.npnct03.log       9.533020e-03             <NA> 2176.333333
+## S.state.log         7.050791e-03             <NA>   30.655340
+## A.state.log         6.668101e-03             <NA>   30.502415
+## S.one.log           4.891059e-03             <NA>   22.777372
+## A.one.log           4.368856e-03             <NA>   22.773723
+## A.said.log          3.735051e-04             <NA>   25.212851
+## S.said.log          3.735051e-04             <NA>   25.212851
+## A.npnct26.log       9.890046e-19             <NA>    0.000000
+## H.npnct26.log       9.890046e-19             <NA>    0.000000
+## S.npnct26.log       9.890046e-19             <NA>    0.000000
+## A.npnct17.log       1.587454e-03             <NA>  434.133333
+## S.npnct17.log       1.587454e-03             <NA>  434.133333
+## S.npnct08.log       2.413868e-03             <NA>  175.513514
+## A.npnct08.log       3.258100e-03             <NA>  170.868421
+## S.npnct09.log       3.986882e-03             <NA>  175.486486
+## A.npnct09.log       4.775988e-03             <NA>  170.842105
+## A.npnct27.log       5.547032e-03             <NA> 6531.000000
+## A.npnct11.log       5.547032e-03             <NA> 6531.000000
+## H.npnct11.log       5.547032e-03             <NA> 6531.000000
+## H.npnct22.log       5.547032e-03             <NA> 6531.000000
+## S.npnct02.log       5.547032e-03             <NA> 6531.000000
+## S.npnct11.log       5.547032e-03             <NA> 6531.000000
+## PubDate.last100.log 7.663322e-03             <NA>   25.000000
+## .rnorm              8.244230e-03             <NA>    2.000000
+## H.npnct05.log       9.653967e-03             <NA>  543.333333
+## PubDate.date.fctr   1.164756e-02             <NA>    1.021394
+## PubDate.second.fctr 1.187946e-02             <NA>    1.018204
+## H.npnct07.log       1.201741e-02             <NA>    5.437234
+## A.npnct07.log       1.214357e-02    S.npnct07.log 1631.750000
+## S.npnct07.log       1.214357e-02             <NA> 1631.750000
+## S.npnct03.log       1.240734e-02             <NA> 1305.400000
+## A.npnct19.log       1.271661e-02             <NA> 1631.500000
+## H.npnct13.log       1.305305e-02             <NA>   13.126638
+## A.has.http          1.359260e-02    A.npnct19.log 1087.666667
+## A.npnct03.log       1.359260e-02    S.npnct03.log 1087.666667
+## A.npnct02.log       1.451467e-02    A.npnct18.log 1087.500000
+## A.npnct18.log       1.451467e-02    A.npnct20.log 1087.500000
+## A.npnct20.log       1.451467e-02             <NA> 1087.500000
+## A.has.year.colon    1.755336e-02 S.has.year.colon  652.200000
+## S.has.year.colon    1.755336e-02             <NA>  652.200000
+## A.npnct22.log       1.923169e-02    S.npnct22.log  543.333333
+## S.npnct22.log       1.923169e-02             <NA>  543.333333
+## H.npnct02.log       2.001851e-02             <NA>  501.461538
+## A.presid.log        2.014404e-02     S.presid.log   26.854701
+## S.presid.log        2.014404e-02             <NA>   26.854701
+## S.npnct15.log       2.121844e-02             <NA>  203.062500
+## A.npnct06.log       2.389145e-02    S.npnct06.log  115.642857
+## S.npnct06.log       2.389145e-02             <NA>  115.642857
+## A.npnct15.log       2.407715e-02    A.npnct02.log  196.696970
+## H.npnct14.log       2.524770e-02             <NA>   22.802326
+## S.take.log          2.569295e-02             <NA>   29.376744
+## A.take.log          2.601772e-02       S.take.log   29.236111
+## PubDate.minute.fctr 3.407385e-02             <NA>    1.483365
+## S.new.log           3.483189e-02             <NA>   10.124573
+## A.new.log           3.524871e-02        S.new.log   10.086735
+## S.npnct13.log       3.638891e-02             <NA>    5.706263
+## A.npnct13.log       3.760012e-02    S.npnct13.log    5.715368
+## PubDate.wkday.fctr  3.980129e-02             <NA>    1.003268
+## S.npnct30.log       4.370037e-02             <NA>  134.791667
+## A.npnct30.log       4.373349e-02    S.npnct30.log  126.862745
+## S.day.log           4.555421e-02             <NA>   24.692913
+## A.day.log           4.581783e-02        S.day.log   24.592157
+## H.X2014.log         4.620638e-02             <NA>   63.673267
+## A.show.log          4.897915e-02       S.show.log   30.512077
+## S.show.log          4.897915e-02             <NA>   30.512077
+## A.npnct14.log       4.999563e-02             <NA>    4.603330
+## A.report.log        5.032801e-02     S.report.log   24.204633
+## S.report.log        5.032801e-02             <NA>   24.204633
+## A.year.log          5.094457e-02       S.year.log   18.456716
+## S.year.log          5.094457e-02             <NA>   18.456716
+## H.npnct04.log       5.126277e-02             <NA>   38.325301
+## A.share.log         5.138139e-02      S.share.log   32.654639
+## S.share.log         5.138139e-02             <NA>   32.654639
+## S.compani.log       5.261812e-02             <NA>   18.093842
+## A.compani.log       5.268413e-02    S.compani.log   18.147059
+## H.new.log           5.313316e-02             <NA>   25.228916
+## S.npnct14.log       5.332519e-02    A.npnct14.log    4.672000
+## A.first.log         5.345938e-02      S.first.log   29.509346
+## S.first.log         5.345938e-02             <NA>   29.509346
+## S.time.log          5.759227e-02             <NA>   13.483296
+## A.time.log          5.779371e-02       S.time.log   13.451111
+## H.newyork.log       5.797009e-02             <NA>   26.795745
+## A.articl.log        5.952055e-02     S.articl.log   30.863415
+## S.articl.log        5.952055e-02             <NA>   30.863415
+## S.will.log          6.103349e-02             <NA>   11.237288
+## A.will.log          6.147068e-02       S.will.log   11.212406
+## H.npnct15.log       6.158577e-02             <NA>   52.983471
+## A.newyork.log       6.219997e-02    S.newyork.log   15.153465
+## S.newyork.log       6.219997e-02             <NA>   15.153465
+## H.day.log           6.272898e-02             <NA>   29.801887
+## A.npnct04.log       6.294642e-02    S.npnct04.log   28.536364
+## S.npnct04.log       6.294642e-02             <NA>   28.536364
+## H.today.log         6.372306e-02             <NA>   36.757225
+## H.report.log        6.494810e-02             <NA>   30.403846
+## H.X2015.log         6.658489e-02    H.npnct15.log   45.326241
+## S.npnct16.log       6.770952e-02             <NA>   13.647191
+## A.intern.log        6.864274e-02     S.intern.log   29.801887
+## S.intern.log        6.864274e-02             <NA>   29.801887
+## A.npnct16.log       6.893301e-02    S.npnct16.log   13.482222
+## H.daili.log         6.919298e-02             <NA>   41.973684
+## H.week.log          7.510522e-02             <NA>   24.818182
+## H.has.year.colon    7.842875e-02     A.intern.log   32.670103
+## H.fashion.log       8.204998e-02       H.week.log   28.542986
+## H.npnct16.log       8.273237e-02             <NA>    3.914910
+## A.fashion.log       8.724932e-02    S.fashion.log   25.737705
+## S.fashion.log       8.724932e-02             <NA>   25.737705
+## A.week.log          8.840293e-02       S.week.log   13.278509
+## S.week.log          8.840293e-02             <NA>   13.278509
+## H.npnct30.log       8.917338e-02             <NA>   24.123077
+## S.npnct12.log       9.158156e-02             <NA>    1.660473
+## A.npnct12.log       9.183870e-02    S.npnct12.log    1.660473
+## H.ndgts.log         1.196633e-01             <NA>   13.616137
+## S.ndgts.log         1.242046e-01             <NA>   10.511247
+## A.ndgts.log         1.249484e-01      S.ndgts.log   10.501022
+## H.nuppr.log         1.278085e-01             <NA>    1.033930
+## H.nchrs.log         1.710624e-01             <NA>    1.023810
+## H.nwrds.log         2.006864e-01             <NA>    1.019119
+## H.nwrds.unq.log     2.044964e-01      H.nuppr.log    1.019071
+## A.nchrs.log         2.245488e-01             <NA>    1.328571
+## S.nchrs.log         2.246930e-01      A.nchrs.log    1.328571
+## A.nwrds.log         2.450733e-01             <NA>    1.029183
+## S.nwrds.log         2.453541e-01      A.nwrds.log    1.029183
+## A.nwrds.unq.log     2.506012e-01             <NA>    1.061567
+## S.nwrds.unq.log     2.507969e-01      S.nchrs.log    1.061567
+## S.nuppr.log         2.718459e-01             <NA>    1.152620
+## A.nuppr.log         2.720962e-01      S.nuppr.log    1.151308
+## A.npnct05.log                 NA             <NA>    0.000000
+## A.npnct10.log                 NA             <NA>    0.000000
+## A.npnct24.log                 NA             <NA>    0.000000
+## A.npnct28.log                 NA             <NA>    0.000000
+## A.npnct29.log                 NA             <NA>    0.000000
+## A.npnct31.log                 NA             <NA>    0.000000
+## A.npnct32.log                 NA             <NA>    0.000000
+## H.has.http                    NA             <NA>    0.000000
+## H.npnct10.log                 NA             <NA>    0.000000
+## H.npnct18.log                 NA             <NA>    0.000000
+## H.npnct19.log                 NA             <NA>    0.000000
+## H.npnct20.log                 NA             <NA>    0.000000
+## H.npnct23.log                 NA             <NA>    0.000000
+## H.npnct24.log                 NA             <NA>    0.000000
+## H.npnct25.log                 NA             <NA>    0.000000
+## H.npnct27.log                 NA             <NA>    0.000000
+## H.npnct28.log                 NA             <NA>    0.000000
+## H.npnct29.log                 NA             <NA>    0.000000
+## H.npnct31.log                 NA             <NA>    0.000000
+## H.npnct32.log                 NA             <NA>    0.000000
+## PubDate.year.fctr             NA             <NA>    0.000000
+## S.has.http                    NA             <NA>    0.000000
+## S.npnct05.log                 NA             <NA>    0.000000
+## S.npnct10.log                 NA             <NA>    0.000000
+## S.npnct18.log                 NA             <NA>    0.000000
+## S.npnct19.log                 NA             <NA>    0.000000
+## S.npnct20.log                 NA             <NA>    0.000000
+## S.npnct24.log                 NA             <NA>    0.000000
+## S.npnct27.log                 NA             <NA>    0.000000
+## S.npnct28.log                 NA             <NA>    0.000000
+## S.npnct29.log                 NA             <NA>    0.000000
+## S.npnct31.log                 NA             <NA>    0.000000
+## S.npnct32.log                 NA             <NA>    0.000000
+##                     percentUnique zeroVar   nzv myNearZV is.cor.y.abs.low
+## Popular                0.03061849   FALSE FALSE    FALSE            FALSE
+## WordCount.log         24.14268218   FALSE FALSE    FALSE            FALSE
+## WordCount             24.15799143   FALSE FALSE    FALSE            FALSE
+## PubDate.hour.fctr      0.04592774   FALSE FALSE    FALSE            FALSE
+## H.npnct21.log          0.06123699   FALSE FALSE    FALSE            FALSE
+## PubDate.wkend          0.03061849   FALSE FALSE    FALSE            FALSE
+## S.npnct21.log          0.07654623   FALSE FALSE    FALSE            FALSE
+## A.npnct21.log          0.07654623   FALSE FALSE    FALSE            FALSE
+## PubDate.last10        79.05695040   FALSE FALSE    FALSE            FALSE
+## H.npnct08.log          0.03061849   FALSE  TRUE    FALSE            FALSE
+## H.npnct09.log          0.03061849   FALSE  TRUE    FALSE            FALSE
+## PubDate.last10.log    79.05695040   FALSE FALSE    FALSE            FALSE
+## PubDate.last1.log     36.49724434   FALSE FALSE    FALSE            FALSE
+## PubDate.last100       92.52908757   FALSE FALSE    FALSE            FALSE
+## PubDate.last1         36.49724434   FALSE FALSE    FALSE            FALSE
+## H.npnct06.log          0.06123699   FALSE  TRUE    FALSE            FALSE
+## A.can.log              0.04592774   FALSE  TRUE    FALSE            FALSE
+## A.npnct01.log          0.06123699   FALSE  TRUE    FALSE            FALSE
+## S.npnct01.log          0.06123699   FALSE  TRUE    FALSE            FALSE
+## S.can.log              0.04592774   FALSE  TRUE    FALSE            FALSE
+## H.npnct17.log          0.06123699   FALSE  TRUE    FALSE            FALSE
+## S.npnct23.log          0.03061849   FALSE  TRUE     TRUE            FALSE
+## S.npnct25.log          0.03061849   FALSE  TRUE     TRUE            FALSE
+## H.has.ebola            0.03061849   FALSE  TRUE    FALSE            FALSE
+## A.make.log             0.04592774   FALSE  TRUE    FALSE            FALSE
+## S.make.log             0.04592774   FALSE  TRUE    FALSE            FALSE
+## H.npnct01.log          0.04592774   FALSE  TRUE    FALSE            FALSE
+## PubDate.month.fctr     0.04592774   FALSE FALSE    FALSE            FALSE
+## PubDate.POSIX         99.86221678   FALSE FALSE    FALSE            FALSE
+## PubDate.zoo           99.86221678   FALSE FALSE    FALSE            FALSE
+## A.npnct23.log          0.04592774   FALSE  TRUE     TRUE            FALSE
+## A.npnct25.log          0.04592774   FALSE  TRUE     TRUE            FALSE
+## H.npnct12.log          0.07654623   FALSE FALSE    FALSE            FALSE
+## myCategory.fctr        0.30618494   FALSE FALSE    FALSE            FALSE
+## UniqueID             100.00000000   FALSE FALSE    FALSE            FALSE
+## H.npnct03.log          0.03061849   FALSE  TRUE     TRUE            FALSE
+## S.state.log            0.04592774   FALSE  TRUE    FALSE             TRUE
+## A.state.log            0.04592774   FALSE  TRUE    FALSE             TRUE
+## S.one.log              0.04592774   FALSE  TRUE    FALSE             TRUE
+## A.one.log              0.04592774   FALSE  TRUE    FALSE             TRUE
+## A.said.log             0.04592774   FALSE  TRUE    FALSE             TRUE
+## S.said.log             0.04592774   FALSE  TRUE    FALSE             TRUE
+## A.npnct26.log          0.01530925    TRUE  TRUE     TRUE             TRUE
+## H.npnct26.log          0.01530925    TRUE  TRUE     TRUE             TRUE
+## S.npnct26.log          0.01530925    TRUE  TRUE     TRUE             TRUE
+## A.npnct17.log          0.04592774   FALSE  TRUE    FALSE             TRUE
+## S.npnct17.log          0.04592774   FALSE  TRUE    FALSE             TRUE
+## S.npnct08.log          0.04592774   FALSE  TRUE    FALSE             TRUE
+## A.npnct08.log          0.04592774   FALSE  TRUE    FALSE             TRUE
+## S.npnct09.log          0.06123699   FALSE  TRUE    FALSE             TRUE
+## A.npnct09.log          0.06123699   FALSE  TRUE    FALSE             TRUE
+## A.npnct27.log          0.03061849   FALSE  TRUE     TRUE             TRUE
+## A.npnct11.log          0.03061849   FALSE  TRUE     TRUE             TRUE
+## H.npnct11.log          0.03061849   FALSE  TRUE     TRUE             TRUE
+## H.npnct22.log          0.03061849   FALSE  TRUE     TRUE             TRUE
+## S.npnct02.log          0.03061849   FALSE  TRUE     TRUE             TRUE
+## S.npnct11.log          0.03061849   FALSE  TRUE     TRUE             TRUE
+## PubDate.last100.log   92.19228414   FALSE FALSE    FALSE             TRUE
+## .rnorm                99.98469075   FALSE FALSE    FALSE            FALSE
+## H.npnct05.log          0.03061849   FALSE  TRUE    FALSE            FALSE
+## PubDate.date.fctr      0.07654623   FALSE FALSE    FALSE            FALSE
+## PubDate.second.fctr    0.06123699   FALSE FALSE    FALSE            FALSE
+## H.npnct07.log          0.12247397   FALSE FALSE    FALSE            FALSE
+## A.npnct07.log          0.04592774   FALSE  TRUE    FALSE            FALSE
+## S.npnct07.log          0.04592774   FALSE  TRUE    FALSE            FALSE
+## S.npnct03.log          0.03061849   FALSE  TRUE    FALSE            FALSE
+## A.npnct19.log          0.06123699   FALSE  TRUE    FALSE            FALSE
+## H.npnct13.log          0.09185548   FALSE FALSE    FALSE            FALSE
+## A.has.http             0.03061849   FALSE  TRUE    FALSE            FALSE
+## A.npnct03.log          0.03061849   FALSE  TRUE    FALSE            FALSE
+## A.npnct02.log          0.04592774   FALSE  TRUE    FALSE            FALSE
+## A.npnct18.log          0.04592774   FALSE  TRUE    FALSE            FALSE
+## A.npnct20.log          0.04592774   FALSE  TRUE    FALSE            FALSE
+## A.has.year.colon       0.03061849   FALSE  TRUE    FALSE            FALSE
+## S.has.year.colon       0.03061849   FALSE  TRUE    FALSE            FALSE
+## A.npnct22.log          0.03061849   FALSE  TRUE    FALSE            FALSE
+## S.npnct22.log          0.03061849   FALSE  TRUE    FALSE            FALSE
+## H.npnct02.log          0.03061849   FALSE  TRUE    FALSE            FALSE
+## A.presid.log           0.06123699   FALSE  TRUE    FALSE            FALSE
+## S.presid.log           0.06123699   FALSE  TRUE    FALSE            FALSE
+## S.npnct15.log          0.04592774   FALSE  TRUE    FALSE            FALSE
+## A.npnct06.log          0.03061849   FALSE  TRUE    FALSE            FALSE
+## S.npnct06.log          0.03061849   FALSE  TRUE    FALSE            FALSE
+## A.npnct15.log          0.10716473   FALSE  TRUE    FALSE            FALSE
+## H.npnct14.log          0.12247397   FALSE  TRUE    FALSE            FALSE
+## S.take.log             0.04592774   FALSE  TRUE    FALSE            FALSE
+## A.take.log             0.04592774   FALSE  TRUE    FALSE            FALSE
+## PubDate.minute.fctr    0.06123699   FALSE FALSE    FALSE            FALSE
+## S.new.log              0.04592774   FALSE FALSE    FALSE            FALSE
+## A.new.log              0.04592774   FALSE FALSE    FALSE            FALSE
+## S.npnct13.log          0.09185548   FALSE FALSE    FALSE            FALSE
+## A.npnct13.log          0.12247397   FALSE FALSE    FALSE            FALSE
+## PubDate.wkday.fctr     0.10716473   FALSE FALSE    FALSE            FALSE
+## S.npnct30.log          0.04592774   FALSE  TRUE    FALSE            FALSE
+## A.npnct30.log          0.04592774   FALSE  TRUE    FALSE            FALSE
+## S.day.log              0.04592774   FALSE  TRUE    FALSE            FALSE
+## A.day.log              0.04592774   FALSE  TRUE    FALSE            FALSE
+## H.X2014.log            0.03061849   FALSE  TRUE    FALSE            FALSE
+## A.show.log             0.06123699   FALSE  TRUE    FALSE            FALSE
+## S.show.log             0.06123699   FALSE  TRUE    FALSE            FALSE
+## A.npnct14.log          0.16840171   FALSE FALSE    FALSE            FALSE
+## A.report.log           0.06123699   FALSE  TRUE    FALSE            FALSE
+## S.report.log           0.06123699   FALSE  TRUE    FALSE            FALSE
+## A.year.log             0.06123699   FALSE FALSE    FALSE            FALSE
+## S.year.log             0.06123699   FALSE FALSE    FALSE            FALSE
+## H.npnct04.log          0.04592774   FALSE  TRUE    FALSE            FALSE
+## A.share.log            0.04592774   FALSE  TRUE    FALSE            FALSE
+## S.share.log            0.04592774   FALSE  TRUE    FALSE            FALSE
+## S.compani.log          0.04592774   FALSE FALSE    FALSE            FALSE
+## A.compani.log          0.04592774   FALSE FALSE    FALSE            FALSE
+## H.new.log              0.04592774   FALSE  TRUE    FALSE            FALSE
+## S.npnct14.log          0.16840171   FALSE FALSE    FALSE            FALSE
+## A.first.log            0.04592774   FALSE  TRUE    FALSE            FALSE
+## S.first.log            0.04592774   FALSE  TRUE    FALSE            FALSE
+## S.time.log             0.04592774   FALSE FALSE    FALSE            FALSE
+## A.time.log             0.04592774   FALSE FALSE    FALSE            FALSE
+## H.newyork.log          0.03061849   FALSE  TRUE    FALSE            FALSE
+## A.articl.log           0.03061849   FALSE  TRUE    FALSE            FALSE
+## S.articl.log           0.03061849   FALSE  TRUE    FALSE            FALSE
+## S.will.log             0.06123699   FALSE FALSE    FALSE            FALSE
+## A.will.log             0.06123699   FALSE FALSE    FALSE            FALSE
+## H.npnct15.log          0.03061849   FALSE  TRUE    FALSE            FALSE
+## A.newyork.log          0.06123699   FALSE FALSE    FALSE            FALSE
+## S.newyork.log          0.06123699   FALSE FALSE    FALSE            FALSE
+## H.day.log              0.04592774   FALSE  TRUE    FALSE            FALSE
+## A.npnct04.log          0.07654623   FALSE  TRUE    FALSE            FALSE
+## S.npnct04.log          0.07654623   FALSE  TRUE    FALSE            FALSE
+## H.today.log            0.03061849   FALSE  TRUE    FALSE            FALSE
+## H.report.log           0.03061849   FALSE  TRUE    FALSE            FALSE
+## H.X2015.log            0.03061849   FALSE  TRUE    FALSE            FALSE
+## S.npnct16.log          0.04592774   FALSE FALSE    FALSE            FALSE
+## A.intern.log           0.04592774   FALSE  TRUE    FALSE            FALSE
+## S.intern.log           0.04592774   FALSE  TRUE    FALSE            FALSE
+## A.npnct16.log          0.04592774   FALSE FALSE    FALSE            FALSE
+## H.daili.log            0.03061849   FALSE  TRUE    FALSE            FALSE
+## H.week.log             0.03061849   FALSE  TRUE    FALSE            FALSE
+## H.has.year.colon       0.03061849   FALSE  TRUE    FALSE            FALSE
+## H.fashion.log          0.04592774   FALSE  TRUE    FALSE            FALSE
+## H.npnct16.log          0.04592774   FALSE FALSE    FALSE            FALSE
+## A.fashion.log          0.04592774   FALSE  TRUE    FALSE            FALSE
+## S.fashion.log          0.04592774   FALSE  TRUE    FALSE            FALSE
+## A.week.log             0.04592774   FALSE FALSE    FALSE            FALSE
+## S.week.log             0.04592774   FALSE FALSE    FALSE            FALSE
+## H.npnct30.log          0.03061849   FALSE  TRUE    FALSE            FALSE
+## S.npnct12.log          0.13778322   FALSE FALSE    FALSE            FALSE
+## A.npnct12.log          0.13778322   FALSE FALSE    FALSE            FALSE
+## H.ndgts.log            0.18371096   FALSE FALSE    FALSE            FALSE
+## S.ndgts.log            0.26025720   FALSE FALSE    FALSE            FALSE
+## A.ndgts.log            0.29087569   FALSE FALSE    FALSE            FALSE
+## H.nuppr.log            0.29087569   FALSE FALSE    FALSE            FALSE
+## H.nchrs.log            1.57685242   FALSE FALSE    FALSE            FALSE
+## H.nwrds.log            0.21432945   FALSE FALSE    FALSE            FALSE
+## H.nwrds.unq.log        0.21432945   FALSE FALSE    FALSE            FALSE
+## A.nchrs.log            4.39375383   FALSE FALSE    FALSE            FALSE
+## S.nchrs.log            3.72014697   FALSE FALSE    FALSE            FALSE
+## A.nwrds.log            0.59706062   FALSE FALSE    FALSE            FALSE
+## S.nwrds.log            0.45927740   FALSE FALSE    FALSE            FALSE
+## A.nwrds.unq.log        0.55113288   FALSE FALSE    FALSE            FALSE
+## S.nwrds.unq.log        0.44396816   FALSE FALSE    FALSE            FALSE
+## S.nuppr.log            0.33680343   FALSE FALSE    FALSE            FALSE
+## A.nuppr.log            0.33680343   FALSE FALSE    FALSE            FALSE
+## A.npnct05.log          0.01530925    TRUE  TRUE     TRUE               NA
+## A.npnct10.log          0.01530925    TRUE  TRUE     TRUE               NA
+## A.npnct24.log          0.01530925    TRUE  TRUE     TRUE               NA
+## A.npnct28.log          0.01530925    TRUE  TRUE     TRUE               NA
+## A.npnct29.log          0.01530925    TRUE  TRUE     TRUE               NA
+## A.npnct31.log          0.01530925    TRUE  TRUE     TRUE               NA
+## A.npnct32.log          0.01530925    TRUE  TRUE     TRUE               NA
+## H.has.http             0.01530925    TRUE  TRUE     TRUE               NA
+## H.npnct10.log          0.01530925    TRUE  TRUE     TRUE               NA
+## H.npnct18.log          0.01530925    TRUE  TRUE     TRUE               NA
+## H.npnct19.log          0.01530925    TRUE  TRUE     TRUE               NA
+## H.npnct20.log          0.01530925    TRUE  TRUE     TRUE               NA
+## H.npnct23.log          0.01530925    TRUE  TRUE     TRUE               NA
+## H.npnct24.log          0.01530925    TRUE  TRUE     TRUE               NA
+## H.npnct25.log          0.01530925    TRUE  TRUE     TRUE               NA
+## H.npnct27.log          0.01530925    TRUE  TRUE     TRUE               NA
+## H.npnct28.log          0.01530925    TRUE  TRUE     TRUE               NA
+## H.npnct29.log          0.01530925    TRUE  TRUE     TRUE               NA
+## H.npnct31.log          0.01530925    TRUE  TRUE     TRUE               NA
+## H.npnct32.log          0.01530925    TRUE  TRUE     TRUE               NA
+## PubDate.year.fctr      0.01530925    TRUE  TRUE     TRUE               NA
+## S.has.http             0.01530925    TRUE  TRUE     TRUE               NA
+## S.npnct05.log          0.01530925    TRUE  TRUE     TRUE               NA
+## S.npnct10.log          0.01530925    TRUE  TRUE     TRUE               NA
+## S.npnct18.log          0.01530925    TRUE  TRUE     TRUE               NA
+## S.npnct19.log          0.01530925    TRUE  TRUE     TRUE               NA
+## S.npnct20.log          0.01530925    TRUE  TRUE     TRUE               NA
+## S.npnct24.log          0.01530925    TRUE  TRUE     TRUE               NA
+## S.npnct27.log          0.01530925    TRUE  TRUE     TRUE               NA
+## S.npnct28.log          0.01530925    TRUE  TRUE     TRUE               NA
+## S.npnct29.log          0.01530925    TRUE  TRUE     TRUE               NA
+## S.npnct31.log          0.01530925    TRUE  TRUE     TRUE               NA
+## S.npnct32.log          0.01530925    TRUE  TRUE     TRUE               NA
 ```
 
 ```r
+print(myplot_scatter(glb_feats_df, "percentUnique", "freqRatio", 
+                     colorcol_name="myNearZV", jitter=TRUE) + 
+          geom_point(aes(shape=nzv)) + xlim(-5, 25))
+```
+
+```
+## Warning in myplot_scatter(glb_feats_df, "percentUnique", "freqRatio",
+## colorcol_name = "myNearZV", : converting myNearZV to class:factor
+```
+
+```
+## Warning: Removed 10 rows containing missing values (geom_point).
+```
+
+```
+## Warning: Removed 10 rows containing missing values (geom_point).
+```
+
+```
+## Warning: Removed 10 rows containing missing values (geom_point).
+```
+
+![](NYTBlogs_txtfeat_files/figure-html/select.features-1.png) 
+
+```r
+print(subset(glb_feats_df, myNearZV))
+```
+
+```
+##                                  id         cor.y exclude.as.feat
+## S.npnct23.log         S.npnct23.log  2.760321e-02               0
+## S.npnct25.log         S.npnct25.log  2.760321e-02               0
+## A.npnct23.log         A.npnct23.log  1.537569e-02               0
+## A.npnct25.log         A.npnct25.log  1.537569e-02               0
+## H.npnct03.log         H.npnct03.log  9.533020e-03               0
+## A.npnct26.log         A.npnct26.log -9.890046e-19               0
+## H.npnct26.log         H.npnct26.log -9.890046e-19               0
+## S.npnct26.log         S.npnct26.log -9.890046e-19               0
+## A.npnct27.log         A.npnct27.log -5.547032e-03               0
+## A.npnct11.log         A.npnct11.log -5.547032e-03               0
+## H.npnct11.log         H.npnct11.log -5.547032e-03               0
+## H.npnct22.log         H.npnct22.log -5.547032e-03               0
+## S.npnct02.log         S.npnct02.log -5.547032e-03               0
+## S.npnct11.log         S.npnct11.log -5.547032e-03               0
+## A.npnct05.log         A.npnct05.log            NA               0
+## A.npnct10.log         A.npnct10.log            NA               0
+## A.npnct24.log         A.npnct24.log            NA               0
+## A.npnct28.log         A.npnct28.log            NA               0
+## A.npnct29.log         A.npnct29.log            NA               0
+## A.npnct31.log         A.npnct31.log            NA               0
+## A.npnct32.log         A.npnct32.log            NA               0
+## H.has.http               H.has.http            NA               0
+## H.npnct10.log         H.npnct10.log            NA               0
+## H.npnct18.log         H.npnct18.log            NA               0
+## H.npnct19.log         H.npnct19.log            NA               0
+## H.npnct20.log         H.npnct20.log            NA               0
+## H.npnct23.log         H.npnct23.log            NA               0
+## H.npnct24.log         H.npnct24.log            NA               0
+## H.npnct25.log         H.npnct25.log            NA               0
+## H.npnct27.log         H.npnct27.log            NA               0
+## H.npnct28.log         H.npnct28.log            NA               0
+## H.npnct29.log         H.npnct29.log            NA               0
+## H.npnct31.log         H.npnct31.log            NA               0
+## H.npnct32.log         H.npnct32.log            NA               0
+## PubDate.year.fctr PubDate.year.fctr            NA               0
+## S.has.http               S.has.http            NA               0
+## S.npnct05.log         S.npnct05.log            NA               0
+## S.npnct10.log         S.npnct10.log            NA               0
+## S.npnct18.log         S.npnct18.log            NA               0
+## S.npnct19.log         S.npnct19.log            NA               0
+## S.npnct20.log         S.npnct20.log            NA               0
+## S.npnct24.log         S.npnct24.log            NA               0
+## S.npnct27.log         S.npnct27.log            NA               0
+## S.npnct28.log         S.npnct28.log            NA               0
+## S.npnct29.log         S.npnct29.log            NA               0
+## S.npnct31.log         S.npnct31.log            NA               0
+## S.npnct32.log         S.npnct32.log            NA               0
+##                      cor.y.abs    cor.high.X freqRatio percentUnique
+## S.npnct23.log     2.760321e-02 A.npnct23.log  6531.000    0.03061849
+## S.npnct25.log     2.760321e-02          <NA>  6531.000    0.03061849
+## A.npnct23.log     1.537569e-02 A.npnct25.log  3264.500    0.04592774
+## A.npnct25.log     1.537569e-02          <NA>  3264.500    0.04592774
+## H.npnct03.log     9.533020e-03          <NA>  2176.333    0.03061849
+## A.npnct26.log     9.890046e-19          <NA>     0.000    0.01530925
+## H.npnct26.log     9.890046e-19          <NA>     0.000    0.01530925
+## S.npnct26.log     9.890046e-19          <NA>     0.000    0.01530925
+## A.npnct27.log     5.547032e-03          <NA>  6531.000    0.03061849
+## A.npnct11.log     5.547032e-03          <NA>  6531.000    0.03061849
+## H.npnct11.log     5.547032e-03          <NA>  6531.000    0.03061849
+## H.npnct22.log     5.547032e-03          <NA>  6531.000    0.03061849
+## S.npnct02.log     5.547032e-03          <NA>  6531.000    0.03061849
+## S.npnct11.log     5.547032e-03          <NA>  6531.000    0.03061849
+## A.npnct05.log               NA          <NA>     0.000    0.01530925
+## A.npnct10.log               NA          <NA>     0.000    0.01530925
+## A.npnct24.log               NA          <NA>     0.000    0.01530925
+## A.npnct28.log               NA          <NA>     0.000    0.01530925
+## A.npnct29.log               NA          <NA>     0.000    0.01530925
+## A.npnct31.log               NA          <NA>     0.000    0.01530925
+## A.npnct32.log               NA          <NA>     0.000    0.01530925
+## H.has.http                  NA          <NA>     0.000    0.01530925
+## H.npnct10.log               NA          <NA>     0.000    0.01530925
+## H.npnct18.log               NA          <NA>     0.000    0.01530925
+## H.npnct19.log               NA          <NA>     0.000    0.01530925
+## H.npnct20.log               NA          <NA>     0.000    0.01530925
+## H.npnct23.log               NA          <NA>     0.000    0.01530925
+## H.npnct24.log               NA          <NA>     0.000    0.01530925
+## H.npnct25.log               NA          <NA>     0.000    0.01530925
+## H.npnct27.log               NA          <NA>     0.000    0.01530925
+## H.npnct28.log               NA          <NA>     0.000    0.01530925
+## H.npnct29.log               NA          <NA>     0.000    0.01530925
+## H.npnct31.log               NA          <NA>     0.000    0.01530925
+## H.npnct32.log               NA          <NA>     0.000    0.01530925
+## PubDate.year.fctr           NA          <NA>     0.000    0.01530925
+## S.has.http                  NA          <NA>     0.000    0.01530925
+## S.npnct05.log               NA          <NA>     0.000    0.01530925
+## S.npnct10.log               NA          <NA>     0.000    0.01530925
+## S.npnct18.log               NA          <NA>     0.000    0.01530925
+## S.npnct19.log               NA          <NA>     0.000    0.01530925
+## S.npnct20.log               NA          <NA>     0.000    0.01530925
+## S.npnct24.log               NA          <NA>     0.000    0.01530925
+## S.npnct27.log               NA          <NA>     0.000    0.01530925
+## S.npnct28.log               NA          <NA>     0.000    0.01530925
+## S.npnct29.log               NA          <NA>     0.000    0.01530925
+## S.npnct31.log               NA          <NA>     0.000    0.01530925
+## S.npnct32.log               NA          <NA>     0.000    0.01530925
+##                   zeroVar  nzv myNearZV is.cor.y.abs.low
+## S.npnct23.log       FALSE TRUE     TRUE            FALSE
+## S.npnct25.log       FALSE TRUE     TRUE            FALSE
+## A.npnct23.log       FALSE TRUE     TRUE            FALSE
+## A.npnct25.log       FALSE TRUE     TRUE            FALSE
+## H.npnct03.log       FALSE TRUE     TRUE            FALSE
+## A.npnct26.log        TRUE TRUE     TRUE             TRUE
+## H.npnct26.log        TRUE TRUE     TRUE             TRUE
+## S.npnct26.log        TRUE TRUE     TRUE             TRUE
+## A.npnct27.log       FALSE TRUE     TRUE             TRUE
+## A.npnct11.log       FALSE TRUE     TRUE             TRUE
+## H.npnct11.log       FALSE TRUE     TRUE             TRUE
+## H.npnct22.log       FALSE TRUE     TRUE             TRUE
+## S.npnct02.log       FALSE TRUE     TRUE             TRUE
+## S.npnct11.log       FALSE TRUE     TRUE             TRUE
+## A.npnct05.log        TRUE TRUE     TRUE               NA
+## A.npnct10.log        TRUE TRUE     TRUE               NA
+## A.npnct24.log        TRUE TRUE     TRUE               NA
+## A.npnct28.log        TRUE TRUE     TRUE               NA
+## A.npnct29.log        TRUE TRUE     TRUE               NA
+## A.npnct31.log        TRUE TRUE     TRUE               NA
+## A.npnct32.log        TRUE TRUE     TRUE               NA
+## H.has.http           TRUE TRUE     TRUE               NA
+## H.npnct10.log        TRUE TRUE     TRUE               NA
+## H.npnct18.log        TRUE TRUE     TRUE               NA
+## H.npnct19.log        TRUE TRUE     TRUE               NA
+## H.npnct20.log        TRUE TRUE     TRUE               NA
+## H.npnct23.log        TRUE TRUE     TRUE               NA
+## H.npnct24.log        TRUE TRUE     TRUE               NA
+## H.npnct25.log        TRUE TRUE     TRUE               NA
+## H.npnct27.log        TRUE TRUE     TRUE               NA
+## H.npnct28.log        TRUE TRUE     TRUE               NA
+## H.npnct29.log        TRUE TRUE     TRUE               NA
+## H.npnct31.log        TRUE TRUE     TRUE               NA
+## H.npnct32.log        TRUE TRUE     TRUE               NA
+## PubDate.year.fctr    TRUE TRUE     TRUE               NA
+## S.has.http           TRUE TRUE     TRUE               NA
+## S.npnct05.log        TRUE TRUE     TRUE               NA
+## S.npnct10.log        TRUE TRUE     TRUE               NA
+## S.npnct18.log        TRUE TRUE     TRUE               NA
+## S.npnct19.log        TRUE TRUE     TRUE               NA
+## S.npnct20.log        TRUE TRUE     TRUE               NA
+## S.npnct24.log        TRUE TRUE     TRUE               NA
+## S.npnct27.log        TRUE TRUE     TRUE               NA
+## S.npnct28.log        TRUE TRUE     TRUE               NA
+## S.npnct29.log        TRUE TRUE     TRUE               NA
+## S.npnct31.log        TRUE TRUE     TRUE               NA
+## S.npnct32.log        TRUE TRUE     TRUE               NA
+```
+
+```r
+glb_entity_df <- glb_entity_df[, setdiff(names(glb_entity_df), 
+                                         subset(glb_feats_df, myNearZV)$id)]
+
 glb_chunks_df <- myadd_chunk(glb_chunks_df, "partition.data.training", major.inc=TRUE)
 ```
 
 ```
 ##                     label step_major step_minor     bgn     end elapsed
-## 7         select.features          4          0 148.235 175.347  27.112
-## 8 partition.data.training          5          0 175.348      NA      NA
+## 7         select.features          4          0 147.378 188.221  40.843
+## 8 partition.data.training          5          0 188.222      NA      NA
 ```
 
 ## Step `5.0: partition data training`
@@ -4389,7 +4698,7 @@ print("glb_feats_df:");   print(dim(glb_feats_df))
 ```
 
 ```
-## [1] 194  10
+## [1] 194  11
 ```
 
 ```r
@@ -4420,14 +4729,14 @@ print(subset(glb_feats_df, rsp_var_raw | rsp_var | id_var))
 ## Popular           Popular 1.00000000            TRUE 1.00000000       <NA>
 ## UniqueID         UniqueID 0.01182492            TRUE 0.01182492       <NA>
 ## Popular.fctr Popular.fctr         NA            TRUE         NA       <NA>
-##              freqRatio percentUnique zeroVar   nzv is.cor.y.abs.low
-## Popular       4.976212    0.03061849   FALSE FALSE            FALSE
-## UniqueID      1.000000  100.00000000   FALSE FALSE             TRUE
-## Popular.fctr        NA            NA      NA    NA               NA
-##              rsp_var_raw id_var rsp_var
-## Popular             TRUE     NA      NA
-## UniqueID           FALSE   TRUE      NA
-## Popular.fctr          NA     NA    TRUE
+##              freqRatio percentUnique zeroVar   nzv myNearZV
+## Popular       4.976212    0.03061849   FALSE FALSE    FALSE
+## UniqueID      1.000000  100.00000000   FALSE FALSE    FALSE
+## Popular.fctr        NA            NA      NA    NA       NA
+##              is.cor.y.abs.low rsp_var_raw id_var rsp_var
+## Popular                 FALSE        TRUE     NA      NA
+## UniqueID                FALSE       FALSE   TRUE      NA
+## Popular.fctr               NA          NA     NA    TRUE
 ```
 
 ```r
@@ -4443,7 +4752,22 @@ print(setdiff(glb_feats_df$id, names(glb_entity_df)))
 ```
 
 ```
-## character(0)
+##  [1] "S.npnct23.log"     "S.npnct25.log"     "A.npnct23.log"    
+##  [4] "A.npnct25.log"     "H.npnct03.log"     "A.npnct26.log"    
+##  [7] "H.npnct26.log"     "S.npnct26.log"     "A.npnct27.log"    
+## [10] "A.npnct11.log"     "H.npnct11.log"     "H.npnct22.log"    
+## [13] "S.npnct02.log"     "S.npnct11.log"     "A.npnct05.log"    
+## [16] "A.npnct10.log"     "A.npnct24.log"     "A.npnct28.log"    
+## [19] "A.npnct29.log"     "A.npnct31.log"     "A.npnct32.log"    
+## [22] "H.has.http"        "H.npnct10.log"     "H.npnct18.log"    
+## [25] "H.npnct19.log"     "H.npnct20.log"     "H.npnct23.log"    
+## [28] "H.npnct24.log"     "H.npnct25.log"     "H.npnct27.log"    
+## [31] "H.npnct28.log"     "H.npnct29.log"     "H.npnct31.log"    
+## [34] "H.npnct32.log"     "PubDate.year.fctr" "S.has.http"       
+## [37] "S.npnct05.log"     "S.npnct10.log"     "S.npnct18.log"    
+## [40] "S.npnct19.log"     "S.npnct20.log"     "S.npnct24.log"    
+## [43] "S.npnct27.log"     "S.npnct28.log"     "S.npnct29.log"    
+## [46] "S.npnct31.log"     "S.npnct32.log"
 ```
 
 ```r
@@ -4476,7 +4800,7 @@ print("glb_entity_df: "); print(dim(glb_entity_df))
 ```
 
 ```
-## [1] 8402  205
+## [1] 8402  158
 ```
 
 ```r
@@ -4567,8 +4891,8 @@ glb_chunks_df <- myadd_chunk(glb_chunks_df, "fit.models", major.inc=TRUE)
 
 ```
 ##                     label step_major step_minor     bgn     end elapsed
-## 8 partition.data.training          5          0 175.348 176.476   1.128
-## 9              fit.models          6          0 176.477      NA      NA
+## 8 partition.data.training          5          0 188.222 189.589   1.367
+## 9              fit.models          6          0 189.590      NA      NA
 ```
 
 ## Step `6.0: fit models`
@@ -4705,7 +5029,7 @@ ret_lst <- myfit_mdl(model_id="MFO",
 ##            model_id  model_method  feats max.nTuningRuns
 ## 1 MFO.myMFO_classfr myMFO_classfr .rnorm               0
 ##   min.elapsedtime.everything min.elapsedtime.final max.auc.fit
-## 1                      0.673                 0.003         0.5
+## 1                       0.87                 0.003         0.5
 ##   opt.prob.threshold.fit max.f.score.fit max.Accuracy.fit
 ## 1                    0.5               0        0.8326257
 ##   max.AccuracyLower.fit max.AccuracyUpper.fit max.Kappa.fit max.auc.OOB
@@ -4813,7 +5137,7 @@ if (glb_is_classification)
 ##                  model_id     model_method  feats max.nTuningRuns
 ## 1 Random.myrandom_classfr myrandom_classfr .rnorm               0
 ##   min.elapsedtime.everything min.elapsedtime.final max.auc.fit
-## 1                      0.338                 0.001   0.5007516
+## 1                      0.341                 0.002   0.5007516
 ##   opt.prob.threshold.fit max.f.score.fit max.Accuracy.fit
 ## 1                    0.1       0.2867534        0.1673743
 ##   max.AccuracyLower.fit max.AccuracyUpper.fit max.Kappa.fit max.auc.OOB
@@ -4906,7 +5230,7 @@ ret_lst <- myfit_mdl(model_id="Max.cor.Y.cv.0",
 ##               model_id model_method       feats max.nTuningRuns
 ## 1 Max.cor.Y.cv.0.rpart        rpart A.nuppr.log               0
 ##   min.elapsedtime.everything min.elapsedtime.final max.auc.fit
-## 1                      0.659                 0.054         0.5
+## 1                      0.688                 0.053         0.5
 ##   opt.prob.threshold.fit max.f.score.fit max.Accuracy.fit
 ## 1                    0.5               0        0.8326257
 ##   max.AccuracyLower.fit max.AccuracyUpper.fit max.Kappa.fit max.auc.OOB
@@ -4986,7 +5310,7 @@ ret_lst <- myfit_mdl(model_id="Max.cor.Y.cv.0.cp.0",
 ##                    model_id model_method       feats max.nTuningRuns
 ## 1 Max.cor.Y.cv.0.cp.0.rpart        rpart A.nuppr.log               0
 ##   min.elapsedtime.everything min.elapsedtime.final max.auc.fit
-## 1                      0.595                 0.053         0.5
+## 1                      0.607                 0.056         0.5
 ##   opt.prob.threshold.fit max.f.score.fit max.Accuracy.fit
 ## 1                    0.5               0        0.8326257
 ##   max.AccuracyLower.fit max.AccuracyUpper.fit max.Kappa.fit max.auc.OOB
@@ -5011,12 +5335,6 @@ ret_lst <- myfit_mdl(model_id="Max.cor.Y",
 ```
 ## [1] "fitting model: Max.cor.Y.rpart"
 ## [1] "    indep_vars: A.nuppr.log"
-## + Fold1: cp=0 
-## - Fold1: cp=0 
-## + Fold2: cp=0 
-## - Fold2: cp=0 
-## + Fold3: cp=0 
-## - Fold3: cp=0 
 ## Aggregating results
 ## Fitting final model on full training set
 ```
@@ -5071,7 +5389,7 @@ ret_lst <- myfit_mdl(model_id="Max.cor.Y",
 ##          model_id model_method       feats max.nTuningRuns
 ## 1 Max.cor.Y.rpart        rpart A.nuppr.log               1
 ##   min.elapsedtime.everything min.elapsedtime.final max.auc.fit
-## 1                      1.196                 0.053         0.5
+## 1                      1.268                 0.056         0.5
 ##   opt.prob.threshold.fit max.f.score.fit max.Accuracy.fit
 ## 1                    0.5               0        0.8326258
 ##   max.AccuracyLower.fit max.AccuracyUpper.fit max.Kappa.fit max.auc.OOB
@@ -5099,12 +5417,6 @@ ret_lst <- myfit_mdl(model_id="Max.cor.Y",
 ```
 ## [1] "fitting model: Max.cor.Y.glm"
 ## [1] "    indep_vars: A.nuppr.log"
-## + Fold1: parameter=none 
-## - Fold1: parameter=none 
-## + Fold2: parameter=none 
-## - Fold2: parameter=none 
-## + Fold3: parameter=none 
-## - Fold3: parameter=none 
 ## Aggregating results
 ## Fitting final model on full training set
 ```
@@ -5214,7 +5526,7 @@ ret_lst <- myfit_mdl(model_id="Max.cor.Y",
 ##        model_id model_method       feats max.nTuningRuns
 ## 1 Max.cor.Y.glm          glm A.nuppr.log               1
 ##   min.elapsedtime.everything min.elapsedtime.final max.auc.fit
-## 1                      1.122                 0.077   0.7073742
+## 1                      1.224                 0.079   0.7073742
 ##   opt.prob.threshold.fit max.f.score.fit max.Accuracy.fit
 ## 1                    0.2       0.3986014        0.8324022
 ##   max.AccuracyLower.fit max.AccuracyUpper.fit max.Kappa.fit max.auc.OOB
@@ -5249,49 +5561,7 @@ if (length(int_feats <- setdiff(unique(glb_feats_df$cor.high.X), NA)) > 0) {
 
 ```
 ## [1] "fitting model: Interact.High.cor.Y.glm"
-## [1] "    indep_vars: A.nuppr.log, A.nuppr.log:A.npnct21.log, A.nuppr.log:H.npnct09.log, A.nuppr.log:H.npnct17.log, A.nuppr.log:S.can.log, A.nuppr.log:S.npnct01.log, A.nuppr.log:S.npnct25.log, A.nuppr.log:S.make.log, A.nuppr.log:S.npnct22.log, A.nuppr.log:S.presid.log, A.nuppr.log:S.npnct06.log, A.nuppr.log:S.take.log, A.nuppr.log:S.new.log, A.nuppr.log:S.npnct13.log, A.nuppr.log:S.npnct30.log, A.nuppr.log:S.day.log, A.nuppr.log:S.show.log, A.nuppr.log:S.report.log, A.nuppr.log:S.year.log, A.nuppr.log:S.share.log, A.nuppr.log:S.compani.log, A.nuppr.log:A.npnct14.log, A.nuppr.log:S.first.log, A.nuppr.log:S.time.log, A.nuppr.log:S.articl.log, A.nuppr.log:S.will.log, A.nuppr.log:S.newyork.log, A.nuppr.log:S.npnct04.log, A.nuppr.log:H.npnct15.log, A.nuppr.log:S.intern.log, A.nuppr.log:S.npnct16.log, A.nuppr.log:A.intern.log, A.nuppr.log:H.week.log, A.nuppr.log:S.fashion.log, A.nuppr.log:S.week.log, A.nuppr.log:S.npnct12.log, A.nuppr.log:S.ndgts.log, A.nuppr.log:H.nuppr.log, A.nuppr.log:A.nchrs.log, A.nuppr.log:A.nwrds.log, A.nuppr.log:S.nchrs.log, A.nuppr.log:S.nuppr.log"
-## + Fold1: parameter=none
-```
-
-```
-## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
-```
-
-```
-## Warning in predict.lm(object, newdata, se.fit, scale = 1, type =
-## ifelse(type == : prediction from a rank-deficient fit may be misleading
-```
-
-```
-## - Fold1: parameter=none 
-## + Fold2: parameter=none
-```
-
-```
-## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
-```
-
-```
-## Warning in predict.lm(object, newdata, se.fit, scale = 1, type =
-## ifelse(type == : prediction from a rank-deficient fit may be misleading
-```
-
-```
-## - Fold2: parameter=none 
-## + Fold3: parameter=none
-```
-
-```
-## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
-```
-
-```
-## Warning in predict.lm(object, newdata, se.fit, scale = 1, type =
-## ifelse(type == : prediction from a rank-deficient fit may be misleading
-```
-
-```
-## - Fold3: parameter=none 
+## [1] "    indep_vars: A.nuppr.log, A.nuppr.log:A.npnct21.log, A.nuppr.log:H.npnct09.log, A.nuppr.log:H.npnct17.log, A.nuppr.log:S.can.log, A.nuppr.log:S.npnct01.log, A.nuppr.log:A.npnct23.log, A.nuppr.log:S.make.log, A.nuppr.log:A.npnct25.log, A.nuppr.log:S.npnct07.log, A.nuppr.log:A.npnct19.log, A.nuppr.log:S.npnct03.log, A.nuppr.log:A.npnct18.log, A.nuppr.log:A.npnct20.log, A.nuppr.log:S.has.year.colon, A.nuppr.log:S.npnct22.log, A.nuppr.log:S.presid.log, A.nuppr.log:S.npnct06.log, A.nuppr.log:A.npnct02.log, A.nuppr.log:S.take.log, A.nuppr.log:S.new.log, A.nuppr.log:S.npnct13.log, A.nuppr.log:S.npnct30.log, A.nuppr.log:S.day.log, A.nuppr.log:S.show.log, A.nuppr.log:S.report.log, A.nuppr.log:S.year.log, A.nuppr.log:S.share.log, A.nuppr.log:S.compani.log, A.nuppr.log:A.npnct14.log, A.nuppr.log:S.first.log, A.nuppr.log:S.time.log, A.nuppr.log:S.articl.log, A.nuppr.log:S.will.log, A.nuppr.log:S.newyork.log, A.nuppr.log:S.npnct04.log, A.nuppr.log:H.npnct15.log, A.nuppr.log:S.intern.log, A.nuppr.log:S.npnct16.log, A.nuppr.log:A.intern.log, A.nuppr.log:H.week.log, A.nuppr.log:S.fashion.log, A.nuppr.log:S.week.log, A.nuppr.log:S.npnct12.log, A.nuppr.log:S.ndgts.log, A.nuppr.log:H.nuppr.log, A.nuppr.log:A.nchrs.log, A.nuppr.log:A.nwrds.log, A.nuppr.log:S.nchrs.log, A.nuppr.log:S.nuppr.log"
 ## Aggregating results
 ## Fitting final model on full training set
 ```
@@ -5303,67 +5573,83 @@ if (length(int_feats <- setdiff(unique(glb_feats_df$cor.high.X), NA)) > 0) {
 ![](NYTBlogs_txtfeat_files/figure-html/fit.models_0-14.png) ![](NYTBlogs_txtfeat_files/figure-html/fit.models_0-15.png) ![](NYTBlogs_txtfeat_files/figure-html/fit.models_0-16.png) 
 
 ```
+## Warning in sqrt(crit * p * (1 - hh)/hh): NaNs produced
+```
+
+```
+## Warning in sqrt(crit * p * (1 - hh)/hh): NaNs produced
+```
+
+```
 ## 
 ## Call:
 ## NULL
 ## 
 ## Deviance Residuals: 
 ##     Min       1Q   Median       3Q      Max  
-## -1.6831  -0.6735  -0.3803  -0.1007   3.1747  
+## -1.7101  -0.6726  -0.3775  -0.0964   3.1776  
 ## 
-## Coefficients: (2 not defined because of singularities)
-##                               Estimate Std. Error z value Pr(>|z|)    
-## (Intercept)                   -0.51755    0.31303  -1.653 0.098259 .  
-## A.nuppr.log                    1.58694    0.73421   2.161 0.030662 *  
-## `A.nuppr.log:A.npnct21.log`    0.48451    0.14058   3.447 0.000568 ***
-## `A.nuppr.log:H.npnct09.log`    0.59295    0.35062   1.691 0.090812 .  
-## `A.nuppr.log:H.npnct17.log`    0.75107    0.25976   2.891 0.003836 ** 
-## `A.nuppr.log:S.can.log`        0.16811    0.24241   0.693 0.488010    
-## `A.nuppr.log:S.npnct01.log`    0.86097    0.46656   1.845 0.064986 .  
-## `A.nuppr.log:S.npnct25.log`         NA         NA      NA       NA    
-## `A.nuppr.log:S.make.log`       0.19167    0.21838   0.878 0.380128    
-## `A.nuppr.log:S.npnct22.log`  -15.22448 2878.71441  -0.005 0.995780    
-## `A.nuppr.log:S.presid.log`    -0.07309    0.20738  -0.352 0.724517    
-## `A.nuppr.log:S.npnct06.log`   -0.70473    0.83971  -0.839 0.401328    
-## `A.nuppr.log:S.take.log`      -0.39937    0.31344  -1.274 0.202598    
-## `A.nuppr.log:S.new.log`       -0.19679    0.17118  -1.150 0.250301    
-## `A.nuppr.log:S.npnct13.log`   -0.04293    0.10057  -0.427 0.669486    
-## `A.nuppr.log:S.npnct30.log`   -8.49555  618.44969  -0.014 0.989040    
-## `A.nuppr.log:S.day.log`       -0.51422    0.34671  -1.483 0.138034    
-## `A.nuppr.log:S.show.log`      -0.72107    0.37336  -1.931 0.053447 .  
-## `A.nuppr.log:S.report.log`    -0.83927    0.34820  -2.410 0.015939 *  
-## `A.nuppr.log:S.year.log`      -0.14977    0.24361  -0.615 0.538699    
-## `A.nuppr.log:S.share.log`     -0.88180    0.37947  -2.324 0.020137 *  
-## `A.nuppr.log:S.compani.log`   -0.62160    0.25841  -2.406 0.016150 *  
-## `A.nuppr.log:A.npnct14.log`    0.73332    0.10767   6.811 9.72e-12 ***
-## `A.nuppr.log:S.first.log`     -0.37160    0.30362  -1.224 0.220997    
-## `A.nuppr.log:S.time.log`      -0.21555    0.19891  -1.084 0.278522    
-## `A.nuppr.log:S.articl.log`    -1.49200    0.48351  -3.086 0.002030 ** 
-## `A.nuppr.log:S.will.log`      -0.58456    0.19448  -3.006 0.002650 ** 
-## `A.nuppr.log:S.newyork.log`    0.43449    0.19000   2.287 0.022208 *  
-## `A.nuppr.log:S.npnct04.log`   -1.05434    0.43307  -2.435 0.014910 *  
-## `A.nuppr.log:H.npnct15.log`  -27.28745  897.98766  -0.030 0.975758    
-## `A.nuppr.log:S.intern.log`    -1.22096    0.56865  -2.147 0.031784 *  
-## `A.nuppr.log:S.npnct16.log`   -0.30827    0.21665  -1.423 0.154767    
-## `A.nuppr.log:A.intern.log`          NA         NA      NA       NA    
-## `A.nuppr.log:H.week.log`      -1.47194    0.66636  -2.209 0.027179 *  
-## `A.nuppr.log:S.fashion.log`  -30.13742  707.57791  -0.043 0.966026    
-## `A.nuppr.log:S.week.log`      -0.62998    0.27246  -2.312 0.020766 *  
-## `A.nuppr.log:S.npnct12.log`   -0.02261    0.06733  -0.336 0.736995    
-## `A.nuppr.log:S.ndgts.log`     -0.26268    0.07520  -3.493 0.000477 ***
-## `A.nuppr.log:H.nuppr.log`     -0.44239    0.09373  -4.720 2.36e-06 ***
-## `A.nuppr.log:A.nchrs.log`     -3.21628    3.16370  -1.017 0.309333    
-## `A.nuppr.log:A.nwrds.log`     -0.57056    0.29004  -1.967 0.049161 *  
-## `A.nuppr.log:S.nchrs.log`      3.30924    3.16954   1.044 0.296451    
-## `A.nuppr.log:S.nuppr.log`     -0.49206    0.18678  -2.634 0.008429 ** 
+## Coefficients: (3 not defined because of singularities)
+##                                  Estimate Std. Error z value Pr(>|z|)    
+## (Intercept)                    -5.117e-01  3.132e-01  -1.634 0.102323    
+## A.nuppr.log                     1.619e+00  7.353e-01   2.202 0.027681 *  
+## `A.nuppr.log:A.npnct21.log`     5.276e-01  1.410e-01   3.741 0.000183 ***
+## `A.nuppr.log:H.npnct09.log`     6.130e-01  3.533e-01   1.735 0.082723 .  
+## `A.nuppr.log:H.npnct17.log`     7.557e-01  2.601e-01   2.905 0.003674 ** 
+## `A.nuppr.log:S.can.log`         1.246e-01  2.420e-01   0.515 0.606429    
+## `A.nuppr.log:S.npnct01.log`     8.649e-01  4.669e-01   1.852 0.063960 .  
+## `A.nuppr.log:A.npnct23.log`    -9.126e+00  3.927e+03  -0.002 0.998146    
+## `A.nuppr.log:S.make.log`        1.855e-01  2.185e-01   0.849 0.396110    
+## `A.nuppr.log:A.npnct25.log`            NA         NA      NA       NA    
+## `A.nuppr.log:S.npnct07.log`    -3.439e+01  5.941e+03  -0.006 0.995382    
+## `A.nuppr.log:A.npnct19.log`     9.215e+00  1.801e+05   0.000 0.999959    
+## `A.nuppr.log:S.npnct03.log`    -1.172e+01  2.974e+03  -0.004 0.996855    
+## `A.nuppr.log:A.npnct18.log`    -1.628e+01  1.126e+05   0.000 0.999885    
+## `A.nuppr.log:A.npnct20.log`            NA         NA      NA       NA    
+## `A.nuppr.log:S.has.year.colon` -1.105e+01  1.621e+03  -0.007 0.994559    
+## `A.nuppr.log:S.npnct22.log`    -1.522e+01  2.877e+03  -0.005 0.995779    
+## `A.nuppr.log:S.presid.log`     -8.079e-02  2.072e-01  -0.390 0.696686    
+## `A.nuppr.log:S.npnct06.log`    -6.995e-01  8.398e-01  -0.833 0.404904    
+## `A.nuppr.log:A.npnct02.log`    -1.135e+01  1.495e+04  -0.001 0.999394    
+## `A.nuppr.log:S.take.log`       -4.029e-01  3.136e-01  -1.285 0.198814    
+## `A.nuppr.log:S.new.log`        -1.961e-01  1.713e-01  -1.145 0.252311    
+## `A.nuppr.log:S.npnct13.log`    -4.416e-02  1.006e-01  -0.439 0.660554    
+## `A.nuppr.log:S.npnct30.log`    -8.502e+00  6.212e+02  -0.014 0.989081    
+## `A.nuppr.log:S.day.log`        -5.125e-01  3.470e-01  -1.477 0.139701    
+## `A.nuppr.log:S.show.log`       -7.227e-01  3.737e-01  -1.934 0.053096 .  
+## `A.nuppr.log:S.report.log`     -8.363e-01  3.485e-01  -2.400 0.016414 *  
+## `A.nuppr.log:S.year.log`       -1.535e-01  2.436e-01  -0.630 0.528568    
+## `A.nuppr.log:S.share.log`      -8.884e-01  3.811e-01  -2.331 0.019755 *  
+## `A.nuppr.log:S.compani.log`    -6.194e-01  2.586e-01  -2.396 0.016594 *  
+## `A.nuppr.log:A.npnct14.log`     7.406e-01  1.082e-01   6.846 7.59e-12 ***
+## `A.nuppr.log:S.first.log`      -3.713e-01  3.040e-01  -1.221 0.221974    
+## `A.nuppr.log:S.time.log`       -2.135e-01  1.994e-01  -1.071 0.284092    
+## `A.nuppr.log:S.articl.log`     -1.510e+00  4.841e-01  -3.120 0.001808 ** 
+## `A.nuppr.log:S.will.log`       -5.920e-01  1.946e-01  -3.042 0.002354 ** 
+## `A.nuppr.log:S.newyork.log`     4.326e-01  1.904e-01   2.272 0.023084 *  
+## `A.nuppr.log:S.npnct04.log`    -1.062e+00  4.332e-01  -2.451 0.014232 *  
+## `A.nuppr.log:H.npnct15.log`    -2.727e+01  8.975e+02  -0.030 0.975759    
+## `A.nuppr.log:S.intern.log`     -1.226e+00  5.691e-01  -2.153 0.031280 *  
+## `A.nuppr.log:S.npnct16.log`    -2.997e-01  2.168e-01  -1.382 0.166881    
+## `A.nuppr.log:A.intern.log`             NA         NA      NA       NA    
+## `A.nuppr.log:H.week.log`       -1.488e+00  6.674e-01  -2.230 0.025728 *  
+## `A.nuppr.log:S.fashion.log`    -3.015e+01  7.075e+02  -0.043 0.966006    
+## `A.nuppr.log:S.week.log`       -6.176e-01  2.725e-01  -2.266 0.023421 *  
+## `A.nuppr.log:S.npnct12.log`    -2.600e-02  6.739e-02  -0.386 0.699632    
+## `A.nuppr.log:S.ndgts.log`      -2.579e-01  7.543e-02  -3.419 0.000629 ***
+## `A.nuppr.log:H.nuppr.log`      -4.571e-01  9.393e-02  -4.866 1.14e-06 ***
+## `A.nuppr.log:A.nchrs.log`       5.276e-02  2.794e+00   0.019 0.984933    
+## `A.nuppr.log:A.nwrds.log`      -5.774e-01  2.906e-01  -1.987 0.046950 *  
+## `A.nuppr.log:S.nchrs.log`       4.078e-02  2.787e+00   0.015 0.988328    
+## `A.nuppr.log:S.nuppr.log`      -4.910e-01  1.868e-01  -2.628 0.008587 ** 
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ## (Dispersion parameter for binomial family taken to be 1)
 ## 
 ##     Null deviance: 4042.7  on 4474  degrees of freedom
-## Residual deviance: 3337.3  on 4434  degrees of freedom
-## AIC: 3419.3
+## Residual deviance: 3328.7  on 4427  degrees of freedom
+## AIC: 3424.7
 ## 
 ## Number of Fisher Scoring iterations: 18
 ## 
@@ -5385,11 +5671,11 @@ if (length(int_feats <- setdiff(unique(glb_feats_df$cor.high.X), NA)) > 0) {
 ```
 ##    threshold    f.score
 ## 1        0.0 0.28675345
-## 2        0.1 0.39734300
-## 3        0.2 0.45756458
-## 4        0.3 0.46658851
-## 5        0.4 0.35462345
-## 6        0.5 0.12546125
+## 2        0.1 0.39842567
+## 3        0.2 0.45857260
+## 4        0.3 0.46666667
+## 5        0.4 0.36278195
+## 6        0.5 0.13480392
 ## 7        0.6 0.01055409
 ## 8        0.7 0.00000000
 ## 9        0.8 0.00000000
@@ -5400,19 +5686,19 @@ if (length(int_feats <- setdiff(unique(glb_feats_df$cor.high.X), NA)) > 0) {
 ```
 ## [1] "Classifier Probability Threshold: 0.3000 to maximize f.score.fit"
 ##   Popular.fctr Popular.fctr.predict.Interact.High.cor.Y.glm.N
-## 1            N                                           3167
-## 2            Y                                            351
+## 1            N                                           3164
+## 2            Y                                            350
 ##   Popular.fctr.predict.Interact.High.cor.Y.glm.Y
-## 1                                            559
-## 2                                            398
+## 1                                            562
+## 2                                            399
 ##          Prediction
 ## Reference    N    Y
-##         N 3167  559
-##         Y  351  398
+##         N 3164  562
+##         Y  350  399
 ##       Accuracy          Kappa  AccuracyLower  AccuracyUpper   AccuracyNull 
-##   7.966480e-01   3.432664e-01   7.845519e-01   8.083558e-01   8.326257e-01 
+##   7.962011e-01   3.430846e-01   7.840956e-01   8.079188e-01   8.326257e-01 
 ## AccuracyPValue  McnemarPValue 
-##   1.000000e+00   6.791106e-12 
+##   1.000000e+00   2.810100e-12 
 ## [1] "    calling mypredict_mdl for OOB:"
 ```
 
@@ -5431,11 +5717,11 @@ if (length(int_feats <- setdiff(unique(glb_feats_df$cor.high.X), NA)) > 0) {
 ```
 ##    threshold    f.score
 ## 1        0.0 0.28654727
-## 2        0.1 0.39043825
-## 3        0.2 0.45036765
-## 4        0.3 0.45956354
-## 5        0.4 0.33884298
-## 6        0.5 0.10840108
+## 2        0.1 0.39014647
+## 3        0.2 0.44770642
+## 4        0.3 0.45210728
+## 5        0.4 0.33877551
+## 6        0.5 0.11320755
 ## 7        0.6 0.03418803
 ## 8        0.7 0.01156069
 ## 9        0.8 0.00000000
@@ -5448,35 +5734,35 @@ if (length(int_feats <- setdiff(unique(glb_feats_df$cor.high.X), NA)) > 0) {
 ```
 ## [1] "Classifier Probability Threshold: 0.3000 to maximize f.score.OOB"
 ##   Popular.fctr Popular.fctr.predict.Interact.High.cor.Y.glm.N
-## 1            N                                           1457
-## 2            Y                                            165
+## 1            N                                           1451
+## 2            Y                                            167
 ##   Popular.fctr.predict.Interact.High.cor.Y.glm.Y
-## 1                                            256
-## 2                                            179
+## 1                                            262
+## 2                                            177
 ##          Prediction
 ## Reference    N    Y
-##         N 1457  256
-##         Y  165  179
+##         N 1451  262
+##         Y  167  177
 ##       Accuracy          Kappa  AccuracyLower  AccuracyUpper   AccuracyNull 
-##   7.953330e-01   3.354449e-01   7.772394e-01   8.125808e-01   8.327662e-01 
+##   7.914439e-01   3.256506e-01   7.732343e-01   8.088189e-01   8.327662e-01 
 ## AccuracyPValue  McnemarPValue 
-##   9.999959e-01   1.152783e-05 
+##   9.999995e-01   5.669267e-06 
 ##                  model_id model_method
 ## 1 Interact.High.cor.Y.glm          glm
-##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   feats
-## 1 A.nuppr.log, A.nuppr.log:A.npnct21.log, A.nuppr.log:H.npnct09.log, A.nuppr.log:H.npnct17.log, A.nuppr.log:S.can.log, A.nuppr.log:S.npnct01.log, A.nuppr.log:S.npnct25.log, A.nuppr.log:S.make.log, A.nuppr.log:S.npnct22.log, A.nuppr.log:S.presid.log, A.nuppr.log:S.npnct06.log, A.nuppr.log:S.take.log, A.nuppr.log:S.new.log, A.nuppr.log:S.npnct13.log, A.nuppr.log:S.npnct30.log, A.nuppr.log:S.day.log, A.nuppr.log:S.show.log, A.nuppr.log:S.report.log, A.nuppr.log:S.year.log, A.nuppr.log:S.share.log, A.nuppr.log:S.compani.log, A.nuppr.log:A.npnct14.log, A.nuppr.log:S.first.log, A.nuppr.log:S.time.log, A.nuppr.log:S.articl.log, A.nuppr.log:S.will.log, A.nuppr.log:S.newyork.log, A.nuppr.log:S.npnct04.log, A.nuppr.log:H.npnct15.log, A.nuppr.log:S.intern.log, A.nuppr.log:S.npnct16.log, A.nuppr.log:A.intern.log, A.nuppr.log:H.week.log, A.nuppr.log:S.fashion.log, A.nuppr.log:S.week.log, A.nuppr.log:S.npnct12.log, A.nuppr.log:S.ndgts.log, A.nuppr.log:H.nuppr.log, A.nuppr.log:A.nchrs.log, A.nuppr.log:A.nwrds.log, A.nuppr.log:S.nchrs.log, A.nuppr.log:S.nuppr.log
+##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              feats
+## 1 A.nuppr.log, A.nuppr.log:A.npnct21.log, A.nuppr.log:H.npnct09.log, A.nuppr.log:H.npnct17.log, A.nuppr.log:S.can.log, A.nuppr.log:S.npnct01.log, A.nuppr.log:A.npnct23.log, A.nuppr.log:S.make.log, A.nuppr.log:A.npnct25.log, A.nuppr.log:S.npnct07.log, A.nuppr.log:A.npnct19.log, A.nuppr.log:S.npnct03.log, A.nuppr.log:A.npnct18.log, A.nuppr.log:A.npnct20.log, A.nuppr.log:S.has.year.colon, A.nuppr.log:S.npnct22.log, A.nuppr.log:S.presid.log, A.nuppr.log:S.npnct06.log, A.nuppr.log:A.npnct02.log, A.nuppr.log:S.take.log, A.nuppr.log:S.new.log, A.nuppr.log:S.npnct13.log, A.nuppr.log:S.npnct30.log, A.nuppr.log:S.day.log, A.nuppr.log:S.show.log, A.nuppr.log:S.report.log, A.nuppr.log:S.year.log, A.nuppr.log:S.share.log, A.nuppr.log:S.compani.log, A.nuppr.log:A.npnct14.log, A.nuppr.log:S.first.log, A.nuppr.log:S.time.log, A.nuppr.log:S.articl.log, A.nuppr.log:S.will.log, A.nuppr.log:S.newyork.log, A.nuppr.log:S.npnct04.log, A.nuppr.log:H.npnct15.log, A.nuppr.log:S.intern.log, A.nuppr.log:S.npnct16.log, A.nuppr.log:A.intern.log, A.nuppr.log:H.week.log, A.nuppr.log:S.fashion.log, A.nuppr.log:S.week.log, A.nuppr.log:S.npnct12.log, A.nuppr.log:S.ndgts.log, A.nuppr.log:H.nuppr.log, A.nuppr.log:A.nchrs.log, A.nuppr.log:A.nwrds.log, A.nuppr.log:S.nchrs.log, A.nuppr.log:S.nuppr.log
 ##   max.nTuningRuns min.elapsedtime.everything min.elapsedtime.final
-## 1               1                      3.489                 0.818
+## 1               1                      3.036                 1.064
 ##   max.auc.fit opt.prob.threshold.fit max.f.score.fit max.Accuracy.fit
-## 1    0.792282                    0.3       0.4665885        0.8402235
+## 1   0.7936512                    0.3       0.4666667        0.8420117
 ##   max.AccuracyLower.fit max.AccuracyUpper.fit max.Kappa.fit max.auc.OOB
-## 1             0.7845519             0.8083558     0.0995997   0.7766863
+## 1             0.7840956             0.8079188     0.1154034   0.7739949
 ##   opt.prob.threshold.OOB max.f.score.OOB max.Accuracy.OOB
-## 1                    0.3       0.4595635         0.795333
+## 1                    0.3       0.4521073        0.7914439
 ##   max.AccuracyLower.OOB max.AccuracyUpper.OOB max.Kappa.OOB min.aic.fit
-## 1             0.7772394             0.8125808     0.3354449    3419.307
+## 1             0.7732343             0.8088189     0.3256506    3424.717
 ##   max.AccuracySD.fit max.KappaSD.fit
-## 1       0.0003600752      0.01639765
+## 1        0.002095066      0.02849274
 ```
 
 ```r
@@ -5485,7 +5771,7 @@ if (length(int_feats <- setdiff(unique(glb_feats_df$cor.high.X), NA)) > 0) {
 #     indep_vars_vctr <- subset(glb_feats_df, is.na(cor.high.X) & 
 #                                             is.ConditionalX.y & 
 #                                             (exclude.as.feat != 1))[, "id"] else
-indep_vars_vctr <- subset(glb_feats_df, is.na(cor.high.X) & !zeroVar & 
+indep_vars_vctr <- subset(glb_feats_df, is.na(cor.high.X) & !myNearZV & 
                               (exclude.as.feat != 1))[, "id"]  
 ret_lst <- myfit_mdl(model_id="Low.cor.X", 
                         model_method=ifelse(glb_is_regression, "lm", 
@@ -5499,63 +5785,9 @@ ret_lst <- myfit_mdl(model_id="Low.cor.X",
 
 ```
 ## [1] "fitting model: Low.cor.X.glm"
-## [1] "    indep_vars: WordCount.log, PubDate.hour.fctr, H.npnct21.log, PubDate.wkend, A.npnct21.log, H.npnct09.log, PubDate.last10.log, PubDate.last1.log, S.npnct01.log, S.can.log, H.npnct17.log, S.npnct25.log, H.has.ebola, S.make.log, H.npnct01.log, .rnorm, A.npnct23.log, A.npnct25.log, H.npnct12.log, myCategory.fctr, H.npnct03.log, S.state.log, A.state.log, S.one.log, A.one.log, A.said.log, S.said.log, A.npnct17.log, S.npnct17.log, S.npnct08.log, A.npnct08.log, S.npnct09.log, A.npnct09.log, A.npnct27.log, A.npnct11.log, H.npnct11.log, H.npnct22.log, S.npnct02.log, S.npnct11.log, PubDate.last100.log, H.npnct05.log, PubDate.date.fctr, PubDate.second.fctr, H.npnct07.log, A.npnct07.log, S.npnct07.log, S.npnct03.log, A.npnct19.log, H.npnct13.log, A.has.http, A.npnct03.log, A.npnct02.log, A.npnct18.log, A.npnct20.log, A.has.year.colon, S.has.year.colon, S.npnct22.log, H.npnct02.log, S.presid.log, S.npnct15.log, S.npnct06.log, A.npnct15.log, H.npnct14.log, S.take.log, PubDate.minute.fctr, S.new.log, S.npnct13.log, PubDate.wkday.fctr, S.npnct30.log, S.day.log, H.X2014.log, S.show.log, A.npnct14.log, S.report.log, S.year.log, H.npnct04.log, S.share.log, S.compani.log, H.new.log, S.first.log, S.time.log, H.newyork.log, S.articl.log, S.will.log, H.npnct15.log, S.newyork.log, H.day.log, S.npnct04.log, H.today.log, H.report.log, S.npnct16.log, S.intern.log, H.daili.log, H.week.log, H.npnct16.log, S.fashion.log, S.week.log, H.npnct30.log, S.npnct12.log, H.ndgts.log, S.ndgts.log, H.nuppr.log, H.nchrs.log, H.nwrds.log, A.nchrs.log, A.nwrds.log, A.nwrds.unq.log, S.nuppr.log"
-## + Fold1: parameter=none
-```
-
-```
-## Warning: glm.fit: algorithm did not converge
-```
-
-```
-## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
-```
-
-```
-## Warning in predict.lm(object, newdata, se.fit, scale = 1, type =
-## ifelse(type == : prediction from a rank-deficient fit may be misleading
-```
-
-```
-## - Fold1: parameter=none 
-## + Fold2: parameter=none
-```
-
-```
-## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
-```
-
-```
-## Warning in predict.lm(object, newdata, se.fit, scale = 1, type =
-## ifelse(type == : prediction from a rank-deficient fit may be misleading
-```
-
-```
-## - Fold2: parameter=none 
-## + Fold3: parameter=none
-```
-
-```
-## Warning: glm.fit: algorithm did not converge
-```
-
-```
-## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
-```
-
-```
-## Warning in predict.lm(object, newdata, se.fit, scale = 1, type =
-## ifelse(type == : prediction from a rank-deficient fit may be misleading
-```
-
-```
-## - Fold3: parameter=none 
+## [1] "    indep_vars: WordCount.log, PubDate.hour.fctr, H.npnct21.log, PubDate.wkend, A.npnct21.log, H.npnct09.log, PubDate.last10.log, PubDate.last1.log, S.npnct01.log, S.can.log, H.npnct17.log, H.has.ebola, S.make.log, H.npnct01.log, H.npnct12.log, myCategory.fctr, S.state.log, A.state.log, S.one.log, A.one.log, A.said.log, S.said.log, A.npnct17.log, S.npnct17.log, S.npnct08.log, A.npnct08.log, S.npnct09.log, A.npnct09.log, PubDate.last100.log, .rnorm, H.npnct05.log, PubDate.date.fctr, PubDate.second.fctr, H.npnct07.log, S.npnct07.log, S.npnct03.log, A.npnct19.log, H.npnct13.log, A.npnct20.log, S.has.year.colon, S.npnct22.log, H.npnct02.log, S.presid.log, S.npnct15.log, S.npnct06.log, H.npnct14.log, S.take.log, PubDate.minute.fctr, S.new.log, S.npnct13.log, PubDate.wkday.fctr, S.npnct30.log, S.day.log, H.X2014.log, S.show.log, A.npnct14.log, S.report.log, S.year.log, H.npnct04.log, S.share.log, S.compani.log, H.new.log, S.first.log, S.time.log, H.newyork.log, S.articl.log, S.will.log, H.npnct15.log, S.newyork.log, H.day.log, S.npnct04.log, H.today.log, H.report.log, S.npnct16.log, S.intern.log, H.daili.log, H.week.log, H.npnct16.log, S.fashion.log, S.week.log, H.npnct30.log, S.npnct12.log, H.ndgts.log, S.ndgts.log, H.nuppr.log, H.nchrs.log, H.nwrds.log, A.nchrs.log, A.nwrds.log, A.nwrds.unq.log, S.nuppr.log"
 ## Aggregating results
 ## Fitting final model on full training set
-```
-
-```
-## Warning: glm.fit: algorithm did not converge
 ```
 
 ```
@@ -5564,14 +5796,14 @@ ret_lst <- myfit_mdl(model_id="Low.cor.X",
 
 ```
 ## Warning: not plotting observations with leverage one:
-##   1143, 1977, 2501, 2502, 3637, 4105, 4408
+##   1143, 2501, 4105, 4408
 ```
 
 ![](NYTBlogs_txtfeat_files/figure-html/fit.models_0-22.png) ![](NYTBlogs_txtfeat_files/figure-html/fit.models_0-23.png) 
 
 ```
 ## Warning: not plotting observations with leverage one:
-##   1143, 1977, 2501, 2502, 3637, 4105, 4408
+##   1143, 2501, 4105, 4408
 ```
 
 ![](NYTBlogs_txtfeat_files/figure-html/fit.models_0-24.png) 
@@ -5591,583 +5823,391 @@ ret_lst <- myfit_mdl(model_id="Low.cor.X",
 ## 
 ## Deviance Residuals: 
 ##     Min       1Q   Median       3Q      Max  
-## -2.7515  -0.3148  -0.1351   0.0000   3.5187  
+## -2.7423  -0.3140  -0.1356   0.0000   3.5693  
 ## 
-## Coefficients: (15 not defined because of singularities)
+## Coefficients: (4 not defined because of singularities)
 ##                                                         Estimate
-## (Intercept)                                           -4.260e+00
-## WordCount.log                                          1.098e+00
-## `PubDate.hour.fctr(7.67,15.3]`                         8.798e-02
-## `PubDate.hour.fctr(15.3,23]`                           2.505e-01
-## H.npnct21.log                                          1.506e+00
-## PubDate.wkend                                         -2.575e-01
-## A.npnct21.log                                          1.446e+00
-## H.npnct09.log                                          2.087e+00
-## PubDate.last10.log                                     2.386e-01
-## PubDate.last1.log                                     -4.989e-02
-## S.npnct01.log                                          1.950e+00
-## S.can.log                                             -7.442e-01
-## H.npnct17.log                                          1.000e+00
-## S.npnct25.log                                                 NA
-## H.has.ebola                                           -3.483e-01
-## S.make.log                                            -4.046e-01
-## H.npnct01.log                                         -1.305e+00
-## .rnorm                                                -5.272e-03
-## A.npnct23.log                                         -6.497e+15
-## A.npnct25.log                                                 NA
-## H.npnct12.log                                          4.260e-01
-## `myCategory.fctrForeign#World#Asia Pacific`           -4.060e+00
-## `myCategory.fctr#Multimedia#`                         -4.337e+00
-## `myCategory.fctrCulture#Arts#`                        -2.850e+00
-## `myCategory.fctrBusiness#Business Day#Dealbook`       -2.405e+00
-## myCategory.fctrmyOther                                -1.984e+01
-## `myCategory.fctrBusiness#Technology#`                 -1.836e+00
-## `myCategory.fctrBusiness#Crosswords/Games#`            8.832e-01
-## `myCategory.fctrTStyle##`                             -4.200e+00
-## `myCategory.fctrForeign#World#`                       -1.213e+01
-## `myCategory.fctrOpEd#Opinion#`                         6.999e-01
-## `myCategory.fctrStyles##Fashion`                      -2.669e+01
-## `myCategory.fctr#Opinion#Room For Debate`             -5.515e+00
-## `myCategory.fctr#U.S.#Education`                      -2.212e+01
-## `myCategory.fctr##`                                   -2.718e+00
-## `myCategory.fctrMetro#N.Y. / Region#`                 -1.877e+00
-## `myCategory.fctrBusiness#Business Day#Small Business` -4.512e+00
-## `myCategory.fctrStyles#U.S.#`                         -4.994e-01
-## `myCategory.fctrTravel#Travel#`                       -4.033e+00
-## `myCategory.fctr#Opinion#The Public Editor`            1.218e+00
-## H.npnct03.log                                                 NA
-## S.state.log                                            2.443e+14
-## A.state.log                                           -2.443e+14
-## S.one.log                                              3.281e+01
-## A.one.log                                             -3.320e+01
-## A.said.log                                             8.717e-01
+## (Intercept)                                           -4.162e+00
+## WordCount.log                                          1.111e+00
+## `PubDate.hour.fctr(7.67,15.3]`                         7.729e-02
+## `PubDate.hour.fctr(15.3,23]`                           2.345e-01
+## H.npnct21.log                                          1.495e+00
+## PubDate.wkend                                         -2.749e-01
+## A.npnct21.log                                          1.419e+00
+## H.npnct09.log                                          2.084e+00
+## PubDate.last10.log                                     2.334e-01
+## PubDate.last1.log                                     -4.732e-02
+## S.npnct01.log                                          1.839e+00
+## S.can.log                                             -7.366e-01
+## H.npnct17.log                                          1.009e+00
+## H.has.ebola                                           -3.894e-01
+## S.make.log                                            -3.826e-01
+## H.npnct01.log                                         -1.295e+00
+## H.npnct12.log                                          4.241e-01
+## `myCategory.fctrForeign#World#Asia Pacific`           -4.121e+00
+## `myCategory.fctr#Multimedia#`                         -4.377e+00
+## `myCategory.fctrCulture#Arts#`                        -2.823e+00
+## `myCategory.fctrBusiness#Business Day#Dealbook`       -2.412e+00
+## myCategory.fctrmyOther                                -2.022e+01
+## `myCategory.fctrBusiness#Technology#`                 -1.841e+00
+## `myCategory.fctrBusiness#Crosswords/Games#`            8.494e-01
+## `myCategory.fctrTStyle##`                             -4.201e+00
+## `myCategory.fctrForeign#World#`                       -1.826e+01
+## `myCategory.fctrOpEd#Opinion#`                         6.859e-01
+## `myCategory.fctrStyles##Fashion`                      -1.970e+01
+## `myCategory.fctr#Opinion#Room For Debate`             -5.673e+00
+## `myCategory.fctr#U.S.#Education`                      -2.090e+01
+## `myCategory.fctr##`                                   -2.722e+00
+## `myCategory.fctrMetro#N.Y. / Region#`                 -1.816e+00
+## `myCategory.fctrBusiness#Business Day#Small Business` -4.537e+00
+## `myCategory.fctrStyles#U.S.#`                         -4.729e-01
+## `myCategory.fctrTravel#Travel#`                       -4.027e+00
+## `myCategory.fctr#Opinion#The Public Editor`            1.166e+00
+## S.state.log                                           -1.440e+01
+## A.state.log                                            1.559e+01
+## S.one.log                                              2.290e+01
+## A.one.log                                             -2.329e+01
+## A.said.log                                             8.864e-01
 ## S.said.log                                                    NA
-## A.npnct17.log                                         -3.669e-01
+## A.npnct17.log                                         -3.040e-01
 ## S.npnct17.log                                                 NA
-## S.npnct08.log                                          1.817e+01
+## S.npnct08.log                                          1.321e+01
 ## A.npnct08.log                                                 NA
-## S.npnct09.log                                         -1.664e+01
+## S.npnct09.log                                         -1.164e+01
 ## A.npnct09.log                                                 NA
-## A.npnct27.log                                          2.443e+14
-## A.npnct11.log                                                 NA
-## H.npnct11.log                                         -3.110e+01
-## H.npnct22.log                                         -1.868e+00
-## S.npnct02.log                                         -2.462e+01
-## S.npnct11.log                                                 NA
-## PubDate.last100.log                                    2.272e-02
-## H.npnct05.log                                         -3.408e+01
-## `PubDate.date.fctr(7,13]`                             -3.726e-02
-## `PubDate.date.fctr(13,19]`                            -1.508e-01
-## `PubDate.date.fctr(19,25]`                            -9.796e-02
-## `PubDate.date.fctr(25,31]`                             1.253e-01
-## `PubDate.second.fctr(14.8,29.5]`                       8.011e-02
-## `PubDate.second.fctr(29.5,44.2]`                      -1.157e-02
-## `PubDate.second.fctr(44.2,59.1]`                      -2.946e-01
-## H.npnct07.log                                          2.201e-01
-## A.npnct07.log                                         -3.585e+01
-## S.npnct07.log                                                 NA
-## S.npnct03.log                                         -3.765e+01
-## A.npnct19.log                                         -7.406e+00
-## H.npnct13.log                                          3.428e-01
-## A.has.http                                                    NA
-## A.npnct03.log                                                 NA
-## A.npnct02.log                                                 NA
-## A.npnct18.log                                          4.430e+00
-## A.npnct20.log                                                 NA
-## A.has.year.colon                                      -1.906e+01
-## S.has.year.colon                                              NA
-## S.npnct22.log                                         -3.387e+01
-## H.npnct02.log                                         -2.358e+01
-## S.presid.log                                           4.570e-01
-## S.npnct15.log                                          1.313e+01
-## S.npnct06.log                                          3.211e-02
-## A.npnct15.log                                         -1.231e+01
-## H.npnct14.log                                         -2.163e-01
-## S.take.log                                            -6.539e-01
-## `PubDate.minute.fctr(14.8,29.5]`                      -1.175e-01
-## `PubDate.minute.fctr(29.5,44.2]`                      -1.994e-01
-## `PubDate.minute.fctr(44.2,59.1]`                       6.085e-02
-## S.new.log                                              1.426e-02
-## S.npnct13.log                                         -1.447e-01
-## PubDate.wkday.fctr1                                   -5.031e-01
-## PubDate.wkday.fctr2                                   -1.130e+00
-## PubDate.wkday.fctr3                                   -7.418e-01
-## PubDate.wkday.fctr4                                   -9.712e-01
-## PubDate.wkday.fctr5                                   -8.478e-01
-## PubDate.wkday.fctr6                                   -1.317e+00
-## S.npnct30.log                                         -2.088e+01
-## S.day.log                                             -1.872e-01
-## H.X2014.log                                           -1.054e+00
-## S.show.log                                            -6.204e-01
-## A.npnct14.log                                          9.695e-01
-## S.report.log                                          -1.293e+00
-## S.year.log                                            -3.837e-01
-## H.npnct04.log                                         -1.874e+00
-## S.share.log                                           -9.823e-01
-## S.compani.log                                         -4.461e-01
-## H.new.log                                             -8.862e-01
-## S.first.log                                           -1.510e-01
-## S.time.log                                            -2.793e-01
-## H.newyork.log                                          1.200e-01
-## S.articl.log                                          -1.955e-01
-## S.will.log                                            -5.070e-01
-## H.npnct15.log                                         -3.039e+01
-## S.newyork.log                                          1.082e+00
-## H.day.log                                             -1.155e+00
-## S.npnct04.log                                         -1.149e+00
-## H.today.log                                           -3.444e+00
-## H.report.log                                          -7.682e-01
-## S.npnct16.log                                          4.628e-01
-## S.intern.log                                          -9.615e-01
-## H.daili.log                                           -1.370e+01
-## H.week.log                                            -6.305e-01
-## H.npnct16.log                                         -2.355e-01
-## S.fashion.log                                         -3.088e+01
-## S.week.log                                            -2.581e-01
-## H.npnct30.log                                         -1.576e-01
-## S.npnct12.log                                         -1.554e-01
-## H.ndgts.log                                            4.681e-01
-## S.ndgts.log                                           -3.416e-01
-## H.nuppr.log                                            1.271e+00
-## H.nchrs.log                                           -9.599e-01
-## H.nwrds.log                                           -7.825e-01
-## A.nchrs.log                                            2.540e-01
-## A.nwrds.log                                            8.726e-01
-## A.nwrds.unq.log                                       -1.618e+00
-## S.nuppr.log                                           -6.755e-01
-##                                                       Std. Error
-## (Intercept)                                            2.125e+00
-## WordCount.log                                          8.980e-02
-## `PubDate.hour.fctr(7.67,15.3]`                         2.464e-01
-## `PubDate.hour.fctr(15.3,23]`                           2.508e-01
-## H.npnct21.log                                          3.163e-01
-## PubDate.wkend                                          4.455e-01
-## A.npnct21.log                                          3.294e-01
-## H.npnct09.log                                          7.189e-01
-## PubDate.last10.log                                     1.258e-01
-## PubDate.last1.log                                      4.379e-02
-## S.npnct01.log                                          1.748e+00
-## S.can.log                                              4.617e-01
-## H.npnct17.log                                          5.705e-01
-## S.npnct25.log                                                 NA
-## H.has.ebola                                            4.452e-01
-## S.make.log                                             4.226e-01
-## H.npnct01.log                                          1.255e+00
-## .rnorm                                                 6.323e-02
-## A.npnct23.log                                          6.846e+07
-## A.npnct25.log                                                 NA
-## H.npnct12.log                                          2.088e-01
-## `myCategory.fctrForeign#World#Asia Pacific`            6.372e-01
-## `myCategory.fctr#Multimedia#`                          7.849e-01
-## `myCategory.fctrCulture#Arts#`                         3.664e-01
-## `myCategory.fctrBusiness#Business Day#Dealbook`        3.037e-01
-## myCategory.fctrmyOther                                 1.737e+03
-## `myCategory.fctrBusiness#Technology#`                  3.208e-01
-## `myCategory.fctrBusiness#Crosswords/Games#`            4.971e-01
-## `myCategory.fctrTStyle##`                              4.932e-01
-## `myCategory.fctrForeign#World#`                        4.026e+01
-## `myCategory.fctrOpEd#Opinion#`                         2.930e-01
-## `myCategory.fctrStyles##Fashion`                       3.319e+04
-## `myCategory.fctr#Opinion#Room For Debate`              6.235e-01
-## `myCategory.fctr#U.S.#Education`                       1.105e+03
-## `myCategory.fctr##`                                    2.858e-01
-## `myCategory.fctrMetro#N.Y. / Region#`                  4.681e-01
-## `myCategory.fctrBusiness#Business Day#Small Business`  6.882e-01
-## `myCategory.fctrStyles#U.S.#`                          3.342e-01
-## `myCategory.fctrTravel#Travel#`                        1.073e+00
-## `myCategory.fctr#Opinion#The Public Editor`            1.193e+00
-## H.npnct03.log                                                 NA
-## S.state.log                                            2.825e+14
-## A.state.log                                            2.825e+14
-## S.one.log                                              5.072e+05
-## A.one.log                                              5.072e+05
-## A.said.log                                             4.127e-01
-## S.said.log                                                    NA
-## A.npnct17.log                                          1.288e+00
-## S.npnct17.log                                                 NA
-## S.npnct08.log                                          2.523e+05
-## A.npnct08.log                                                 NA
-## S.npnct09.log                                          2.523e+05
-## A.npnct09.log                                                 NA
-## A.npnct27.log                                          2.825e+14
-## A.npnct11.log                                                 NA
-## H.npnct11.log                                          4.926e+05
-## H.npnct22.log                                          5.145e+05
-## S.npnct02.log                                          3.321e+05
-## S.npnct11.log                                                 NA
-## PubDate.last100.log                                    4.592e-02
-## H.npnct05.log                                          1.920e+05
-## `PubDate.date.fctr(7,13]`                              1.952e-01
-## `PubDate.date.fctr(13,19]`                             1.930e-01
-## `PubDate.date.fctr(19,25]`                             1.898e-01
-## `PubDate.date.fctr(25,31]`                             2.031e-01
-## `PubDate.second.fctr(14.8,29.5]`                       1.728e-01
-## `PubDate.second.fctr(29.5,44.2]`                       1.697e-01
-## `PubDate.second.fctr(44.2,59.1]`                       1.771e-01
-## H.npnct07.log                                          1.852e-01
-## A.npnct07.log                                          2.252e+05
-## S.npnct07.log                                                 NA
-## S.npnct03.log                                          1.704e+05
-## A.npnct19.log                                          3.311e+06
-## H.npnct13.log                                          3.097e-01
-## A.has.http                                                    NA
-## A.npnct03.log                                                 NA
-## A.npnct02.log                                                 NA
-## A.npnct18.log                                          1.127e+06
-## A.npnct20.log                                                 NA
-## A.has.year.colon                                       6.842e+04
-## S.has.year.colon                                              NA
-## S.npnct22.log                                          1.436e+05
-## H.npnct02.log                                          9.238e+04
-## S.presid.log                                           4.670e-01
-## S.npnct15.log                                          1.786e+06
-## S.npnct06.log                                          1.520e+00
-## A.npnct15.log                                          1.786e+06
-## H.npnct14.log                                          1.961e-01
-## S.take.log                                             5.543e-01
-## `PubDate.minute.fctr(14.8,29.5]`                       1.809e-01
-## `PubDate.minute.fctr(29.5,44.2]`                       1.747e-01
-## `PubDate.minute.fctr(44.2,59.1]`                       1.815e-01
-## S.new.log                                              3.091e-01
-## S.npnct13.log                                          1.981e-01
-## PubDate.wkday.fctr1                                    5.211e-01
-## PubDate.wkday.fctr2                                    5.670e-01
-## PubDate.wkday.fctr3                                    5.595e-01
-## PubDate.wkday.fctr4                                    5.530e-01
-## PubDate.wkday.fctr5                                    5.593e-01
-## PubDate.wkday.fctr6                                    4.646e-01
-## S.npnct30.log                                          3.906e+04
-## S.day.log                                              6.270e-01
-## H.X2014.log                                            1.435e+00
-## S.show.log                                             6.103e-01
-## A.npnct14.log                                          2.615e-01
-## S.report.log                                           6.076e-01
-## S.year.log                                             4.567e-01
-## H.npnct04.log                                          9.402e-01
-## S.share.log                                            6.562e-01
-## S.compani.log                                          4.137e-01
-## H.new.log                                              6.220e-01
-## S.first.log                                            6.227e-01
-## S.time.log                                             4.609e-01
-## H.newyork.log                                          7.020e-01
-## S.articl.log                                           1.147e+00
-## S.will.log                                             3.714e-01
-## H.npnct15.log                                          4.316e+04
-## S.newyork.log                                          5.143e-01
-## H.day.log                                              1.044e+00
-## S.npnct04.log                                          6.879e-01
-## H.today.log                                            9.766e-01
-## H.report.log                                           1.007e+00
-## S.npnct16.log                                          4.770e-01
-## S.intern.log                                           1.208e+00
-## H.daili.log                                            1.122e+02
-## H.week.log                                             9.343e-01
-## H.npnct16.log                                          2.848e-01
-## S.fashion.log                                          2.957e+04
-## S.week.log                                             4.751e-01
-## H.npnct30.log                                          1.714e+00
-## S.npnct12.log                                          1.429e-01
-## H.ndgts.log                                            2.474e-01
-## S.ndgts.log                                            1.543e-01
-## H.nuppr.log                                            4.208e-01
-## H.nchrs.log                                            4.345e-01
-## H.nwrds.log                                            4.444e-01
-## A.nchrs.log                                            5.061e-01
-## A.nwrds.log                                            1.647e+00
-## A.nwrds.unq.log                                        1.587e+00
-## S.nuppr.log                                            1.558e-01
-##                                                          z value Pr(>|z|)
-## (Intercept)                                           -2.004e+00 0.045039
-## WordCount.log                                          1.223e+01  < 2e-16
-## `PubDate.hour.fctr(7.67,15.3]`                         3.570e-01 0.721020
-## `PubDate.hour.fctr(15.3,23]`                           9.990e-01 0.317879
-## H.npnct21.log                                          4.763e+00 1.91e-06
-## PubDate.wkend                                         -5.780e-01 0.563328
-## A.npnct21.log                                          4.390e+00 1.13e-05
-## H.npnct09.log                                          2.903e+00 0.003692
-## PubDate.last10.log                                     1.896e+00 0.057944
-## PubDate.last1.log                                     -1.139e+00 0.254600
-## S.npnct01.log                                          1.116e+00 0.264568
-## S.can.log                                             -1.612e+00 0.107046
-## H.npnct17.log                                          1.753e+00 0.079565
-## S.npnct25.log                                                 NA       NA
-## H.has.ebola                                           -7.820e-01 0.434109
-## S.make.log                                            -9.570e-01 0.338350
-## H.npnct01.log                                         -1.040e+00 0.298319
-## .rnorm                                                -8.300e-02 0.933553
-## A.npnct23.log                                         -9.491e+07  < 2e-16
-## A.npnct25.log                                                 NA       NA
-## H.npnct12.log                                          2.040e+00 0.041372
-## `myCategory.fctrForeign#World#Asia Pacific`           -6.372e+00 1.87e-10
-## `myCategory.fctr#Multimedia#`                         -5.525e+00 3.30e-08
-## `myCategory.fctrCulture#Arts#`                        -7.778e+00 7.37e-15
-## `myCategory.fctrBusiness#Business Day#Dealbook`       -7.920e+00 2.37e-15
-## myCategory.fctrmyOther                                -1.100e-02 0.990884
-## `myCategory.fctrBusiness#Technology#`                 -5.724e+00 1.04e-08
-## `myCategory.fctrBusiness#Crosswords/Games#`            1.777e+00 0.075618
-## `myCategory.fctrTStyle##`                             -8.516e+00  < 2e-16
-## `myCategory.fctrForeign#World#`                       -3.010e-01 0.763229
-## `myCategory.fctrOpEd#Opinion#`                         2.389e+00 0.016888
-## `myCategory.fctrStyles##Fashion`                      -1.000e-03 0.999358
-## `myCategory.fctr#Opinion#Room For Debate`             -8.846e+00  < 2e-16
-## `myCategory.fctr#U.S.#Education`                      -2.000e-02 0.984027
-## `myCategory.fctr##`                                   -9.512e+00  < 2e-16
-## `myCategory.fctrMetro#N.Y. / Region#`                 -4.010e+00 6.07e-05
-## `myCategory.fctrBusiness#Business Day#Small Business` -6.556e+00 5.51e-11
-## `myCategory.fctrStyles#U.S.#`                         -1.494e+00 0.135116
-## `myCategory.fctrTravel#Travel#`                       -3.760e+00 0.000170
-## `myCategory.fctr#Opinion#The Public Editor`            1.021e+00 0.307391
-## H.npnct03.log                                                 NA       NA
-## S.state.log                                            8.650e-01 0.387232
-## A.state.log                                           -8.650e-01 0.387232
-## S.one.log                                              0.000e+00 0.999948
-## A.one.log                                              0.000e+00 0.999948
-## A.said.log                                             2.112e+00 0.034659
-## S.said.log                                                    NA       NA
-## A.npnct17.log                                         -2.850e-01 0.775847
-## S.npnct17.log                                                 NA       NA
-## S.npnct08.log                                          0.000e+00 0.999943
-## A.npnct08.log                                                 NA       NA
-## S.npnct09.log                                          0.000e+00 0.999947
-## A.npnct09.log                                                 NA       NA
-## A.npnct27.log                                          8.650e-01 0.387232
-## A.npnct11.log                                                 NA       NA
-## H.npnct11.log                                          0.000e+00 0.999950
-## H.npnct22.log                                          0.000e+00 0.999997
-## S.npnct02.log                                          0.000e+00 0.999941
-## S.npnct11.log                                                 NA       NA
-## PubDate.last100.log                                    4.950e-01 0.620815
-## H.npnct05.log                                          0.000e+00 0.999858
-## `PubDate.date.fctr(7,13]`                             -1.910e-01 0.848639
-## `PubDate.date.fctr(13,19]`                            -7.810e-01 0.434583
-## `PubDate.date.fctr(19,25]`                            -5.160e-01 0.605781
-## `PubDate.date.fctr(25,31]`                             6.170e-01 0.537249
-## `PubDate.second.fctr(14.8,29.5]`                       4.640e-01 0.642967
-## `PubDate.second.fctr(29.5,44.2]`                      -6.800e-02 0.945649
-## `PubDate.second.fctr(44.2,59.1]`                      -1.663e+00 0.096295
-## H.npnct07.log                                          1.188e+00 0.234838
-## A.npnct07.log                                          0.000e+00 0.999873
-## S.npnct07.log                                                 NA       NA
-## S.npnct03.log                                          0.000e+00 0.999824
-## A.npnct19.log                                          0.000e+00 0.999998
-## H.npnct13.log                                          1.107e+00 0.268403
-## A.has.http                                                    NA       NA
-## A.npnct03.log                                                 NA       NA
-## A.npnct02.log                                                 NA       NA
-## A.npnct18.log                                          0.000e+00 0.999997
-## A.npnct20.log                                                 NA       NA
-## A.has.year.colon                                       0.000e+00 0.999778
-## S.has.year.colon                                              NA       NA
-## S.npnct22.log                                          0.000e+00 0.999812
-## H.npnct02.log                                          0.000e+00 0.999796
-## S.presid.log                                           9.790e-01 0.327731
-## S.npnct15.log                                          0.000e+00 0.999994
-## S.npnct06.log                                          2.100e-02 0.983146
-## A.npnct15.log                                          0.000e+00 0.999995
-## H.npnct14.log                                         -1.103e+00 0.270021
-## S.take.log                                            -1.180e+00 0.238180
-## `PubDate.minute.fctr(14.8,29.5]`                      -6.490e-01 0.516016
-## `PubDate.minute.fctr(29.5,44.2]`                      -1.141e+00 0.253727
-## `PubDate.minute.fctr(44.2,59.1]`                       3.350e-01 0.737411
-## S.new.log                                              4.600e-02 0.963189
-## S.npnct13.log                                         -7.300e-01 0.465188
-## PubDate.wkday.fctr1                                   -9.650e-01 0.334319
-## PubDate.wkday.fctr2                                   -1.993e+00 0.046307
-## PubDate.wkday.fctr3                                   -1.326e+00 0.184906
-## PubDate.wkday.fctr4                                   -1.756e+00 0.079020
-## PubDate.wkday.fctr5                                   -1.516e+00 0.129572
-## PubDate.wkday.fctr6                                   -2.834e+00 0.004598
-## S.npnct30.log                                         -1.000e-03 0.999573
-## S.day.log                                             -2.990e-01 0.765265
-## H.X2014.log                                           -7.350e-01 0.462577
-## S.show.log                                            -1.017e+00 0.309388
-## A.npnct14.log                                          3.707e+00 0.000209
-## S.report.log                                          -2.128e+00 0.033373
-## S.year.log                                            -8.400e-01 0.400871
-## H.npnct04.log                                         -1.994e+00 0.046206
-## S.share.log                                           -1.497e+00 0.134392
-## S.compani.log                                         -1.078e+00 0.280906
-## H.new.log                                             -1.425e+00 0.154226
-## S.first.log                                           -2.430e-01 0.808364
-## S.time.log                                            -6.060e-01 0.544586
-## H.newyork.log                                          1.710e-01 0.864293
-## S.articl.log                                          -1.700e-01 0.864648
-## S.will.log                                            -1.365e+00 0.172295
-## H.npnct15.log                                         -1.000e-03 0.999438
-## S.newyork.log                                          2.103e+00 0.035459
-## H.day.log                                             -1.106e+00 0.268689
-## S.npnct04.log                                         -1.670e+00 0.094837
-## H.today.log                                           -3.527e+00 0.000421
-## H.report.log                                          -7.630e-01 0.445472
-## S.npnct16.log                                          9.700e-01 0.331910
-## S.intern.log                                          -7.960e-01 0.426005
-## H.daili.log                                           -1.220e-01 0.902775
-## H.week.log                                            -6.750e-01 0.499793
-## H.npnct16.log                                         -8.270e-01 0.408408
-## S.fashion.log                                         -1.000e-03 0.999167
-## S.week.log                                            -5.430e-01 0.586991
-## H.npnct30.log                                         -9.200e-02 0.926752
-## S.npnct12.log                                         -1.088e+00 0.276810
-## H.ndgts.log                                            1.892e+00 0.058486
-## S.ndgts.log                                           -2.214e+00 0.026796
-## H.nuppr.log                                            3.020e+00 0.002528
-## H.nchrs.log                                           -2.209e+00 0.027161
-## H.nwrds.log                                           -1.761e+00 0.078289
-## A.nchrs.log                                            5.020e-01 0.615783
-## A.nwrds.log                                            5.300e-01 0.596341
-## A.nwrds.unq.log                                       -1.019e+00 0.308053
-## S.nuppr.log                                           -4.337e+00 1.45e-05
-##                                                          
-## (Intercept)                                           *  
-## WordCount.log                                         ***
-## `PubDate.hour.fctr(7.67,15.3]`                           
-## `PubDate.hour.fctr(15.3,23]`                             
-## H.npnct21.log                                         ***
-## PubDate.wkend                                            
-## A.npnct21.log                                         ***
-## H.npnct09.log                                         ** 
-## PubDate.last10.log                                    .  
-## PubDate.last1.log                                        
-## S.npnct01.log                                            
-## S.can.log                                                
-## H.npnct17.log                                         .  
-## S.npnct25.log                                            
-## H.has.ebola                                              
-## S.make.log                                               
-## H.npnct01.log                                            
-## .rnorm                                                   
-## A.npnct23.log                                         ***
-## A.npnct25.log                                            
-## H.npnct12.log                                         *  
-## `myCategory.fctrForeign#World#Asia Pacific`           ***
-## `myCategory.fctr#Multimedia#`                         ***
-## `myCategory.fctrCulture#Arts#`                        ***
-## `myCategory.fctrBusiness#Business Day#Dealbook`       ***
-## myCategory.fctrmyOther                                   
-## `myCategory.fctrBusiness#Technology#`                 ***
-## `myCategory.fctrBusiness#Crosswords/Games#`           .  
-## `myCategory.fctrTStyle##`                             ***
-## `myCategory.fctrForeign#World#`                          
-## `myCategory.fctrOpEd#Opinion#`                        *  
-## `myCategory.fctrStyles##Fashion`                         
-## `myCategory.fctr#Opinion#Room For Debate`             ***
-## `myCategory.fctr#U.S.#Education`                         
-## `myCategory.fctr##`                                   ***
-## `myCategory.fctrMetro#N.Y. / Region#`                 ***
-## `myCategory.fctrBusiness#Business Day#Small Business` ***
-## `myCategory.fctrStyles#U.S.#`                            
-## `myCategory.fctrTravel#Travel#`                       ***
-## `myCategory.fctr#Opinion#The Public Editor`              
-## H.npnct03.log                                            
-## S.state.log                                              
-## A.state.log                                              
-## S.one.log                                                
-## A.one.log                                                
-## A.said.log                                            *  
-## S.said.log                                               
-## A.npnct17.log                                            
-## S.npnct17.log                                            
-## S.npnct08.log                                            
-## A.npnct08.log                                            
-## S.npnct09.log                                            
-## A.npnct09.log                                            
-## A.npnct27.log                                            
-## A.npnct11.log                                            
-## H.npnct11.log                                            
-## H.npnct22.log                                            
-## S.npnct02.log                                            
-## S.npnct11.log                                            
-## PubDate.last100.log                                      
-## H.npnct05.log                                            
-## `PubDate.date.fctr(7,13]`                                
-## `PubDate.date.fctr(13,19]`                               
-## `PubDate.date.fctr(19,25]`                               
-## `PubDate.date.fctr(25,31]`                               
-## `PubDate.second.fctr(14.8,29.5]`                         
-## `PubDate.second.fctr(29.5,44.2]`                         
-## `PubDate.second.fctr(44.2,59.1]`                      .  
-## H.npnct07.log                                            
-## A.npnct07.log                                            
-## S.npnct07.log                                            
-## S.npnct03.log                                            
-## A.npnct19.log                                            
-## H.npnct13.log                                            
-## A.has.http                                               
-## A.npnct03.log                                            
-## A.npnct02.log                                            
-## A.npnct18.log                                            
-## A.npnct20.log                                            
-## A.has.year.colon                                         
-## S.has.year.colon                                         
-## S.npnct22.log                                            
-## H.npnct02.log                                            
-## S.presid.log                                             
-## S.npnct15.log                                            
-## S.npnct06.log                                            
-## A.npnct15.log                                            
-## H.npnct14.log                                            
-## S.take.log                                               
-## `PubDate.minute.fctr(14.8,29.5]`                         
-## `PubDate.minute.fctr(29.5,44.2]`                         
-## `PubDate.minute.fctr(44.2,59.1]`                         
-## S.new.log                                                
-## S.npnct13.log                                            
-## PubDate.wkday.fctr1                                      
-## PubDate.wkday.fctr2                                   *  
-## PubDate.wkday.fctr3                                      
-## PubDate.wkday.fctr4                                   .  
-## PubDate.wkday.fctr5                                      
-## PubDate.wkday.fctr6                                   ** 
-## S.npnct30.log                                            
-## S.day.log                                                
-## H.X2014.log                                              
-## S.show.log                                               
-## A.npnct14.log                                         ***
-## S.report.log                                          *  
-## S.year.log                                               
-## H.npnct04.log                                         *  
-## S.share.log                                              
-## S.compani.log                                            
-## H.new.log                                                
-## S.first.log                                              
-## S.time.log                                               
-## H.newyork.log                                            
-## S.articl.log                                             
-## S.will.log                                               
-## H.npnct15.log                                            
-## S.newyork.log                                         *  
-## H.day.log                                                
-## S.npnct04.log                                         .  
-## H.today.log                                           ***
-## H.report.log                                             
-## S.npnct16.log                                            
-## S.intern.log                                             
-## H.daili.log                                              
-## H.week.log                                               
-## H.npnct16.log                                            
-## S.fashion.log                                            
-## S.week.log                                               
-## H.npnct30.log                                            
-## S.npnct12.log                                            
-## H.ndgts.log                                           .  
-## S.ndgts.log                                           *  
-## H.nuppr.log                                           ** 
-## H.nchrs.log                                           *  
-## H.nwrds.log                                           .  
-## A.nchrs.log                                              
-## A.nwrds.log                                              
-## A.nwrds.unq.log                                          
-## S.nuppr.log                                           ***
+## PubDate.last100.log                                    1.464e-02
+## .rnorm                                                -8.169e-02
+## H.npnct05.log                                         -2.430e+01
+## `PubDate.date.fctr(7,13]`                             -4.525e-02
+## `PubDate.date.fctr(13,19]`                            -1.459e-01
+## `PubDate.date.fctr(19,25]`                            -9.055e-02
+## `PubDate.date.fctr(25,31]`                             1.354e-01
+## `PubDate.second.fctr(14.8,29.5]`                       9.117e-02
+## `PubDate.second.fctr(29.5,44.2]`                      -1.879e-02
+## `PubDate.second.fctr(44.2,59.1]`                      -2.889e-01
+## H.npnct07.log                                          1.974e-01
+## S.npnct07.log                                         -2.552e+01
+## S.npnct03.log                                         -2.763e+01
+## A.npnct19.log                                         -2.245e+01
+## H.npnct13.log                                          3.489e-01
+## A.npnct20.log                                         -2.505e+00
+## S.has.year.colon                                      -1.268e+01
+## S.npnct22.log                                         -2.393e+01
+## H.npnct02.log                                         -1.736e+01
+## S.presid.log                                           4.844e-01
+## S.npnct15.log                                          9.482e-01
+## S.npnct06.log                                          1.060e-01
+## H.npnct14.log                                         -2.168e-01
+## S.take.log                                            -6.489e-01
+## `PubDate.minute.fctr(14.8,29.5]`                      -1.479e-01
+## `PubDate.minute.fctr(29.5,44.2]`                      -2.149e-01
+## `PubDate.minute.fctr(44.2,59.1]`                       5.112e-02
+## S.new.log                                              2.066e-02
+## S.npnct13.log                                         -1.672e-01
+## PubDate.wkday.fctr1                                   -5.211e-01
+## PubDate.wkday.fctr2                                   -1.131e+00
+## PubDate.wkday.fctr3                                   -7.598e-01
+## PubDate.wkday.fctr4                                   -9.757e-01
+## PubDate.wkday.fctr5                                   -8.554e-01
+## PubDate.wkday.fctr6                                   -1.271e+00
+## S.npnct30.log                                         -1.448e+01
+## S.day.log                                             -1.962e-01
+## H.X2014.log                                           -1.043e+00
+## S.show.log                                            -6.364e-01
+## A.npnct14.log                                          9.378e-01
+## S.report.log                                          -1.302e+00
+## S.year.log                                            -3.860e-01
+## H.npnct04.log                                         -1.891e+00
+## S.share.log                                           -9.829e-01
+## S.compani.log                                         -4.270e-01
+## H.new.log                                             -8.796e-01
+## S.first.log                                           -1.557e-01
+## S.time.log                                            -2.970e-01
+## H.newyork.log                                          6.233e-02
+## S.articl.log                                          -1.780e-01
+## S.will.log                                            -5.102e-01
+## H.npnct15.log                                         -2.035e+01
+## S.newyork.log                                          1.120e+00
+## H.day.log                                             -1.145e+00
+## S.npnct04.log                                         -1.109e+00
+## H.today.log                                           -3.482e+00
+## H.report.log                                          -7.512e-01
+## S.npnct16.log                                          4.426e-01
+## S.intern.log                                          -9.754e-01
+## H.daili.log                                           -2.152e+01
+## H.week.log                                            -6.268e-01
+## H.npnct16.log                                         -2.383e-01
+## S.fashion.log                                         -2.097e+01
+## S.week.log                                            -2.515e-01
+## H.npnct30.log                                         -1.406e-01
+## S.npnct12.log                                         -1.611e-01
+## H.ndgts.log                                            4.666e-01
+## S.ndgts.log                                           -3.408e-01
+## H.nuppr.log                                            1.244e+00
+## H.nchrs.log                                           -9.101e-01
+## H.nwrds.log                                           -8.080e-01
+## A.nchrs.log                                            2.336e-01
+## A.nwrds.log                                            8.562e-01
+## A.nwrds.unq.log                                       -1.601e+00
+## S.nuppr.log                                           -6.715e-01
+##                                                       Std. Error z value
+## (Intercept)                                            2.122e+00  -1.962
+## WordCount.log                                          9.018e-02  12.319
+## `PubDate.hour.fctr(7.67,15.3]`                         2.472e-01   0.313
+## `PubDate.hour.fctr(15.3,23]`                           2.519e-01   0.931
+## H.npnct21.log                                          3.165e-01   4.725
+## PubDate.wkend                                          4.481e-01  -0.613
+## A.npnct21.log                                          3.286e-01   4.317
+## H.npnct09.log                                          7.224e-01   2.885
+## PubDate.last10.log                                     1.255e-01   1.860
+## PubDate.last1.log                                      4.384e-02  -1.080
+## S.npnct01.log                                          1.745e+00   1.054
+## S.can.log                                              4.622e-01  -1.594
+## H.npnct17.log                                          5.692e-01   1.773
+## H.has.ebola                                            4.424e-01  -0.880
+## S.make.log                                             4.236e-01  -0.903
+## H.npnct01.log                                          1.256e+00  -1.031
+## H.npnct12.log                                          2.096e-01   2.024
+## `myCategory.fctrForeign#World#Asia Pacific`            6.660e-01  -6.189
+## `myCategory.fctr#Multimedia#`                          7.986e-01  -5.481
+## `myCategory.fctrCulture#Arts#`                         3.662e-01  -7.708
+## `myCategory.fctrBusiness#Business Day#Dealbook`        3.042e-01  -7.930
+## myCategory.fctrmyOther                                 1.818e+03  -0.011
+## `myCategory.fctrBusiness#Technology#`                  3.220e-01  -5.719
+## `myCategory.fctrBusiness#Crosswords/Games#`            4.981e-01   1.705
+## `myCategory.fctrTStyle##`                              4.915e-01  -8.547
+## `myCategory.fctrForeign#World#`                        8.774e+02  -0.021
+## `myCategory.fctrOpEd#Opinion#`                         2.934e-01   2.338
+## `myCategory.fctrStyles##Fashion`                       1.017e+03  -0.019
+## `myCategory.fctr#Opinion#Room For Debate`              6.277e-01  -9.039
+## `myCategory.fctr#U.S.#Education`                       5.997e+02  -0.035
+## `myCategory.fctr##`                                    2.863e-01  -9.508
+## `myCategory.fctrMetro#N.Y. / Region#`                  4.654e-01  -3.901
+## `myCategory.fctrBusiness#Business Day#Small Business`  6.841e-01  -6.632
+## `myCategory.fctrStyles#U.S.#`                          3.336e-01  -1.417
+## `myCategory.fctrTravel#Travel#`                        1.048e+00  -3.842
+## `myCategory.fctr#Opinion#The Public Editor`            1.203e+00   0.969
+## S.state.log                                            2.143e+04  -0.001
+## A.state.log                                            2.143e+04   0.001
+## S.one.log                                              1.551e+04   0.001
+## A.one.log                                              1.551e+04  -0.002
+## A.said.log                                             4.126e-01   2.148
+## S.said.log                                                    NA      NA
+## A.npnct17.log                                          1.287e+00  -0.236
+## S.npnct17.log                                                 NA      NA
+## S.npnct08.log                                          7.757e+03   0.002
+## A.npnct08.log                                                 NA      NA
+## S.npnct09.log                                          7.757e+03  -0.002
+## A.npnct09.log                                                 NA      NA
+## PubDate.last100.log                                    4.493e-02   0.326
+## .rnorm                                                 6.266e-02  -1.304
+## H.npnct05.log                                          6.194e+03  -0.004
+## `PubDate.date.fctr(7,13]`                              1.957e-01  -0.231
+## `PubDate.date.fctr(13,19]`                             1.933e-01  -0.754
+## `PubDate.date.fctr(19,25]`                             1.903e-01  -0.476
+## `PubDate.date.fctr(25,31]`                             2.039e-01   0.664
+## `PubDate.second.fctr(14.8,29.5]`                       1.731e-01   0.527
+## `PubDate.second.fctr(29.5,44.2]`                       1.700e-01  -0.110
+## `PubDate.second.fctr(44.2,59.1]`                       1.769e-01  -1.633
+## H.npnct07.log                                          1.850e-01   1.067
+## S.npnct07.log                                          6.740e+03  -0.004
+## S.npnct03.log                                          5.275e+03  -0.005
+## A.npnct19.log                                          1.719e+04  -0.001
+## H.npnct13.log                                          3.094e-01   1.128
+## A.npnct20.log                                          9.804e+03   0.000
+## S.has.year.colon                                       2.979e+03  -0.004
+## S.npnct22.log                                          4.665e+03  -0.005
+## H.npnct02.log                                          3.057e+03  -0.006
+## S.presid.log                                           4.689e-01   1.033
+## S.npnct15.log                                          1.521e+00   0.623
+## S.npnct06.log                                          1.527e+00   0.069
+## H.npnct14.log                                          1.967e-01  -1.102
+## S.take.log                                             5.528e-01  -1.174
+## `PubDate.minute.fctr(14.8,29.5]`                       1.807e-01  -0.819
+## `PubDate.minute.fctr(29.5,44.2]`                       1.750e-01  -1.228
+## `PubDate.minute.fctr(44.2,59.1]`                       1.816e-01   0.281
+## S.new.log                                              3.091e-01   0.067
+## S.npnct13.log                                          1.988e-01  -0.841
+## PubDate.wkday.fctr1                                    5.244e-01  -0.994
+## PubDate.wkday.fctr2                                    5.709e-01  -1.981
+## PubDate.wkday.fctr3                                    5.632e-01  -1.349
+## PubDate.wkday.fctr4                                    5.574e-01  -1.750
+## PubDate.wkday.fctr5                                    5.621e-01  -1.522
+## PubDate.wkday.fctr6                                    4.656e-01  -2.730
+## S.npnct30.log                                          1.278e+03  -0.011
+## S.day.log                                              6.227e-01  -0.315
+## H.X2014.log                                            1.431e+00  -0.729
+## S.show.log                                             6.102e-01  -1.043
+## A.npnct14.log                                          2.591e-01   3.620
+## S.report.log                                           6.050e-01  -2.152
+## S.year.log                                             4.560e-01  -0.847
+## H.npnct04.log                                          9.471e-01  -1.997
+## S.share.log                                            6.595e-01  -1.491
+## S.compani.log                                          4.143e-01  -1.031
+## H.new.log                                              6.206e-01  -1.417
+## S.first.log                                            6.259e-01  -0.249
+## S.time.log                                             4.621e-01  -0.643
+## H.newyork.log                                          6.991e-01   0.089
+## S.articl.log                                           1.154e+00  -0.154
+## S.will.log                                             3.715e-01  -1.373
+## H.npnct15.log                                          1.298e+03  -0.016
+## S.newyork.log                                          5.112e-01   2.191
+## H.day.log                                              1.043e+00  -1.098
+## S.npnct04.log                                          6.872e-01  -1.614
+## H.today.log                                            9.770e-01  -3.564
+## H.report.log                                           9.984e-01  -0.752
+## S.npnct16.log                                          4.763e-01   0.929
+## S.intern.log                                           1.206e+00  -0.809
+## H.daili.log                                            1.439e+03  -0.015
+## H.week.log                                             9.382e-01  -0.668
+## H.npnct16.log                                          2.850e-01  -0.836
+## S.fashion.log                                          9.283e+02  -0.023
+## S.week.log                                             4.770e-01  -0.527
+## H.npnct30.log                                          1.704e+00  -0.083
+## S.npnct12.log                                          1.431e-01  -1.126
+## H.ndgts.log                                            2.468e-01   1.890
+## S.ndgts.log                                            1.547e-01  -2.202
+## H.nuppr.log                                            4.193e-01   2.967
+## H.nchrs.log                                            4.340e-01  -2.097
+## H.nwrds.log                                            4.448e-01  -1.817
+## A.nchrs.log                                            5.068e-01   0.461
+## A.nwrds.log                                            1.652e+00   0.518
+## A.nwrds.unq.log                                        1.591e+00  -1.006
+## S.nuppr.log                                            1.563e-01  -4.297
+##                                                       Pr(>|z|)    
+## (Intercept)                                           0.049784 *  
+## WordCount.log                                          < 2e-16 ***
+## `PubDate.hour.fctr(7.67,15.3]`                        0.754532    
+## `PubDate.hour.fctr(15.3,23]`                          0.351877    
+## H.npnct21.log                                         2.30e-06 ***
+## PubDate.wkend                                         0.539548    
+## A.npnct21.log                                         1.58e-05 ***
+## H.npnct09.log                                         0.003920 ** 
+## PubDate.last10.log                                    0.062838 .  
+## PubDate.last1.log                                     0.280342    
+## S.npnct01.log                                         0.291976    
+## S.can.log                                             0.110955    
+## H.npnct17.log                                         0.076252 .  
+## H.has.ebola                                           0.378717    
+## S.make.log                                            0.366493    
+## H.npnct01.log                                         0.302512    
+## H.npnct12.log                                         0.043017 *  
+## `myCategory.fctrForeign#World#Asia Pacific`           6.07e-10 ***
+## `myCategory.fctr#Multimedia#`                         4.24e-08 ***
+## `myCategory.fctrCulture#Arts#`                        1.28e-14 ***
+## `myCategory.fctrBusiness#Business Day#Dealbook`       2.19e-15 ***
+## myCategory.fctrmyOther                                0.991127    
+## `myCategory.fctrBusiness#Technology#`                 1.07e-08 ***
+## `myCategory.fctrBusiness#Crosswords/Games#`           0.088141 .  
+## `myCategory.fctrTStyle##`                              < 2e-16 ***
+## `myCategory.fctrForeign#World#`                       0.983399    
+## `myCategory.fctrOpEd#Opinion#`                        0.019399 *  
+## `myCategory.fctrStyles##Fashion`                      0.984554    
+## `myCategory.fctr#Opinion#Room For Debate`              < 2e-16 ***
+## `myCategory.fctr#U.S.#Education`                      0.972195    
+## `myCategory.fctr##`                                    < 2e-16 ***
+## `myCategory.fctrMetro#N.Y. / Region#`                 9.56e-05 ***
+## `myCategory.fctrBusiness#Business Day#Small Business` 3.31e-11 ***
+## `myCategory.fctrStyles#U.S.#`                         0.156348    
+## `myCategory.fctrTravel#Travel#`                       0.000122 ***
+## `myCategory.fctr#Opinion#The Public Editor`           0.332379    
+## S.state.log                                           0.999464    
+## A.state.log                                           0.999419    
+## S.one.log                                             0.998822    
+## A.one.log                                             0.998802    
+## A.said.log                                            0.031690 *  
+## S.said.log                                                  NA    
+## A.npnct17.log                                         0.813240    
+## S.npnct17.log                                               NA    
+## S.npnct08.log                                         0.998642    
+## A.npnct08.log                                               NA    
+## S.npnct09.log                                         0.998803    
+## A.npnct09.log                                               NA    
+## PubDate.last100.log                                   0.744618    
+## .rnorm                                                0.192341    
+## H.npnct05.log                                         0.996870    
+## `PubDate.date.fctr(7,13]`                             0.817151    
+## `PubDate.date.fctr(13,19]`                            0.450572    
+## `PubDate.date.fctr(19,25]`                            0.634202    
+## `PubDate.date.fctr(25,31]`                            0.506891    
+## `PubDate.second.fctr(14.8,29.5]`                      0.598536    
+## `PubDate.second.fctr(29.5,44.2]`                      0.912018    
+## `PubDate.second.fctr(44.2,59.1]`                      0.102401    
+## H.npnct07.log                                         0.285972    
+## S.npnct07.log                                         0.996979    
+## S.npnct03.log                                         0.995821    
+## A.npnct19.log                                         0.998958    
+## H.npnct13.log                                         0.259466    
+## A.npnct20.log                                         0.999796    
+## S.has.year.colon                                      0.996602    
+## S.npnct22.log                                         0.995907    
+## H.npnct02.log                                         0.995470    
+## S.presid.log                                          0.301545    
+## S.npnct15.log                                         0.533108    
+## S.npnct06.log                                         0.944691    
+## H.npnct14.log                                         0.270322    
+## S.take.log                                            0.240453    
+## `PubDate.minute.fctr(14.8,29.5]`                      0.412919    
+## `PubDate.minute.fctr(29.5,44.2]`                      0.219295    
+## `PubDate.minute.fctr(44.2,59.1]`                      0.778381    
+## S.new.log                                             0.946707    
+## S.npnct13.log                                         0.400340    
+## PubDate.wkday.fctr1                                   0.320325    
+## PubDate.wkday.fctr2                                   0.047621 *  
+## PubDate.wkday.fctr3                                   0.177272    
+## PubDate.wkday.fctr4                                   0.080051 .  
+## PubDate.wkday.fctr5                                   0.128106    
+## PubDate.wkday.fctr6                                   0.006332 ** 
+## S.npnct30.log                                         0.990966    
+## S.day.log                                             0.752696    
+## H.X2014.log                                           0.466137    
+## S.show.log                                            0.297002    
+## A.npnct14.log                                         0.000295 ***
+## S.report.log                                          0.031395 *  
+## S.year.log                                            0.397220    
+## H.npnct04.log                                         0.045839 *  
+## S.share.log                                           0.136093    
+## S.compani.log                                         0.302760    
+## H.new.log                                             0.156403    
+## S.first.log                                           0.803577    
+## S.time.log                                            0.520425    
+## H.newyork.log                                         0.928951    
+## S.articl.log                                          0.877434    
+## S.will.log                                            0.169631    
+## H.npnct15.log                                         0.987496    
+## S.newyork.log                                         0.028476 *  
+## H.day.log                                             0.272099    
+## S.npnct04.log                                         0.106537    
+## H.today.log                                           0.000366 ***
+## H.report.log                                          0.451830    
+## S.npnct16.log                                         0.352844    
+## S.intern.log                                          0.418790    
+## H.daili.log                                           0.988067    
+## H.week.log                                            0.504070    
+## H.npnct16.log                                         0.402997    
+## S.fashion.log                                         0.981973    
+## S.week.log                                            0.598083    
+## H.npnct30.log                                         0.934245    
+## S.npnct12.log                                         0.260270    
+## H.ndgts.log                                           0.058737 .  
+## S.ndgts.log                                           0.027647 *  
+## H.nuppr.log                                           0.003005 ** 
+## H.nchrs.log                                           0.035976 *  
+## H.nwrds.log                                           0.069265 .  
+## A.nchrs.log                                           0.644811    
+## A.nwrds.log                                           0.604257    
+## A.nwrds.unq.log                                       0.314356    
+## S.nuppr.log                                           1.73e-05 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ## (Dispersion parameter for binomial family taken to be 1)
 ## 
 ##     Null deviance: 4042.7  on 4474  degrees of freedom
-## Residual deviance: 1842.9  on 4350  degrees of freedom
-## AIC: 2092.9
+## Residual deviance: 1841.2  on 4356  degrees of freedom
+## AIC: 2079.2
 ## 
-## Number of Fisher Scoring iterations: 25
+## Number of Fisher Scoring iterations: 18
 ## 
 ## [1] "    calling mypredict_mdl for fit:"
 ```
@@ -6187,34 +6227,34 @@ ret_lst <- myfit_mdl(model_id="Low.cor.X",
 ```
 ##    threshold   f.score
 ## 1        0.0 0.2867534
-## 2        0.1 0.6616400
-## 3        0.2 0.7321226
-## 4        0.3 0.7441860
-## 5        0.4 0.7373396
+## 2        0.1 0.6600660
+## 3        0.2 0.7335601
+## 4        0.3 0.7415307
+## 5        0.4 0.7444668
 ## 6        0.5 0.7324750
-## 7        0.6 0.7091875
-## 8        0.7 0.6595570
-## 9        0.8 0.5698730
-## 10       0.9 0.3744681
+## 7        0.6 0.7080182
+## 8        0.7 0.6540050
+## 9        0.8 0.5776173
+## 10       0.9 0.3779193
 ## 11       1.0 0.0000000
 ```
 
 ```
-## [1] "Classifier Probability Threshold: 0.3000 to maximize f.score.fit"
+## [1] "Classifier Probability Threshold: 0.4000 to maximize f.score.fit"
 ##   Popular.fctr Popular.fctr.predict.Low.cor.X.glm.N
-## 1            N                                 3476
-## 2            Y                                  157
+## 1            N                                 3539
+## 2            Y                                  194
 ##   Popular.fctr.predict.Low.cor.X.glm.Y
-## 1                                  250
-## 2                                  592
+## 1                                  187
+## 2                                  555
 ##          Prediction
 ## Reference    N    Y
-##         N 3476  250
-##         Y  157  592
+##         N 3539  187
+##         Y  194  555
 ##       Accuracy          Kappa  AccuracyLower  AccuracyUpper   AccuracyNull 
-##   9.090503e-01   6.891093e-01   9.002448e-01   9.173176e-01   8.326257e-01 
+##   9.148603e-01   6.933889e-01   9.062982e-01   9.228764e-01   8.326257e-01 
 ## AccuracyPValue  McnemarPValue 
-##   1.896445e-49   5.108772e-06 
+##   9.523435e-58   7.585471e-01 
 ## [1] "    calling mypredict_mdl for OOB:"
 ```
 
@@ -6233,15 +6273,15 @@ ret_lst <- myfit_mdl(model_id="Low.cor.X",
 ```
 ##    threshold   f.score
 ## 1        0.0 0.2865473
-## 2        0.1 0.6359833
-## 3        0.2 0.7048568
-## 4        0.3 0.7252747
-## 5        0.4 0.7088235
-## 6        0.5 0.6990596
-## 7        0.6 0.6644068
-## 8        0.7 0.6162162
-## 9        0.8 0.5461690
-## 10       0.9 0.3317536
+## 2        0.1 0.6397516
+## 3        0.2 0.7058824
+## 4        0.3 0.7257618
+## 5        0.4 0.7010309
+## 6        0.5 0.7021944
+## 7        0.6 0.6689189
+## 8        0.7 0.6198198
+## 9        0.8 0.5415020
+## 10       0.9 0.3190476
 ## 11       1.0 0.0000000
 ```
 
@@ -6250,35 +6290,35 @@ ret_lst <- myfit_mdl(model_id="Low.cor.X",
 ```
 ## [1] "Classifier Probability Threshold: 0.3000 to maximize f.score.OOB"
 ##   Popular.fctr Popular.fctr.predict.Low.cor.X.glm.N
-## 1            N                                 1593
-## 2            Y                                   80
+## 1            N                                 1597
+## 2            Y                                   82
 ##   Popular.fctr.predict.Low.cor.X.glm.Y
-## 1                                  120
-## 2                                  264
+## 1                                  116
+## 2                                  262
 ##          Prediction
 ## Reference    N    Y
-##         N 1593  120
-##         Y   80  264
+##         N 1597  116
+##         Y   82  262
 ##       Accuracy          Kappa  AccuracyLower  AccuracyUpper   AccuracyNull 
-##   9.027710e-01   6.664245e-01   8.891448e-01   9.152364e-01   8.327662e-01 
+##   9.037433e-01   6.675461e-01   8.901728e-01   9.161500e-01   8.327662e-01 
 ## AccuracyPValue  McnemarPValue 
-##   6.489691e-20   5.820666e-03 
+##   1.831382e-20   1.901647e-02 
 ##        model_id model_method
 ## 1 Low.cor.X.glm          glm
-##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         feats
-## 1 WordCount.log, PubDate.hour.fctr, H.npnct21.log, PubDate.wkend, A.npnct21.log, H.npnct09.log, PubDate.last10.log, PubDate.last1.log, S.npnct01.log, S.can.log, H.npnct17.log, S.npnct25.log, H.has.ebola, S.make.log, H.npnct01.log, .rnorm, A.npnct23.log, A.npnct25.log, H.npnct12.log, myCategory.fctr, H.npnct03.log, S.state.log, A.state.log, S.one.log, A.one.log, A.said.log, S.said.log, A.npnct17.log, S.npnct17.log, S.npnct08.log, A.npnct08.log, S.npnct09.log, A.npnct09.log, A.npnct27.log, A.npnct11.log, H.npnct11.log, H.npnct22.log, S.npnct02.log, S.npnct11.log, PubDate.last100.log, H.npnct05.log, PubDate.date.fctr, PubDate.second.fctr, H.npnct07.log, A.npnct07.log, S.npnct07.log, S.npnct03.log, A.npnct19.log, H.npnct13.log, A.has.http, A.npnct03.log, A.npnct02.log, A.npnct18.log, A.npnct20.log, A.has.year.colon, S.has.year.colon, S.npnct22.log, H.npnct02.log, S.presid.log, S.npnct15.log, S.npnct06.log, A.npnct15.log, H.npnct14.log, S.take.log, PubDate.minute.fctr, S.new.log, S.npnct13.log, PubDate.wkday.fctr, S.npnct30.log, S.day.log, H.X2014.log, S.show.log, A.npnct14.log, S.report.log, S.year.log, H.npnct04.log, S.share.log, S.compani.log, H.new.log, S.first.log, S.time.log, H.newyork.log, S.articl.log, S.will.log, H.npnct15.log, S.newyork.log, H.day.log, S.npnct04.log, H.today.log, H.report.log, S.npnct16.log, S.intern.log, H.daili.log, H.week.log, H.npnct16.log, S.fashion.log, S.week.log, H.npnct30.log, S.npnct12.log, H.ndgts.log, S.ndgts.log, H.nuppr.log, H.nchrs.log, H.nwrds.log, A.nchrs.log, A.nwrds.log, A.nwrds.unq.log, S.nuppr.log
+##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          feats
+## 1 WordCount.log, PubDate.hour.fctr, H.npnct21.log, PubDate.wkend, A.npnct21.log, H.npnct09.log, PubDate.last10.log, PubDate.last1.log, S.npnct01.log, S.can.log, H.npnct17.log, H.has.ebola, S.make.log, H.npnct01.log, H.npnct12.log, myCategory.fctr, S.state.log, A.state.log, S.one.log, A.one.log, A.said.log, S.said.log, A.npnct17.log, S.npnct17.log, S.npnct08.log, A.npnct08.log, S.npnct09.log, A.npnct09.log, PubDate.last100.log, .rnorm, H.npnct05.log, PubDate.date.fctr, PubDate.second.fctr, H.npnct07.log, S.npnct07.log, S.npnct03.log, A.npnct19.log, H.npnct13.log, A.npnct20.log, S.has.year.colon, S.npnct22.log, H.npnct02.log, S.presid.log, S.npnct15.log, S.npnct06.log, H.npnct14.log, S.take.log, PubDate.minute.fctr, S.new.log, S.npnct13.log, PubDate.wkday.fctr, S.npnct30.log, S.day.log, H.X2014.log, S.show.log, A.npnct14.log, S.report.log, S.year.log, H.npnct04.log, S.share.log, S.compani.log, H.new.log, S.first.log, S.time.log, H.newyork.log, S.articl.log, S.will.log, H.npnct15.log, S.newyork.log, H.day.log, S.npnct04.log, H.today.log, H.report.log, S.npnct16.log, S.intern.log, H.daili.log, H.week.log, H.npnct16.log, S.fashion.log, S.week.log, H.npnct30.log, S.npnct12.log, H.ndgts.log, S.ndgts.log, H.nuppr.log, H.nchrs.log, H.nwrds.log, A.nchrs.log, A.nwrds.log, A.nwrds.unq.log, S.nuppr.log
 ##   max.nTuningRuns min.elapsedtime.everything min.elapsedtime.final
-## 1               1                     14.959                 4.685
+## 1               1                      6.939                 3.268
 ##   max.auc.fit opt.prob.threshold.fit max.f.score.fit max.Accuracy.fit
-## 1   0.9487497                    0.3        0.744186        0.8929586
+## 1   0.9486508                    0.4       0.7444668        0.9088264
 ##   max.AccuracyLower.fit max.AccuracyUpper.fit max.Kappa.fit max.auc.OOB
-## 1             0.9002448             0.9173176      0.606769   0.9226367
+## 1             0.9062982             0.9228764     0.6544786   0.9262548
 ##   opt.prob.threshold.OOB max.f.score.OOB max.Accuracy.OOB
-## 1                    0.3       0.7252747         0.902771
+## 1                    0.3       0.7257618        0.9037433
 ##   max.AccuracyLower.OOB max.AccuracyUpper.OOB max.Kappa.OOB min.aic.fit
-## 1             0.8891448             0.9152364     0.6664245    2092.942
+## 1             0.8901728               0.91615     0.6675461    2079.176
 ##   max.AccuracySD.fit max.KappaSD.fit
-## 1         0.01556256      0.04242306
+## 1         0.00180873      0.00412111
 ```
 
 ```r
@@ -6286,11 +6326,20 @@ glb_chunks_df <- myadd_chunk(glb_chunks_df, "fit.models", major.inc=FALSE)
 ```
 
 ```
-##         label step_major step_minor     bgn    end elapsed
-## 9  fit.models          6          0 176.477 222.29  45.814
-## 10 fit.models          6          1 222.291     NA      NA
+##         label step_major step_minor     bgn     end elapsed
+## 9  fit.models          6          0 189.590 228.568  38.978
+## 10 fit.models          6          1 228.568      NA      NA
 ```
 
+
+```r
+fit.models_1_chunk_df <- myadd_chunk(NULL, "fit.models_1_bgn")
+```
+
+```
+##              label step_major step_minor     bgn end elapsed
+## 1 fit.models_1_bgn          1          0 232.714  NA      NA
+```
 
 ```r
 # All X that is not user excluded
@@ -6301,10 +6350,13 @@ glb_chunks_df <- myadd_chunk(glb_chunks_df, "fit.models", major.inc=FALSE)
 #                                             (exclude.as.feat != 1))[, "id"]
 # } else {
     model_id_pfx <- "All.X"
-    indep_vars_vctr <- subset(glb_feats_df, !zeroVar &
+    indep_vars_vctr <- subset(glb_feats_df, !myNearZV &
                                             (exclude.as.feat != 1))[, "id"]
 # }
+
 for (method in glb_models_method_vctr) {
+    fit.models_1_chunk_df <- myadd_chunk(fit.models_1_chunk_df, 
+                                paste0("fit.models_1_", method), major.inc=TRUE)
     if (method %in% c("rpart", "rf")) {
         # rpart:    fubar's the tree
         # rf:       skip the scenario w/ .rnorm for speed
@@ -6331,58 +6383,11 @@ for (method in glb_models_method_vctr) {
 ```
 
 ```
+##              label step_major step_minor     bgn     end elapsed
+## 1 fit.models_1_bgn          1          0 232.714 232.725   0.012
+## 2 fit.models_1_glm          2          0 232.726      NA      NA
 ## [1] "fitting model: All.X.glm"
-## [1] "    indep_vars: WordCount.log, PubDate.hour.fctr, H.npnct21.log, PubDate.wkend, S.npnct21.log, A.npnct21.log, H.npnct08.log, H.npnct09.log, PubDate.last10.log, PubDate.last1.log, H.npnct06.log, A.can.log, A.npnct01.log, S.npnct01.log, S.can.log, H.npnct17.log, S.npnct23.log, S.npnct25.log, H.has.ebola, A.make.log, S.make.log, H.npnct01.log, .rnorm, A.npnct23.log, A.npnct25.log, H.npnct12.log, myCategory.fctr, H.npnct03.log, S.state.log, A.state.log, S.one.log, A.one.log, A.said.log, S.said.log, A.npnct17.log, S.npnct17.log, S.npnct08.log, A.npnct08.log, S.npnct09.log, A.npnct09.log, A.npnct27.log, A.npnct11.log, H.npnct11.log, H.npnct22.log, S.npnct02.log, S.npnct11.log, PubDate.last100.log, H.npnct05.log, PubDate.date.fctr, PubDate.second.fctr, H.npnct07.log, A.npnct07.log, S.npnct07.log, S.npnct03.log, A.npnct19.log, H.npnct13.log, A.has.http, A.npnct03.log, A.npnct02.log, A.npnct18.log, A.npnct20.log, A.has.year.colon, S.has.year.colon, A.npnct22.log, S.npnct22.log, H.npnct02.log, A.presid.log, S.presid.log, S.npnct15.log, A.npnct06.log, S.npnct06.log, A.npnct15.log, H.npnct14.log, S.take.log, A.take.log, PubDate.minute.fctr, S.new.log, A.new.log, S.npnct13.log, A.npnct13.log, PubDate.wkday.fctr, S.npnct30.log, A.npnct30.log, S.day.log, A.day.log, H.X2014.log, A.show.log, S.show.log, A.npnct14.log, A.report.log, S.report.log, A.year.log, S.year.log, H.npnct04.log, A.share.log, S.share.log, S.compani.log, A.compani.log, H.new.log, S.npnct14.log, A.first.log, S.first.log, S.time.log, A.time.log, H.newyork.log, A.articl.log, S.articl.log, S.will.log, A.will.log, H.npnct15.log, A.newyork.log, S.newyork.log, H.day.log, A.npnct04.log, S.npnct04.log, H.today.log, H.report.log, H.X2015.log, S.npnct16.log, A.intern.log, S.intern.log, A.npnct16.log, H.daili.log, H.week.log, H.has.year.colon, H.fashion.log, H.npnct16.log, A.fashion.log, S.fashion.log, A.week.log, S.week.log, H.npnct30.log, S.npnct12.log, A.npnct12.log, H.ndgts.log, S.ndgts.log, A.ndgts.log, H.nuppr.log, H.nchrs.log, H.nwrds.log, H.nwrds.unq.log, A.nchrs.log, S.nchrs.log, A.nwrds.log, S.nwrds.log, A.nwrds.unq.log, S.nwrds.unq.log, S.nuppr.log, A.nuppr.log"
-## + Fold1: parameter=none
-```
-
-```
-## Warning: glm.fit: algorithm did not converge
-```
-
-```
-## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
-```
-
-```
-## Warning in predict.lm(object, newdata, se.fit, scale = 1, type =
-## ifelse(type == : prediction from a rank-deficient fit may be misleading
-```
-
-```
-## - Fold1: parameter=none 
-## + Fold2: parameter=none
-```
-
-```
-## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
-```
-
-```
-## Warning in predict.lm(object, newdata, se.fit, scale = 1, type =
-## ifelse(type == : prediction from a rank-deficient fit may be misleading
-```
-
-```
-## - Fold2: parameter=none 
-## + Fold3: parameter=none
-```
-
-```
-## Warning: glm.fit: algorithm did not converge
-```
-
-```
-## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
-```
-
-```
-## Warning in predict.lm(object, newdata, se.fit, scale = 1, type =
-## ifelse(type == : prediction from a rank-deficient fit may be misleading
-```
-
-```
-## - Fold3: parameter=none 
+## [1] "    indep_vars: WordCount.log, PubDate.hour.fctr, H.npnct21.log, PubDate.wkend, S.npnct21.log, A.npnct21.log, H.npnct08.log, H.npnct09.log, PubDate.last10.log, PubDate.last1.log, H.npnct06.log, A.can.log, A.npnct01.log, S.npnct01.log, S.can.log, H.npnct17.log, H.has.ebola, A.make.log, S.make.log, H.npnct01.log, H.npnct12.log, myCategory.fctr, S.state.log, A.state.log, S.one.log, A.one.log, A.said.log, S.said.log, A.npnct17.log, S.npnct17.log, S.npnct08.log, A.npnct08.log, S.npnct09.log, A.npnct09.log, PubDate.last100.log, .rnorm, H.npnct05.log, PubDate.date.fctr, PubDate.second.fctr, H.npnct07.log, A.npnct07.log, S.npnct07.log, S.npnct03.log, A.npnct19.log, H.npnct13.log, A.has.http, A.npnct03.log, A.npnct02.log, A.npnct18.log, A.npnct20.log, A.has.year.colon, S.has.year.colon, A.npnct22.log, S.npnct22.log, H.npnct02.log, A.presid.log, S.presid.log, S.npnct15.log, A.npnct06.log, S.npnct06.log, A.npnct15.log, H.npnct14.log, S.take.log, A.take.log, PubDate.minute.fctr, S.new.log, A.new.log, S.npnct13.log, A.npnct13.log, PubDate.wkday.fctr, S.npnct30.log, A.npnct30.log, S.day.log, A.day.log, H.X2014.log, A.show.log, S.show.log, A.npnct14.log, A.report.log, S.report.log, A.year.log, S.year.log, H.npnct04.log, A.share.log, S.share.log, S.compani.log, A.compani.log, H.new.log, S.npnct14.log, A.first.log, S.first.log, S.time.log, A.time.log, H.newyork.log, A.articl.log, S.articl.log, S.will.log, A.will.log, H.npnct15.log, A.newyork.log, S.newyork.log, H.day.log, A.npnct04.log, S.npnct04.log, H.today.log, H.report.log, H.X2015.log, S.npnct16.log, A.intern.log, S.intern.log, A.npnct16.log, H.daili.log, H.week.log, H.has.year.colon, H.fashion.log, H.npnct16.log, A.fashion.log, S.fashion.log, A.week.log, S.week.log, H.npnct30.log, S.npnct12.log, A.npnct12.log, H.ndgts.log, S.ndgts.log, A.ndgts.log, H.nuppr.log, H.nchrs.log, H.nwrds.log, H.nwrds.unq.log, A.nchrs.log, S.nchrs.log, A.nwrds.log, S.nwrds.log, A.nwrds.unq.log, S.nwrds.unq.log, S.nuppr.log, A.nuppr.log"
 ## Aggregating results
 ## Fitting final model on full training set
 ```
@@ -6397,14 +6402,14 @@ for (method in glb_models_method_vctr) {
 
 ```
 ## Warning: not plotting observations with leverage one:
-##   1143, 1161, 1930, 1977, 2502, 3799, 4105, 4408
+##   1143, 2501, 3625, 3637, 3799, 4105, 4408
 ```
 
 ![](NYTBlogs_txtfeat_files/figure-html/fit.models_1-1.png) ![](NYTBlogs_txtfeat_files/figure-html/fit.models_1-2.png) 
 
 ```
 ## Warning: not plotting observations with leverage one:
-##   1143, 1161, 1930, 1977, 2502, 3799, 4105, 4408
+##   1143, 2501, 3625, 3637, 3799, 4105, 4408
 ```
 
 ![](NYTBlogs_txtfeat_files/figure-html/fit.models_1-3.png) 
@@ -6426,553 +6431,520 @@ for (method in glb_models_method_vctr) {
 ##    Min      1Q  Median      3Q     Max  
 ##  -8.49    0.00    0.00    0.00    8.49  
 ## 
-## Coefficients: (39 not defined because of singularities)
+## Coefficients: (31 not defined because of singularities)
 ##                                                         Estimate
-## (Intercept)                                            7.336e+14
-## WordCount.log                                          2.451e+14
-## `PubDate.hour.fctr(7.67,15.3]`                         3.403e+13
-## `PubDate.hour.fctr(15.3,23]`                           5.287e+13
-## H.npnct21.log                                          9.165e+14
-## PubDate.wkend                                         -1.327e+13
-## S.npnct21.log                                          2.942e+15
-## A.npnct21.log                                         -2.126e+15
-## H.npnct08.log                                         -8.494e+14
+## (Intercept)                                           -9.447e+14
+## WordCount.log                                          4.908e+14
+## `PubDate.hour.fctr(7.67,15.3]`                         1.748e+14
+## `PubDate.hour.fctr(15.3,23]`                           6.615e+14
+## H.npnct21.log                                          1.242e+15
+## PubDate.wkend                                         -3.716e+13
+## S.npnct21.log                                         -2.188e+15
+## A.npnct21.log                                          3.821e+15
+## H.npnct08.log                                          1.041e+15
 ## H.npnct09.log                                                 NA
-## PubDate.last10.log                                     1.204e+14
-## PubDate.last1.log                                     -5.490e+12
-## H.npnct06.log                                         -5.766e+14
-## A.can.log                                              8.075e+15
-## A.npnct01.log                                          7.136e+13
+## PubDate.last10.log                                     1.468e+14
+## PubDate.last1.log                                     -5.579e+12
+## H.npnct06.log                                          8.977e+14
+## A.can.log                                              9.731e+15
+## A.npnct01.log                                          9.868e+14
 ## S.npnct01.log                                                 NA
-## S.can.log                                             -8.263e+15
-## H.npnct17.log                                         -1.263e+14
-## S.npnct23.log                                                 NA
-## S.npnct25.log                                                 NA
-## H.has.ebola                                           -7.683e+14
-## A.make.log                                            -6.327e+14
+## S.can.log                                             -8.487e+15
+## H.npnct17.log                                         -2.481e+14
+## H.has.ebola                                            9.863e+13
+## A.make.log                                             1.094e+15
 ## S.make.log                                                    NA
-## H.npnct01.log                                         -8.337e+14
-## .rnorm                                                 9.930e+13
-## A.npnct23.log                                         -1.771e+15
-## A.npnct25.log                                                 NA
-## H.npnct12.log                                          1.903e+14
-## `myCategory.fctrForeign#World#Asia Pacific`           -2.822e+15
-## `myCategory.fctr#Multimedia#`                         -3.744e+15
-## `myCategory.fctrCulture#Arts#`                        -1.878e+15
-## `myCategory.fctrBusiness#Business Day#Dealbook`       -4.884e+15
-## myCategory.fctrmyOther                                -5.716e+15
-## `myCategory.fctrBusiness#Technology#`                 -2.390e+15
-## `myCategory.fctrBusiness#Crosswords/Games#`           -8.911e+14
-## `myCategory.fctrTStyle##`                             -2.217e+15
-## `myCategory.fctrForeign#World#`                       -3.782e+15
-## `myCategory.fctrOpEd#Opinion#`                         5.803e+14
-## `myCategory.fctrStyles##Fashion`                      -5.396e+15
-## `myCategory.fctr#Opinion#Room For Debate`             -4.318e+15
-## `myCategory.fctr#U.S.#Education`                      -6.978e+15
-## `myCategory.fctr##`                                   -4.691e+15
-## `myCategory.fctrMetro#N.Y. / Region#`                 -1.945e+15
-## `myCategory.fctrBusiness#Business Day#Small Business` -5.715e+15
-## `myCategory.fctrStyles#U.S.#`                         -1.121e+15
-## `myCategory.fctrTravel#Travel#`                       -2.560e+15
-## `myCategory.fctr#Opinion#The Public Editor`           -8.298e+13
-## H.npnct03.log                                                 NA
-## S.state.log                                            1.009e+16
-## A.state.log                                           -9.680e+15
-## S.one.log                                              1.413e+15
-## A.one.log                                             -2.247e+15
-## A.said.log                                             1.068e+15
+## H.npnct01.log                                          2.972e+14
+## H.npnct12.log                                         -8.269e+13
+## `myCategory.fctrForeign#World#Asia Pacific`           -3.868e+15
+## `myCategory.fctr#Multimedia#`                         -3.856e+15
+## `myCategory.fctrCulture#Arts#`                        -2.956e+15
+## `myCategory.fctrBusiness#Business Day#Dealbook`       -3.209e+15
+## myCategory.fctrmyOther                                -3.205e+15
+## `myCategory.fctrBusiness#Technology#`                 -2.871e+15
+## `myCategory.fctrBusiness#Crosswords/Games#`           -1.662e+14
+## `myCategory.fctrTStyle##`                             -2.835e+15
+## `myCategory.fctrForeign#World#`                       -2.009e+15
+## `myCategory.fctrOpEd#Opinion#`                         9.667e+14
+## `myCategory.fctrStyles##Fashion`                      -4.023e+15
+## `myCategory.fctr#Opinion#Room For Debate`             -5.282e+15
+## `myCategory.fctr#U.S.#Education`                      -6.503e+15
+## `myCategory.fctr##`                                   -3.413e+15
+## `myCategory.fctrMetro#N.Y. / Region#`                 -3.186e+15
+## `myCategory.fctrBusiness#Business Day#Small Business` -3.525e+15
+## `myCategory.fctrStyles#U.S.#`                         -8.377e+13
+## `myCategory.fctrTravel#Travel#`                       -2.945e+15
+## `myCategory.fctr#Opinion#The Public Editor`            1.634e+15
+## S.state.log                                            1.774e+16
+## A.state.log                                           -1.452e+16
+## S.one.log                                             -5.269e+15
+## A.one.log                                              5.178e+15
+## A.said.log                                             6.214e+14
 ## S.said.log                                                    NA
-## A.npnct17.log                                         -4.378e+14
+## A.npnct17.log                                         -8.489e+14
 ## S.npnct17.log                                                 NA
-## S.npnct08.log                                          1.870e+15
+## S.npnct08.log                                          2.157e+15
 ## A.npnct08.log                                                 NA
-## S.npnct09.log                                         -2.851e+15
+## S.npnct09.log                                         -1.195e+15
 ## A.npnct09.log                                                 NA
-## A.npnct27.log                                                 NA
-## A.npnct11.log                                                 NA
-## H.npnct11.log                                         -5.274e+15
-## H.npnct22.log                                          1.817e+15
-## S.npnct02.log                                          3.057e+14
-## S.npnct11.log                                                 NA
-## PubDate.last100.log                                    1.286e+13
-## H.npnct05.log                                         -2.880e+15
-## `PubDate.date.fctr(7,13]`                             -9.212e+13
-## `PubDate.date.fctr(13,19]`                             7.976e+13
-## `PubDate.date.fctr(19,25]`                             5.690e+13
-## `PubDate.date.fctr(25,31]`                             6.455e+13
-## `PubDate.second.fctr(14.8,29.5]`                       8.535e+13
-## `PubDate.second.fctr(29.5,44.2]`                       3.958e+13
-## `PubDate.second.fctr(44.2,59.1]`                       1.699e+13
-## H.npnct07.log                                          3.850e+13
-## A.npnct07.log                                          5.995e+14
+## PubDate.last100.log                                    2.795e+13
+## .rnorm                                                -6.296e+13
+## H.npnct05.log                                         -1.567e+15
+## `PubDate.date.fctr(7,13]`                              9.714e+13
+## `PubDate.date.fctr(13,19]`                            -1.235e+13
+## `PubDate.date.fctr(19,25]`                             1.877e+13
+## `PubDate.date.fctr(25,31]`                             1.610e+14
+## `PubDate.second.fctr(14.8,29.5]`                       2.563e+13
+## `PubDate.second.fctr(29.5,44.2]`                       5.194e+13
+## `PubDate.second.fctr(44.2,59.1]`                      -7.845e+13
+## H.npnct07.log                                          1.655e+14
+## A.npnct07.log                                         -6.395e+14
 ## S.npnct07.log                                                 NA
-## S.npnct03.log                                         -3.845e+14
-## A.npnct19.log                                          1.756e+16
-## H.npnct13.log                                         -5.368e+13
+## S.npnct03.log                                          3.179e+14
+## A.npnct19.log                                          3.597e+16
+## H.npnct13.log                                          2.953e+14
 ## A.has.http                                                    NA
 ## A.npnct03.log                                                 NA
-## A.npnct02.log                                                 NA
-## A.npnct18.log                                          1.421e+16
+## A.npnct02.log                                          4.811e+14
+## A.npnct18.log                                          1.205e+16
 ## A.npnct20.log                                                 NA
-## A.has.year.colon                                       2.132e+15
+## A.has.year.colon                                       1.478e+14
 ## S.has.year.colon                                              NA
-## A.npnct22.log                                         -3.107e+14
+## A.npnct22.log                                          1.087e+15
 ## S.npnct22.log                                                 NA
-## H.npnct02.log                                         -3.292e+15
-## A.presid.log                                           6.151e+12
+## H.npnct02.log                                         -3.379e+13
+## A.presid.log                                           3.207e+14
 ## S.presid.log                                                  NA
-## S.npnct15.log                                          1.553e+16
-## A.npnct06.log                                         -4.037e+14
+## S.npnct15.log                                          2.152e+16
+## A.npnct06.log                                         -2.430e+14
 ## S.npnct06.log                                                 NA
-## A.npnct15.log                                         -1.555e+16
-## H.npnct14.log                                         -1.160e+14
-## S.take.log                                            -2.442e+14
+## A.npnct15.log                                         -2.113e+16
+## H.npnct14.log                                         -1.404e+13
+## S.take.log                                            -2.134e+14
 ## A.take.log                                                    NA
-## `PubDate.minute.fctr(14.8,29.5]`                       6.319e+12
-## `PubDate.minute.fctr(29.5,44.2]`                      -6.467e+13
-## `PubDate.minute.fctr(44.2,59.1]`                       9.576e+13
-## S.new.log                                             -1.018e+16
-## A.new.log                                              1.005e+16
-## S.npnct13.log                                         -1.669e+15
-## A.npnct13.log                                          1.531e+15
-## PubDate.wkday.fctr1                                   -3.192e+13
-## PubDate.wkday.fctr2                                   -1.959e+14
-## PubDate.wkday.fctr3                                   -6.961e+13
-## PubDate.wkday.fctr4                                   -1.193e+14
-## PubDate.wkday.fctr5                                   -1.724e+14
-## PubDate.wkday.fctr6                                   -4.728e+14
-## S.npnct30.log                                         -8.008e+15
-## A.npnct30.log                                          7.291e+15
-## S.day.log                                             -2.167e+14
+## `PubDate.minute.fctr(14.8,29.5]`                      -1.461e+14
+## `PubDate.minute.fctr(29.5,44.2]`                      -9.707e+13
+## `PubDate.minute.fctr(44.2,59.1]`                      -1.399e+13
+## S.new.log                                              3.170e+15
+## A.new.log                                             -3.070e+15
+## S.npnct13.log                                         -2.045e+15
+## A.npnct13.log                                          2.039e+15
+## PubDate.wkday.fctr1                                   -7.566e+13
+## PubDate.wkday.fctr2                                   -2.884e+14
+## PubDate.wkday.fctr3                                   -1.565e+14
+## PubDate.wkday.fctr4                                   -1.658e+14
+## PubDate.wkday.fctr5                                   -2.091e+14
+## PubDate.wkday.fctr6                                   -4.855e+14
+## S.npnct30.log                                         -3.633e+15
+## A.npnct30.log                                          2.711e+15
+## S.day.log                                             -2.921e+14
 ## A.day.log                                                     NA
-## H.X2014.log                                           -9.315e+14
-## A.show.log                                            -2.186e+15
+## H.X2014.log                                            4.301e+14
+## A.show.log                                            -4.676e+14
 ## S.show.log                                                    NA
-## A.npnct14.log                                         -2.217e+14
-## A.report.log                                          -2.255e+15
+## A.npnct14.log                                          2.796e+14
+## A.report.log                                          -9.455e+14
 ## S.report.log                                                  NA
-## A.year.log                                            -6.487e+13
+## A.year.log                                            -2.529e+14
 ## S.year.log                                                    NA
-## H.npnct04.log                                         -1.582e+15
-## A.share.log                                           -2.466e+14
+## H.npnct04.log                                         -8.797e+14
+## A.share.log                                           -8.119e+14
 ## S.share.log                                                   NA
-## S.compani.log                                         -2.412e+14
+## S.compani.log                                         -2.613e+14
 ## A.compani.log                                                 NA
-## H.new.log                                             -1.729e+14
-## S.npnct14.log                                          5.120e+14
-## A.first.log                                            5.994e+13
+## H.new.log                                             -6.768e+14
+## S.npnct14.log                                          2.368e+14
+## A.first.log                                           -6.177e+13
 ## S.first.log                                                   NA
-## S.time.log                                            -5.285e+14
+## S.time.log                                            -3.788e+14
 ## A.time.log                                                    NA
-## H.newyork.log                                         -4.387e+14
-## A.articl.log                                           1.711e+15
+## H.newyork.log                                         -6.853e+13
+## A.articl.log                                           1.199e+15
 ## S.articl.log                                                  NA
-## S.will.log                                             2.070e+15
-## A.will.log                                            -2.110e+15
-## H.npnct15.log                                          6.959e+14
-## A.newyork.log                                         -6.920e+11
+## S.will.log                                             3.765e+15
+## A.will.log                                            -4.114e+15
+## H.npnct15.log                                         -4.845e+14
+## A.newyork.log                                          4.852e+14
 ## S.newyork.log                                                 NA
-## H.day.log                                              3.221e+14
-## A.npnct04.log                                         -6.576e+13
+## H.day.log                                              7.724e+13
+## A.npnct04.log                                         -7.641e+14
 ## S.npnct04.log                                                 NA
-## H.today.log                                           -1.889e+14
-## H.report.log                                          -3.954e+14
-## H.X2015.log                                           -6.346e+14
-## S.npnct16.log                                          3.641e+14
-## A.intern.log                                          -1.238e+15
+## H.today.log                                           -1.053e+15
+## H.report.log                                          -3.294e+14
+## H.X2015.log                                            2.301e+15
+## S.npnct16.log                                          3.428e+14
+## A.intern.log                                          -8.385e+14
 ## S.intern.log                                                  NA
 ## A.npnct16.log                                                 NA
-## H.daili.log                                           -2.108e+15
-## H.week.log                                             2.697e+14
-## H.has.year.colon                                      -1.635e+15
-## H.fashion.log                                         -7.047e+13
-## H.npnct16.log                                         -1.592e+14
-## A.fashion.log                                         -1.179e+15
+## H.daili.log                                            1.739e+13
+## H.week.log                                            -6.011e+14
+## H.has.year.colon                                       1.197e+15
+## H.fashion.log                                          3.386e+14
+## H.npnct16.log                                         -2.156e+13
+## A.fashion.log                                         -1.494e+15
 ## S.fashion.log                                                 NA
-## A.week.log                                            -3.541e+14
+## A.week.log                                            -3.959e+14
 ## S.week.log                                                    NA
-## H.npnct30.log                                          5.016e+14
-## S.npnct12.log                                          2.885e+15
-## A.npnct12.log                                         -2.892e+15
-## H.ndgts.log                                            2.919e+14
-## S.ndgts.log                                            7.656e+14
-## A.ndgts.log                                           -9.231e+14
-## H.nuppr.log                                            4.150e+14
-## H.nchrs.log                                           -1.509e+14
-## H.nwrds.log                                            8.574e+13
-## H.nwrds.unq.log                                       -4.910e+14
-## A.nchrs.log                                            1.325e+16
-## S.nchrs.log                                           -1.355e+16
-## A.nwrds.log                                           -2.684e+15
-## S.nwrds.log                                            3.945e+15
-## A.nwrds.unq.log                                       -1.284e+16
-## S.nwrds.unq.log                                        1.170e+16
-## S.nuppr.log                                           -4.983e+14
-## A.nuppr.log                                            2.929e+14
+## H.npnct30.log                                          1.581e+15
+## S.npnct12.log                                         -8.402e+15
+## A.npnct12.log                                          8.350e+15
+## H.ndgts.log                                            3.205e+14
+## S.ndgts.log                                           -1.457e+15
+## A.ndgts.log                                            1.320e+15
+## H.nuppr.log                                            3.456e+14
+## H.nchrs.log                                           -2.818e+14
+## H.nwrds.log                                           -1.434e+14
+## H.nwrds.unq.log                                       -4.929e+14
+## A.nchrs.log                                           -8.539e+15
+## S.nchrs.log                                            8.168e+15
+## A.nwrds.log                                           -8.951e+15
+## S.nwrds.log                                            9.525e+15
+## A.nwrds.unq.log                                        1.404e+16
+## S.nwrds.unq.log                                       -1.464e+16
+## S.nuppr.log                                           -4.014e+15
+## A.nuppr.log                                            3.559e+15
 ##                                                       Std. Error
-## (Intercept)                                            3.560e+07
-## WordCount.log                                          1.213e+06
-## `PubDate.hour.fctr(7.67,15.3]`                         3.799e+06
-## `PubDate.hour.fctr(15.3,23]`                           4.045e+06
+## (Intercept)                                            3.559e+07
+## WordCount.log                                          1.219e+06
+## `PubDate.hour.fctr(7.67,15.3]`                         3.797e+06
+## `PubDate.hour.fctr(15.3,23]`                           4.044e+06
 ## H.npnct21.log                                          6.619e+06
-## PubDate.wkend                                          7.771e+06
-## S.npnct21.log                                          1.000e+08
-## A.npnct21.log                                          9.996e+07
+## PubDate.wkend                                          7.776e+06
+## S.npnct21.log                                          9.958e+07
+## A.npnct21.log                                          9.953e+07
 ## H.npnct08.log                                          1.489e+07
 ## H.npnct09.log                                                 NA
-## PubDate.last10.log                                     1.955e+06
-## PubDate.last1.log                                      7.095e+05
+## PubDate.last10.log                                     1.954e+06
+## PubDate.last1.log                                      7.091e+05
 ## H.npnct06.log                                          1.670e+07
-## A.can.log                                              2.064e+08
-## A.npnct01.log                                          2.678e+07
+## A.can.log                                              2.057e+08
+## A.npnct01.log                                          2.679e+07
 ## S.npnct01.log                                                 NA
-## S.can.log                                              2.070e+08
+## S.can.log                                              2.062e+08
 ## H.npnct17.log                                          1.784e+07
-## S.npnct23.log                                                 NA
-## S.npnct25.log                                                 NA
-## H.has.ebola                                            8.879e+06
+## H.has.ebola                                            8.881e+06
 ## A.make.log                                             7.668e+06
 ## S.make.log                                                    NA
 ## H.npnct01.log                                          2.340e+07
-## .rnorm                                                 1.029e+06
-## A.npnct23.log                                          1.067e+08
-## A.npnct25.log                                                 NA
-## H.npnct12.log                                          3.660e+06
-## `myCategory.fctrForeign#World#Asia Pacific`            8.779e+06
-## `myCategory.fctr#Multimedia#`                          1.019e+07
+## H.npnct12.log                                          3.661e+06
+## `myCategory.fctrForeign#World#Asia Pacific`            8.774e+06
+## `myCategory.fctr#Multimedia#`                          1.018e+07
 ## `myCategory.fctrCulture#Arts#`                         7.372e+06
-## `myCategory.fctrBusiness#Business Day#Dealbook`        7.185e+06
+## `myCategory.fctrBusiness#Business Day#Dealbook`        7.183e+06
 ## myCategory.fctrmyOther                                 1.513e+07
-## `myCategory.fctrBusiness#Technology#`                  7.951e+06
-## `myCategory.fctrBusiness#Crosswords/Games#`            1.048e+07
-## `myCategory.fctrTStyle##`                              7.322e+06
-## `myCategory.fctrForeign#World#`                        1.736e+07
-## `myCategory.fctrOpEd#Opinion#`                         7.379e+06
+## `myCategory.fctrBusiness#Technology#`                  7.949e+06
+## `myCategory.fctrBusiness#Crosswords/Games#`            1.047e+07
+## `myCategory.fctrTStyle##`                              7.317e+06
+## `myCategory.fctrForeign#World#`                        1.735e+07
+## `myCategory.fctrOpEd#Opinion#`                         7.377e+06
 ## `myCategory.fctrStyles##Fashion`                       1.128e+07
-## `myCategory.fctr#Opinion#Room For Debate`              1.182e+07
+## `myCategory.fctr#Opinion#Room For Debate`              1.181e+07
 ## `myCategory.fctr#U.S.#Education`                       1.138e+07
-## `myCategory.fctr##`                                    6.802e+06
-## `myCategory.fctrMetro#N.Y. / Region#`                  9.716e+06
-## `myCategory.fctrBusiness#Business Day#Small Business`  9.910e+06
-## `myCategory.fctrStyles#U.S.#`                          8.961e+06
-## `myCategory.fctrTravel#Travel#`                        9.799e+06
-## `myCategory.fctr#Opinion#The Public Editor`            2.251e+07
-## H.npnct03.log                                                 NA
-## S.state.log                                            3.377e+08
-## A.state.log                                            3.377e+08
+## `myCategory.fctr##`                                    6.801e+06
+## `myCategory.fctrMetro#N.Y. / Region#`                  9.712e+06
+## `myCategory.fctrBusiness#Business Day#Small Business`  9.909e+06
+## `myCategory.fctrStyles#U.S.#`                          8.958e+06
+## `myCategory.fctrTravel#Travel#`                        9.798e+06
+## `myCategory.fctr#Opinion#The Public Editor`            2.252e+07
+## S.state.log                                            3.414e+08
+## A.state.log                                            3.414e+08
 ## S.one.log                                              1.684e+08
 ## A.one.log                                              1.686e+08
-## A.said.log                                             7.939e+06
+## A.said.log                                             7.938e+06
 ## S.said.log                                                    NA
 ## A.npnct17.log                                          2.100e+07
 ## S.npnct17.log                                                 NA
-## S.npnct08.log                                          5.208e+07
+## S.npnct08.log                                          5.207e+07
 ## A.npnct08.log                                                 NA
-## S.npnct09.log                                          4.870e+07
+## S.npnct09.log                                          4.868e+07
 ## A.npnct09.log                                                 NA
-## A.npnct27.log                                                 NA
-## A.npnct11.log                                                 NA
-## H.npnct11.log                                          9.754e+07
-## H.npnct22.log                                          9.804e+07
-## S.npnct02.log                                          6.299e+07
-## S.npnct11.log                                                 NA
-## PubDate.last100.log                                    7.784e+05
+## PubDate.last100.log                                    7.782e+05
+## .rnorm                                                 1.028e+06
 ## H.npnct05.log                                          4.048e+07
-## `PubDate.date.fctr(7,13]`                              3.233e+06
-## `PubDate.date.fctr(13,19]`                             3.188e+06
-## `PubDate.date.fctr(19,25]`                             3.080e+06
-## `PubDate.date.fctr(25,31]`                             3.433e+06
-## `PubDate.second.fctr(14.8,29.5]`                       2.861e+06
-## `PubDate.second.fctr(29.5,44.2]`                       2.824e+06
-## `PubDate.second.fctr(44.2,59.1]`                       2.884e+06
-## H.npnct07.log                                          2.983e+06
-## A.npnct07.log                                          5.017e+07
+## `PubDate.date.fctr(7,13]`                              3.232e+06
+## `PubDate.date.fctr(13,19]`                             3.186e+06
+## `PubDate.date.fctr(19,25]`                             3.079e+06
+## `PubDate.date.fctr(25,31]`                             3.432e+06
+## `PubDate.second.fctr(14.8,29.5]`                       2.860e+06
+## `PubDate.second.fctr(29.5,44.2]`                       2.823e+06
+## `PubDate.second.fctr(44.2,59.1]`                       2.883e+06
+## H.npnct07.log                                          2.982e+06
+## A.npnct07.log                                          5.011e+07
 ## S.npnct07.log                                                 NA
 ## S.npnct03.log                                          4.404e+07
-## A.npnct19.log                                          7.229e+08
-## H.npnct13.log                                          5.232e+06
+## A.npnct19.log                                          7.276e+08
+## H.npnct13.log                                          5.228e+06
 ## A.has.http                                                    NA
 ## A.npnct03.log                                                 NA
-## A.npnct02.log                                                 NA
-## A.npnct18.log                                          2.206e+08
+## A.npnct02.log                                          6.300e+07
+## A.npnct18.log                                          2.198e+08
 ## A.npnct20.log                                                 NA
 ## A.has.year.colon                                       2.385e+07
 ## S.has.year.colon                                              NA
 ## A.npnct22.log                                          3.172e+07
 ## S.npnct22.log                                                 NA
 ## H.npnct02.log                                          2.532e+07
-## A.presid.log                                           7.652e+06
+## A.presid.log                                           7.645e+06
 ## S.presid.log                                                  NA
-## S.npnct15.log                                          3.391e+08
+## S.npnct15.log                                          3.378e+08
 ## A.npnct06.log                                          1.791e+07
 ## S.npnct06.log                                                 NA
-## A.npnct15.log                                          3.386e+08
+## A.npnct15.log                                          3.373e+08
 ## H.npnct14.log                                          3.444e+06
-## S.take.log                                             8.390e+06
+## S.take.log                                             8.391e+06
 ## A.take.log                                                    NA
-## `PubDate.minute.fctr(14.8,29.5]`                       2.938e+06
-## `PubDate.minute.fctr(29.5,44.2]`                       2.777e+06
-## `PubDate.minute.fctr(44.2,59.1]`                       3.000e+06
-## S.new.log                                              1.828e+08
-## A.new.log                                              1.826e+08
-## S.npnct13.log                                          4.887e+07
-## A.npnct13.log                                          4.872e+07
-## PubDate.wkday.fctr1                                    9.447e+06
+## `PubDate.minute.fctr(14.8,29.5]`                       2.937e+06
+## `PubDate.minute.fctr(29.5,44.2]`                       2.776e+06
+## `PubDate.minute.fctr(44.2,59.1]`                       2.998e+06
+## S.new.log                                              1.496e+08
+## A.new.log                                              1.494e+08
+## S.npnct13.log                                          4.866e+07
+## A.npnct13.log                                          4.851e+07
+## PubDate.wkday.fctr1                                    9.451e+06
 ## PubDate.wkday.fctr2                                    1.006e+07
-## PubDate.wkday.fctr3                                    1.000e+07
-## PubDate.wkday.fctr4                                    9.856e+06
-## PubDate.wkday.fctr5                                    9.983e+06
-## PubDate.wkday.fctr6                                    7.819e+06
+## PubDate.wkday.fctr3                                    1.001e+07
+## PubDate.wkday.fctr4                                    9.860e+06
+## PubDate.wkday.fctr5                                    9.986e+06
+## PubDate.wkday.fctr6                                    7.826e+06
 ## S.npnct30.log                                          2.072e+08
-## A.npnct30.log                                          2.057e+08
-## S.day.log                                              8.908e+06
+## A.npnct30.log                                          2.058e+08
+## S.day.log                                              8.907e+06
 ## A.day.log                                                     NA
-## H.X2014.log                                            1.621e+07
-## A.show.log                                             8.302e+06
+## H.X2014.log                                            1.620e+07
+## A.show.log                                             8.303e+06
 ## S.show.log                                                    NA
-## A.npnct14.log                                          2.902e+07
-## A.report.log                                           9.145e+06
+## A.npnct14.log                                          2.831e+07
+## A.report.log                                           9.142e+06
 ## S.report.log                                                  NA
-## A.year.log                                             6.827e+06
+## A.year.log                                             6.828e+06
 ## S.year.log                                                    NA
-## H.npnct04.log                                          1.191e+07
-## A.share.log                                            8.764e+06
+## H.npnct04.log                                          1.190e+07
+## A.share.log                                            8.761e+06
 ## S.share.log                                                   NA
-## S.compani.log                                          6.665e+06
+## S.compani.log                                          6.664e+06
 ## A.compani.log                                                 NA
-## H.new.log                                              8.032e+06
-## S.npnct14.log                                          2.879e+07
+## H.new.log                                              8.030e+06
+## S.npnct14.log                                          2.810e+07
 ## A.first.log                                            8.267e+06
 ## S.first.log                                                   NA
-## S.time.log                                             6.815e+06
+## S.time.log                                             6.816e+06
 ## A.time.log                                                    NA
-## H.newyork.log                                          9.798e+06
-## A.articl.log                                           1.200e+07
+## H.newyork.log                                          9.799e+06
+## A.articl.log                                           1.201e+07
 ## S.articl.log                                                  NA
 ## S.will.log                                             1.030e+08
-## A.will.log                                             1.030e+08
+## A.will.log                                             1.029e+08
 ## H.npnct15.log                                          2.330e+07
 ## A.newyork.log                                          7.217e+06
 ## S.newyork.log                                                 NA
 ## H.day.log                                              1.027e+07
-## A.npnct04.log                                          8.060e+06
+## A.npnct04.log                                          8.063e+06
 ## S.npnct04.log                                                 NA
 ## H.today.log                                            1.208e+07
 ## H.report.log                                           1.258e+07
-## H.X2015.log                                            2.467e+07
-## S.npnct16.log                                          8.190e+06
-## A.intern.log                                           1.492e+07
+## H.X2015.log                                            2.464e+07
+## S.npnct16.log                                          8.188e+06
+## A.intern.log                                           1.491e+07
 ## S.intern.log                                                  NA
 ## A.npnct16.log                                                 NA
 ## H.daili.log                                            1.584e+07
-## H.week.log                                             1.320e+07
+## H.week.log                                             1.319e+07
 ## H.has.year.colon                                       1.430e+07
 ## H.fashion.log                                          1.501e+07
 ## H.npnct16.log                                          4.811e+06
-## A.fashion.log                                          1.143e+07
+## A.fashion.log                                          1.136e+07
 ## S.fashion.log                                                 NA
-## A.week.log                                             6.941e+06
+## A.week.log                                             6.934e+06
 ## S.week.log                                                    NA
-## H.npnct30.log                                          1.470e+07
-## S.npnct12.log                                          1.801e+08
-## A.npnct12.log                                          1.801e+08
-## H.ndgts.log                                            4.115e+06
-## S.ndgts.log                                            3.682e+07
-## A.ndgts.log                                            3.671e+07
-## H.nuppr.log                                            7.531e+06
-## H.nchrs.log                                            7.534e+06
-## H.nwrds.log                                            3.855e+07
-## H.nwrds.unq.log                                        3.788e+07
-## A.nchrs.log                                            4.543e+08
-## S.nchrs.log                                            4.542e+08
-## A.nwrds.log                                            7.379e+08
-## S.nwrds.log                                            7.380e+08
-## A.nwrds.unq.log                                        5.948e+08
-## S.nwrds.unq.log                                        5.947e+08
-## S.nuppr.log                                            1.056e+08
-## A.nuppr.log                                            1.056e+08
+## H.npnct30.log                                          1.469e+07
+## S.npnct12.log                                          1.791e+08
+## A.npnct12.log                                          1.790e+08
+## H.ndgts.log                                            4.098e+06
+## S.ndgts.log                                            3.677e+07
+## A.ndgts.log                                            3.667e+07
+## H.nuppr.log                                            7.529e+06
+## H.nchrs.log                                            7.535e+06
+## H.nwrds.log                                            3.854e+07
+## H.nwrds.unq.log                                        3.787e+07
+## A.nchrs.log                                            4.519e+08
+## S.nchrs.log                                            4.518e+08
+## A.nwrds.log                                            7.378e+08
+## S.nwrds.log                                            7.379e+08
+## A.nwrds.unq.log                                        5.933e+08
+## S.nwrds.unq.log                                        5.932e+08
+## S.nuppr.log                                            1.054e+08
+## A.nuppr.log                                            1.054e+08
 ##                                                          z value Pr(>|z|)
-## (Intercept)                                             20607958   <2e-16
-## WordCount.log                                          201958080   <2e-16
-## `PubDate.hour.fctr(7.67,15.3]`                           8958289   <2e-16
-## `PubDate.hour.fctr(15.3,23]`                            13072790   <2e-16
-## H.npnct21.log                                          138468093   <2e-16
-## PubDate.wkend                                           -1707155   <2e-16
-## S.npnct21.log                                           29411471   <2e-16
-## A.npnct21.log                                          -21271434   <2e-16
-## H.npnct08.log                                          -57034642   <2e-16
+## (Intercept)                                            -26544426   <2e-16
+## WordCount.log                                          402748115   <2e-16
+## `PubDate.hour.fctr(7.67,15.3]`                          46035233   <2e-16
+## `PubDate.hour.fctr(15.3,23]`                           163594019   <2e-16
+## H.npnct21.log                                          187659261   <2e-16
+## PubDate.wkend                                           -4778830   <2e-16
+## S.npnct21.log                                          -21970579   <2e-16
+## A.npnct21.log                                           38389620   <2e-16
+## H.npnct08.log                                           69905112   <2e-16
 ## H.npnct09.log                                                 NA       NA
-## PubDate.last10.log                                      61594005   <2e-16
-## PubDate.last1.log                                       -7738034   <2e-16
-## H.npnct06.log                                          -34534529   <2e-16
-## A.can.log                                               39122525   <2e-16
-## A.npnct01.log                                            2664432   <2e-16
+## PubDate.last10.log                                      75105174   <2e-16
+## PubDate.last1.log                                       -7868539   <2e-16
+## H.npnct06.log                                           53768602   <2e-16
+## A.can.log                                               47310920   <2e-16
+## A.npnct01.log                                           36827222   <2e-16
 ## S.npnct01.log                                                 NA       NA
-## S.can.log                                              -39924010   <2e-16
-## H.npnct17.log                                           -7079590   <2e-16
-## S.npnct23.log                                                 NA       NA
-## S.npnct25.log                                                 NA       NA
-## H.has.ebola                                            -86529385   <2e-16
-## A.make.log                                             -82520227   <2e-16
+## S.can.log                                              -41149445   <2e-16
+## H.npnct17.log                                          -13906966   <2e-16
+## H.has.ebola                                             11105687   <2e-16
+## A.make.log                                             142663085   <2e-16
 ## S.make.log                                                    NA       NA
-## H.npnct01.log                                          -35631842   <2e-16
-## .rnorm                                                  96525806   <2e-16
-## A.npnct23.log                                          -16592828   <2e-16
-## A.npnct25.log                                                 NA       NA
-## H.npnct12.log                                           51989973   <2e-16
-## `myCategory.fctrForeign#World#Asia Pacific`           -321385613   <2e-16
-## `myCategory.fctr#Multimedia#`                         -367616241   <2e-16
-## `myCategory.fctrCulture#Arts#`                        -254689231   <2e-16
-## `myCategory.fctrBusiness#Business Day#Dealbook`       -679753902   <2e-16
-## myCategory.fctrmyOther                                -377736326   <2e-16
-## `myCategory.fctrBusiness#Technology#`                 -300633327   <2e-16
-## `myCategory.fctrBusiness#Crosswords/Games#`            -85060197   <2e-16
-## `myCategory.fctrTStyle##`                             -302836241   <2e-16
-## `myCategory.fctrForeign#World#`                       -217895688   <2e-16
-## `myCategory.fctrOpEd#Opinion#`                          78645387   <2e-16
-## `myCategory.fctrStyles##Fashion`                      -478330216   <2e-16
-## `myCategory.fctr#Opinion#Room For Debate`             -365399062   <2e-16
-## `myCategory.fctr#U.S.#Education`                      -612930113   <2e-16
-## `myCategory.fctr##`                                   -689677812   <2e-16
-## `myCategory.fctrMetro#N.Y. / Region#`                 -200206224   <2e-16
-## `myCategory.fctrBusiness#Business Day#Small Business` -576711935   <2e-16
-## `myCategory.fctrStyles#U.S.#`                         -125151569   <2e-16
-## `myCategory.fctrTravel#Travel#`                       -261220073   <2e-16
-## `myCategory.fctr#Opinion#The Public Editor`             -3686245   <2e-16
-## H.npnct03.log                                                 NA       NA
-## S.state.log                                             29881973   <2e-16
-## A.state.log                                            -28665514   <2e-16
-## S.one.log                                                8389437   <2e-16
-## A.one.log                                              -13324617   <2e-16
-## A.said.log                                             134488678   <2e-16
+## H.npnct01.log                                           12702040   <2e-16
+## H.npnct12.log                                          -22585094   <2e-16
+## `myCategory.fctrForeign#World#Asia Pacific`           -440918229   <2e-16
+## `myCategory.fctr#Multimedia#`                         -378666617   <2e-16
+## `myCategory.fctrCulture#Arts#`                        -400964516   <2e-16
+## `myCategory.fctrBusiness#Business Day#Dealbook`       -446802417   <2e-16
+## myCategory.fctrmyOther                                -211785090   <2e-16
+## `myCategory.fctrBusiness#Technology#`                 -361145227   <2e-16
+## `myCategory.fctrBusiness#Crosswords/Games#`            -15869663   <2e-16
+## `myCategory.fctrTStyle##`                             -387523258   <2e-16
+## `myCategory.fctrForeign#World#`                       -115739228   <2e-16
+## `myCategory.fctrOpEd#Opinion#`                         131038302   <2e-16
+## `myCategory.fctrStyles##Fashion`                      -356671576   <2e-16
+## `myCategory.fctr#Opinion#Room For Debate`             -447081085   <2e-16
+## `myCategory.fctr#U.S.#Education`                      -571361362   <2e-16
+## `myCategory.fctr##`                                   -501870028   <2e-16
+## `myCategory.fctrMetro#N.Y. / Region#`                 -328006158   <2e-16
+## `myCategory.fctrBusiness#Business Day#Small Business` -355738103   <2e-16
+## `myCategory.fctrStyles#U.S.#`                           -9351322   <2e-16
+## `myCategory.fctrTravel#Travel#`                       -300556630   <2e-16
+## `myCategory.fctr#Opinion#The Public Editor`             72559625   <2e-16
+## S.state.log                                             51970619   <2e-16
+## A.state.log                                            -42516911   <2e-16
+## S.one.log                                              -31289229   <2e-16
+## A.one.log                                               30714676   <2e-16
+## A.said.log                                              78280670   <2e-16
 ## S.said.log                                                    NA       NA
-## A.npnct17.log                                          -20850361   <2e-16
+## A.npnct17.log                                          -40431083   <2e-16
 ## S.npnct17.log                                                 NA       NA
-## S.npnct08.log                                           35905800   <2e-16
+## S.npnct08.log                                           41419696   <2e-16
 ## A.npnct08.log                                                 NA       NA
-## S.npnct09.log                                          -58540795   <2e-16
+## S.npnct09.log                                          -24549282   <2e-16
 ## A.npnct09.log                                                 NA       NA
-## A.npnct27.log                                                 NA       NA
-## A.npnct11.log                                                 NA       NA
-## H.npnct11.log                                          -54065654   <2e-16
-## H.npnct22.log                                           18531867   <2e-16
-## S.npnct02.log                                            4852837   <2e-16
-## S.npnct11.log                                                 NA       NA
-## PubDate.last100.log                                     16515164   <2e-16
-## H.npnct05.log                                          -71152083   <2e-16
-## `PubDate.date.fctr(7,13]`                              -28492836   <2e-16
-## `PubDate.date.fctr(13,19]`                              25018188   <2e-16
-## `PubDate.date.fctr(19,25]`                              18470112   <2e-16
-## `PubDate.date.fctr(25,31]`                              18804173   <2e-16
-## `PubDate.second.fctr(14.8,29.5]`                        29834575   <2e-16
-## `PubDate.second.fctr(29.5,44.2]`                        14017895   <2e-16
-## `PubDate.second.fctr(44.2,59.1]`                         5890120   <2e-16
-## H.npnct07.log                                           12907912   <2e-16
-## A.npnct07.log                                           11947483   <2e-16
+## PubDate.last100.log                                     35917907   <2e-16
+## .rnorm                                                 -61275955   <2e-16
+## H.npnct05.log                                          -38720733   <2e-16
+## `PubDate.date.fctr(7,13]`                               30052149   <2e-16
+## `PubDate.date.fctr(13,19]`                              -3875972   <2e-16
+## `PubDate.date.fctr(19,25]`                               6096550   <2e-16
+## `PubDate.date.fctr(25,31]`                              46922910   <2e-16
+## `PubDate.second.fctr(14.8,29.5]`                         8962778   <2e-16
+## `PubDate.second.fctr(29.5,44.2]`                        18402512   <2e-16
+## `PubDate.second.fctr(44.2,59.1]`                       -27213882   <2e-16
+## H.npnct07.log                                           55482694   <2e-16
+## A.npnct07.log                                          -12761386   <2e-16
 ## S.npnct07.log                                                 NA       NA
-## S.npnct03.log                                           -8731572   <2e-16
-## A.npnct19.log                                           24290681   <2e-16
-## H.npnct13.log                                          -10260728   <2e-16
+## S.npnct03.log                                            7218966   <2e-16
+## A.npnct19.log                                           49439608   <2e-16
+## H.npnct13.log                                           56482498   <2e-16
 ## A.has.http                                                    NA       NA
 ## A.npnct03.log                                                 NA       NA
-## A.npnct02.log                                                 NA       NA
-## A.npnct18.log                                           64403060   <2e-16
+## A.npnct02.log                                            7636804   <2e-16
+## A.npnct18.log                                           54815431   <2e-16
 ## A.npnct20.log                                                 NA       NA
-## A.has.year.colon                                        89394421   <2e-16
+## A.has.year.colon                                         6196380   <2e-16
 ## S.has.year.colon                                              NA       NA
-## A.npnct22.log                                           -9795517   <2e-16
+## A.npnct22.log                                           34281885   <2e-16
 ## S.npnct22.log                                                 NA       NA
-## H.npnct02.log                                         -130033589   <2e-16
-## A.presid.log                                              803742   <2e-16
+## H.npnct02.log                                           -1334378   <2e-16
+## A.presid.log                                            41945768   <2e-16
 ## S.presid.log                                                  NA       NA
-## S.npnct15.log                                           45810321   <2e-16
-## A.npnct06.log                                          -22544507   <2e-16
+## S.npnct15.log                                           63704223   <2e-16
+## A.npnct06.log                                          -13567638   <2e-16
 ## S.npnct06.log                                                 NA       NA
-## A.npnct15.log                                          -45921688   <2e-16
-## H.npnct14.log                                          -33681957   <2e-16
-## S.take.log                                             -29106066   <2e-16
+## A.npnct15.log                                          -62646168   <2e-16
+## H.npnct14.log                                           -4076244   <2e-16
+## S.take.log                                             -25432453   <2e-16
 ## A.take.log                                                    NA       NA
-## `PubDate.minute.fctr(14.8,29.5]`                         2150583   <2e-16
-## `PubDate.minute.fctr(29.5,44.2]`                       -23287887   <2e-16
-## `PubDate.minute.fctr(44.2,59.1]`                        31919969   <2e-16
-## S.new.log                                              -55694369   <2e-16
-## A.new.log                                               55003086   <2e-16
-## S.npnct13.log                                          -34146038   <2e-16
-## A.npnct13.log                                           31434504   <2e-16
-## PubDate.wkday.fctr1                                     -3378732   <2e-16
-## PubDate.wkday.fctr2                                    -19471106   <2e-16
-## PubDate.wkday.fctr3                                     -6958116   <2e-16
-## PubDate.wkday.fctr4                                    -12107565   <2e-16
-## PubDate.wkday.fctr5                                    -17272384   <2e-16
-## PubDate.wkday.fctr6                                    -60465358   <2e-16
-## S.npnct30.log                                          -38652180   <2e-16
-## A.npnct30.log                                           35439320   <2e-16
-## S.day.log                                              -24331225   <2e-16
+## `PubDate.minute.fctr(14.8,29.5]`                       -49746763   <2e-16
+## `PubDate.minute.fctr(29.5,44.2]`                       -34971274   <2e-16
+## `PubDate.minute.fctr(44.2,59.1]`                        -4664975   <2e-16
+## S.new.log                                               21186768   <2e-16
+## A.new.log                                              -20549279   <2e-16
+## S.npnct13.log                                          -42037279   <2e-16
+## A.npnct13.log                                           42030083   <2e-16
+## PubDate.wkday.fctr1                                     -8005232   <2e-16
+## PubDate.wkday.fctr2                                    -28661306   <2e-16
+## PubDate.wkday.fctr3                                    -15634792   <2e-16
+## PubDate.wkday.fctr4                                    -16811492   <2e-16
+## PubDate.wkday.fctr5                                    -20935621   <2e-16
+## PubDate.wkday.fctr6                                    -62035818   <2e-16
+## S.npnct30.log                                          -17529790   <2e-16
+## A.npnct30.log                                           13176029   <2e-16
+## S.day.log                                              -32790424   <2e-16
 ## A.day.log                                                     NA       NA
-## H.X2014.log                                            -57454028   <2e-16
-## A.show.log                                            -263274748   <2e-16
+## H.X2014.log                                             26558128   <2e-16
+## A.show.log                                             -56322215   <2e-16
 ## S.show.log                                                    NA       NA
-## A.npnct14.log                                           -7638768   <2e-16
-## A.report.log                                          -246543705   <2e-16
+## A.npnct14.log                                            9876652   <2e-16
+## A.report.log                                          -103425376   <2e-16
 ## S.report.log                                                  NA       NA
-## A.year.log                                              -9501648   <2e-16
+## A.year.log                                             -37043182   <2e-16
 ## S.year.log                                                    NA       NA
-## H.npnct04.log                                         -132773254   <2e-16
-## A.share.log                                            -28135244   <2e-16
+## H.npnct04.log                                          -73915998   <2e-16
+## A.share.log                                            -92668869   <2e-16
 ## S.share.log                                                   NA       NA
-## S.compani.log                                          -36195664   <2e-16
+## S.compani.log                                          -39209719   <2e-16
 ## A.compani.log                                                 NA       NA
-## H.new.log                                              -21525505   <2e-16
-## S.npnct14.log                                           17782463   <2e-16
-## A.first.log                                              7250693   <2e-16
+## H.new.log                                              -84292376   <2e-16
+## S.npnct14.log                                            8426715   <2e-16
+## A.first.log                                             -7471487   <2e-16
 ## S.first.log                                                   NA       NA
-## S.time.log                                             -77546959   <2e-16
+## S.time.log                                             -55576089   <2e-16
 ## A.time.log                                                    NA       NA
-## H.newyork.log                                          -44777517   <2e-16
-## A.articl.log                                           142560028   <2e-16
+## H.newyork.log                                           -6993368   <2e-16
+## A.articl.log                                            99843475   <2e-16
 ## S.articl.log                                                  NA       NA
-## S.will.log                                              20090701   <2e-16
-## A.will.log                                             -20482852   <2e-16
-## H.npnct15.log                                           29866331   <2e-16
-## A.newyork.log                                             -95881   <2e-16
+## S.will.log                                              36567174   <2e-16
+## A.will.log                                             -39972218   <2e-16
+## H.npnct15.log                                          -20793499   <2e-16
+## A.newyork.log                                           67232099   <2e-16
 ## S.newyork.log                                                 NA       NA
-## H.day.log                                               31365096   <2e-16
-## A.npnct04.log                                           -8158016   <2e-16
+## H.day.log                                                7522782   <2e-16
+## A.npnct04.log                                          -94776214   <2e-16
 ## S.npnct04.log                                                 NA       NA
-## H.today.log                                            -15636801   <2e-16
-## H.report.log                                           -31431852   <2e-16
-## H.X2015.log                                            -25728207   <2e-16
-## S.npnct16.log                                           44457576   <2e-16
-## A.intern.log                                           -82937899   <2e-16
+## H.today.log                                            -87153602   <2e-16
+## H.report.log                                           -26190720   <2e-16
+## H.X2015.log                                             93410695   <2e-16
+## S.npnct16.log                                           41868159   <2e-16
+## A.intern.log                                           -56220975   <2e-16
 ## S.intern.log                                                  NA       NA
 ## A.npnct16.log                                                 NA       NA
-## H.daili.log                                           -133090276   <2e-16
-## H.week.log                                              20438732   <2e-16
-## H.has.year.colon                                      -114343989   <2e-16
-## H.fashion.log                                           -4695702   <2e-16
-## H.npnct16.log                                          -33082262   <2e-16
-## A.fashion.log                                         -103171231   <2e-16
+## H.daili.log                                              1097436   <2e-16
+## H.week.log                                             -45556770   <2e-16
+## H.has.year.colon                                        83708330   <2e-16
+## H.fashion.log                                           22561643   <2e-16
+## H.npnct16.log                                           -4481965   <2e-16
+## A.fashion.log                                         -131505345   <2e-16
 ## S.fashion.log                                                 NA       NA
-## A.week.log                                             -51020487   <2e-16
+## A.week.log                                             -57095008   <2e-16
 ## S.week.log                                                    NA       NA
-## H.npnct30.log                                           34122519   <2e-16
-## S.npnct12.log                                           16014464   <2e-16
-## A.npnct12.log                                          -16058289   <2e-16
-## H.ndgts.log                                             70936178   <2e-16
-## S.ndgts.log                                             20793245   <2e-16
-## A.ndgts.log                                            -25149154   <2e-16
-## H.nuppr.log                                             55103374   <2e-16
-## H.nchrs.log                                            -20030894   <2e-16
-## H.nwrds.log                                              2224121   <2e-16
-## H.nwrds.unq.log                                        -12960602   <2e-16
-## A.nchrs.log                                             29156576   <2e-16
-## S.nchrs.log                                            -29838470   <2e-16
-## A.nwrds.log                                             -3637314   <2e-16
-## S.nwrds.log                                              5345563   <2e-16
-## A.nwrds.unq.log                                        -21591339   <2e-16
-## S.nwrds.unq.log                                         19678444   <2e-16
-## S.nuppr.log                                             -4718319   <2e-16
-## A.nuppr.log                                              2773154   <2e-16
+## H.npnct30.log                                          107559412   <2e-16
+## S.npnct12.log                                          -46916170   <2e-16
+## A.npnct12.log                                           46639912   <2e-16
+## H.ndgts.log                                             78211121   <2e-16
+## S.ndgts.log                                            -39634064   <2e-16
+## A.ndgts.log                                             36010722   <2e-16
+## H.nuppr.log                                             45899612   <2e-16
+## H.nchrs.log                                            -37398480   <2e-16
+## H.nwrds.log                                             -3721869   <2e-16
+## H.nwrds.unq.log                                        -13016909   <2e-16
+## A.nchrs.log                                            -18894333   <2e-16
+## S.nchrs.log                                             18080056   <2e-16
+## A.nwrds.log                                            -12132798   <2e-16
+## S.nwrds.log                                             12909056   <2e-16
+## A.nwrds.unq.log                                         23662101   <2e-16
+## S.nwrds.unq.log                                        -24676382   <2e-16
+## S.nuppr.log                                            -38091413   <2e-16
+## A.nuppr.log                                             33776771   <2e-16
 ##                                                          
 ## (Intercept)                                           ***
 ## WordCount.log                                         ***
@@ -6992,15 +6964,10 @@ for (method in glb_models_method_vctr) {
 ## S.npnct01.log                                            
 ## S.can.log                                             ***
 ## H.npnct17.log                                         ***
-## S.npnct23.log                                            
-## S.npnct25.log                                            
 ## H.has.ebola                                           ***
 ## A.make.log                                            ***
 ## S.make.log                                               
 ## H.npnct01.log                                         ***
-## .rnorm                                                ***
-## A.npnct23.log                                         ***
-## A.npnct25.log                                            
 ## H.npnct12.log                                         ***
 ## `myCategory.fctrForeign#World#Asia Pacific`           ***
 ## `myCategory.fctr#Multimedia#`                         ***
@@ -7021,7 +6988,6 @@ for (method in glb_models_method_vctr) {
 ## `myCategory.fctrStyles#U.S.#`                         ***
 ## `myCategory.fctrTravel#Travel#`                       ***
 ## `myCategory.fctr#Opinion#The Public Editor`           ***
-## H.npnct03.log                                            
 ## S.state.log                                           ***
 ## A.state.log                                           ***
 ## S.one.log                                             ***
@@ -7034,13 +7000,8 @@ for (method in glb_models_method_vctr) {
 ## A.npnct08.log                                            
 ## S.npnct09.log                                         ***
 ## A.npnct09.log                                            
-## A.npnct27.log                                            
-## A.npnct11.log                                            
-## H.npnct11.log                                         ***
-## H.npnct22.log                                         ***
-## S.npnct02.log                                         ***
-## S.npnct11.log                                            
 ## PubDate.last100.log                                   ***
+## .rnorm                                                ***
 ## H.npnct05.log                                         ***
 ## `PubDate.date.fctr(7,13]`                             ***
 ## `PubDate.date.fctr(13,19]`                            ***
@@ -7057,7 +7018,7 @@ for (method in glb_models_method_vctr) {
 ## H.npnct13.log                                         ***
 ## A.has.http                                               
 ## A.npnct03.log                                            
-## A.npnct02.log                                            
+## A.npnct02.log                                         ***
 ## A.npnct18.log                                         ***
 ## A.npnct20.log                                            
 ## A.has.year.colon                                      ***
@@ -7161,8 +7122,8 @@ for (method in glb_models_method_vctr) {
 ## (Dispersion parameter for binomial family taken to be 1)
 ## 
 ##     Null deviance:  4042.7  on 4474  degrees of freedom
-## Residual deviance: 33664.8  on 4333  degrees of freedom
-## AIC: 33949
+## Residual deviance: 29844.1  on 4336  degrees of freedom
+## AIC: 30122
 ## 
 ## Number of Fisher Scoring iterations: 25
 ## 
@@ -7184,34 +7145,34 @@ for (method in glb_models_method_vctr) {
 ```
 ##    threshold   f.score
 ## 1        0.0 0.2867534
-## 2        0.1 0.6965562
-## 3        0.2 0.6965562
-## 4        0.3 0.6965562
-## 5        0.4 0.6965562
-## 6        0.5 0.6965562
-## 7        0.6 0.6965562
-## 8        0.7 0.6965562
-## 9        0.8 0.6965562
-## 10       0.9 0.6965562
+## 2        0.1 0.7059659
+## 3        0.2 0.7059659
+## 4        0.3 0.7059659
+## 5        0.4 0.7059659
+## 6        0.5 0.7059659
+## 7        0.6 0.7059659
+## 8        0.7 0.7059659
+## 9        0.8 0.7059659
+## 10       0.9 0.7059659
 ## 11       1.0 0.0000000
 ```
 
 ```
 ## [1] "Classifier Probability Threshold: 0.9000 to maximize f.score.fit"
 ##   Popular.fctr Popular.fctr.predict.All.X.glm.N
-## 1            N                             3472
-## 2            Y                              213
+## 1            N                             3564
+## 2            Y                              252
 ##   Popular.fctr.predict.All.X.glm.Y
-## 1                              254
-## 2                              536
+## 1                              162
+## 2                              497
 ##          Prediction
 ## Reference    N    Y
-##         N 3472  254
-##         Y  213  536
+##         N 3564  162
+##         Y  252  497
 ##       Accuracy          Kappa  AccuracyLower  AccuracyUpper   AccuracyNull 
-##   8.956425e-01   6.335958e-01   8.863137e-01   9.044512e-01   8.326257e-01 
+##   9.074860e-01   6.513393e-01   8.986168e-01   9.158192e-01   8.326257e-01 
 ## AccuracyPValue  McnemarPValue 
-##   3.044288e-33   6.417254e-02 
+##   2.373225e-47   1.219281e-05 
 ## [1] "    calling mypredict_mdl for OOB:"
 ```
 
@@ -7230,15 +7191,15 @@ for (method in glb_models_method_vctr) {
 ```
 ##    threshold   f.score
 ## 1        0.0 0.2865473
-## 2        0.1 0.6892655
-## 3        0.2 0.6892655
-## 4        0.3 0.6892655
-## 5        0.4 0.6892655
-## 6        0.5 0.6892655
-## 7        0.6 0.6892655
-## 8        0.7 0.6892655
-## 9        0.8 0.6892655
-## 10       0.9 0.6892655
+## 2        0.1 0.6897638
+## 3        0.2 0.6897638
+## 4        0.3 0.6897638
+## 5        0.4 0.6897638
+## 6        0.5 0.6897638
+## 7        0.6 0.6897638
+## 8        0.7 0.6897638
+## 9        0.8 0.6897638
+## 10       0.9 0.6897638
 ## 11       1.0 0.0000000
 ```
 
@@ -7247,43 +7208,40 @@ for (method in glb_models_method_vctr) {
 ```
 ## [1] "Classifier Probability Threshold: 0.9000 to maximize f.score.OOB"
 ##   Popular.fctr Popular.fctr.predict.All.X.glm.N
-## 1            N                             1593
-## 2            Y                              100
+## 1            N                             1641
+## 2            Y                              125
 ##   Popular.fctr.predict.All.X.glm.Y
-## 1                              120
-## 2                              244
+## 1                               72
+## 2                              219
 ##          Prediction
 ## Reference    N    Y
-##         N 1593  120
-##         Y  100  244
+##         N 1641   72
+##         Y  125  219
 ##       Accuracy          Kappa  AccuracyLower  AccuracyUpper   AccuracyNull 
-##   8.930481e-01   6.247359e-01   8.788850e-01   9.060795e-01   8.327662e-01 
+##   9.042295e-01   6.336042e-01   8.906870e-01   9.166067e-01   8.327662e-01 
 ## AccuracyPValue  McnemarPValue 
-##   6.262798e-15   2.002008e-01 
+##   9.648468e-21   2.115187e-04 
 ##    model_id model_method
 ## 1 All.X.glm          glm
-##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    feats
-## 1 WordCount.log, PubDate.hour.fctr, H.npnct21.log, PubDate.wkend, S.npnct21.log, A.npnct21.log, H.npnct08.log, H.npnct09.log, PubDate.last10.log, PubDate.last1.log, H.npnct06.log, A.can.log, A.npnct01.log, S.npnct01.log, S.can.log, H.npnct17.log, S.npnct23.log, S.npnct25.log, H.has.ebola, A.make.log, S.make.log, H.npnct01.log, .rnorm, A.npnct23.log, A.npnct25.log, H.npnct12.log, myCategory.fctr, H.npnct03.log, S.state.log, A.state.log, S.one.log, A.one.log, A.said.log, S.said.log, A.npnct17.log, S.npnct17.log, S.npnct08.log, A.npnct08.log, S.npnct09.log, A.npnct09.log, A.npnct27.log, A.npnct11.log, H.npnct11.log, H.npnct22.log, S.npnct02.log, S.npnct11.log, PubDate.last100.log, H.npnct05.log, PubDate.date.fctr, PubDate.second.fctr, H.npnct07.log, A.npnct07.log, S.npnct07.log, S.npnct03.log, A.npnct19.log, H.npnct13.log, A.has.http, A.npnct03.log, A.npnct02.log, A.npnct18.log, A.npnct20.log, A.has.year.colon, S.has.year.colon, A.npnct22.log, S.npnct22.log, H.npnct02.log, A.presid.log, S.presid.log, S.npnct15.log, A.npnct06.log, S.npnct06.log, A.npnct15.log, H.npnct14.log, S.take.log, A.take.log, PubDate.minute.fctr, S.new.log, A.new.log, S.npnct13.log, A.npnct13.log, PubDate.wkday.fctr, S.npnct30.log, A.npnct30.log, S.day.log, A.day.log, H.X2014.log, A.show.log, S.show.log, A.npnct14.log, A.report.log, S.report.log, A.year.log, S.year.log, H.npnct04.log, A.share.log, S.share.log, S.compani.log, A.compani.log, H.new.log, S.npnct14.log, A.first.log, S.first.log, S.time.log, A.time.log, H.newyork.log, A.articl.log, S.articl.log, S.will.log, A.will.log, H.npnct15.log, A.newyork.log, S.newyork.log, H.day.log, A.npnct04.log, S.npnct04.log, H.today.log, H.report.log, H.X2015.log, S.npnct16.log, A.intern.log, S.intern.log, A.npnct16.log, H.daili.log, H.week.log, H.has.year.colon, H.fashion.log, H.npnct16.log, A.fashion.log, S.fashion.log, A.week.log, S.week.log, H.npnct30.log, S.npnct12.log, A.npnct12.log, H.ndgts.log, S.ndgts.log, A.ndgts.log, H.nuppr.log, H.nchrs.log, H.nwrds.log, H.nwrds.unq.log, A.nchrs.log, S.nchrs.log, A.nwrds.log, S.nwrds.log, A.nwrds.unq.log, S.nwrds.unq.log, S.nuppr.log, A.nuppr.log
+##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               feats
+## 1 WordCount.log, PubDate.hour.fctr, H.npnct21.log, PubDate.wkend, S.npnct21.log, A.npnct21.log, H.npnct08.log, H.npnct09.log, PubDate.last10.log, PubDate.last1.log, H.npnct06.log, A.can.log, A.npnct01.log, S.npnct01.log, S.can.log, H.npnct17.log, H.has.ebola, A.make.log, S.make.log, H.npnct01.log, H.npnct12.log, myCategory.fctr, S.state.log, A.state.log, S.one.log, A.one.log, A.said.log, S.said.log, A.npnct17.log, S.npnct17.log, S.npnct08.log, A.npnct08.log, S.npnct09.log, A.npnct09.log, PubDate.last100.log, .rnorm, H.npnct05.log, PubDate.date.fctr, PubDate.second.fctr, H.npnct07.log, A.npnct07.log, S.npnct07.log, S.npnct03.log, A.npnct19.log, H.npnct13.log, A.has.http, A.npnct03.log, A.npnct02.log, A.npnct18.log, A.npnct20.log, A.has.year.colon, S.has.year.colon, A.npnct22.log, S.npnct22.log, H.npnct02.log, A.presid.log, S.presid.log, S.npnct15.log, A.npnct06.log, S.npnct06.log, A.npnct15.log, H.npnct14.log, S.take.log, A.take.log, PubDate.minute.fctr, S.new.log, A.new.log, S.npnct13.log, A.npnct13.log, PubDate.wkday.fctr, S.npnct30.log, A.npnct30.log, S.day.log, A.day.log, H.X2014.log, A.show.log, S.show.log, A.npnct14.log, A.report.log, S.report.log, A.year.log, S.year.log, H.npnct04.log, A.share.log, S.share.log, S.compani.log, A.compani.log, H.new.log, S.npnct14.log, A.first.log, S.first.log, S.time.log, A.time.log, H.newyork.log, A.articl.log, S.articl.log, S.will.log, A.will.log, H.npnct15.log, A.newyork.log, S.newyork.log, H.day.log, A.npnct04.log, S.npnct04.log, H.today.log, H.report.log, H.X2015.log, S.npnct16.log, A.intern.log, S.intern.log, A.npnct16.log, H.daili.log, H.week.log, H.has.year.colon, H.fashion.log, H.npnct16.log, A.fashion.log, S.fashion.log, A.week.log, S.week.log, H.npnct30.log, S.npnct12.log, A.npnct12.log, H.ndgts.log, S.ndgts.log, A.ndgts.log, H.nuppr.log, H.nchrs.log, H.nwrds.log, H.nwrds.unq.log, A.nchrs.log, S.nchrs.log, A.nwrds.log, S.nwrds.log, A.nwrds.unq.log, S.nwrds.unq.log, S.nuppr.log, A.nuppr.log
 ##   max.nTuningRuns min.elapsedtime.everything min.elapsedtime.final
-## 1               1                     23.501                 7.287
+## 1               1                     13.409                  6.87
 ##   max.auc.fit opt.prob.threshold.fit max.f.score.fit max.Accuracy.fit
-## 1   0.8237256                    0.9       0.6965562        0.8634728
+## 1   0.8100366                    0.9       0.7059659        0.9021193
 ##   max.AccuracyLower.fit max.AccuracyUpper.fit max.Kappa.fit max.auc.OOB
-## 1             0.8863137             0.9044512     0.5545249   0.8196249
+## 1             0.8986168             0.9158192     0.6295388   0.7972982
 ##   opt.prob.threshold.OOB max.f.score.OOB max.Accuracy.OOB
-## 1                    0.9       0.6892655        0.8930481
+## 1                    0.9       0.6897638        0.9042295
 ##   max.AccuracyLower.OOB max.AccuracyUpper.OOB max.Kappa.OOB min.aic.fit
-## 1              0.878885             0.9060795     0.6247359    33948.77
+## 1              0.890687             0.9166067     0.6336042    30122.15
 ##   max.AccuracySD.fit max.KappaSD.fit
-## 1         0.07748035       0.1722791
+## 1         0.01403897      0.05217796
+##                label step_major step_minor     bgn     end elapsed
+## 2   fit.models_1_glm          2          0 232.726 250.408  17.682
+## 3 fit.models_1_rpart          3          0 250.408      NA      NA
 ## [1] "fitting model: All.X.no.rnorm.rpart"
-## [1] "    indep_vars: WordCount.log, PubDate.hour.fctr, H.npnct21.log, PubDate.wkend, S.npnct21.log, A.npnct21.log, H.npnct08.log, H.npnct09.log, PubDate.last10.log, PubDate.last1.log, H.npnct06.log, A.can.log, A.npnct01.log, S.npnct01.log, S.can.log, H.npnct17.log, S.npnct23.log, S.npnct25.log, H.has.ebola, A.make.log, S.make.log, H.npnct01.log, A.npnct23.log, A.npnct25.log, H.npnct12.log, myCategory.fctr, H.npnct03.log, S.state.log, A.state.log, S.one.log, A.one.log, A.said.log, S.said.log, A.npnct17.log, S.npnct17.log, S.npnct08.log, A.npnct08.log, S.npnct09.log, A.npnct09.log, A.npnct27.log, A.npnct11.log, H.npnct11.log, H.npnct22.log, S.npnct02.log, S.npnct11.log, PubDate.last100.log, H.npnct05.log, PubDate.date.fctr, PubDate.second.fctr, H.npnct07.log, A.npnct07.log, S.npnct07.log, S.npnct03.log, A.npnct19.log, H.npnct13.log, A.has.http, A.npnct03.log, A.npnct02.log, A.npnct18.log, A.npnct20.log, A.has.year.colon, S.has.year.colon, A.npnct22.log, S.npnct22.log, H.npnct02.log, A.presid.log, S.presid.log, S.npnct15.log, A.npnct06.log, S.npnct06.log, A.npnct15.log, H.npnct14.log, S.take.log, A.take.log, PubDate.minute.fctr, S.new.log, A.new.log, S.npnct13.log, A.npnct13.log, PubDate.wkday.fctr, S.npnct30.log, A.npnct30.log, S.day.log, A.day.log, H.X2014.log, A.show.log, S.show.log, A.npnct14.log, A.report.log, S.report.log, A.year.log, S.year.log, H.npnct04.log, A.share.log, S.share.log, S.compani.log, A.compani.log, H.new.log, S.npnct14.log, A.first.log, S.first.log, S.time.log, A.time.log, H.newyork.log, A.articl.log, S.articl.log, S.will.log, A.will.log, H.npnct15.log, A.newyork.log, S.newyork.log, H.day.log, A.npnct04.log, S.npnct04.log, H.today.log, H.report.log, H.X2015.log, S.npnct16.log, A.intern.log, S.intern.log, A.npnct16.log, H.daili.log, H.week.log, H.has.year.colon, H.fashion.log, H.npnct16.log, A.fashion.log, S.fashion.log, A.week.log, S.week.log, H.npnct30.log, S.npnct12.log, A.npnct12.log, H.ndgts.log, S.ndgts.log, A.ndgts.log, H.nuppr.log, H.nchrs.log, H.nwrds.log, H.nwrds.unq.log, A.nchrs.log, S.nchrs.log, A.nwrds.log, S.nwrds.log, A.nwrds.unq.log, S.nwrds.unq.log, S.nuppr.log, A.nuppr.log"
-## + Fold1: cp=0.01135 
-## - Fold1: cp=0.01135 
-## + Fold2: cp=0.01135 
-## - Fold2: cp=0.01135 
-## + Fold3: cp=0.01135 
-## - Fold3: cp=0.01135 
+## [1] "    indep_vars: WordCount.log, PubDate.hour.fctr, H.npnct21.log, PubDate.wkend, S.npnct21.log, A.npnct21.log, H.npnct08.log, H.npnct09.log, PubDate.last10.log, PubDate.last1.log, H.npnct06.log, A.can.log, A.npnct01.log, S.npnct01.log, S.can.log, H.npnct17.log, H.has.ebola, A.make.log, S.make.log, H.npnct01.log, H.npnct12.log, myCategory.fctr, S.state.log, A.state.log, S.one.log, A.one.log, A.said.log, S.said.log, A.npnct17.log, S.npnct17.log, S.npnct08.log, A.npnct08.log, S.npnct09.log, A.npnct09.log, PubDate.last100.log, H.npnct05.log, PubDate.date.fctr, PubDate.second.fctr, H.npnct07.log, A.npnct07.log, S.npnct07.log, S.npnct03.log, A.npnct19.log, H.npnct13.log, A.has.http, A.npnct03.log, A.npnct02.log, A.npnct18.log, A.npnct20.log, A.has.year.colon, S.has.year.colon, A.npnct22.log, S.npnct22.log, H.npnct02.log, A.presid.log, S.presid.log, S.npnct15.log, A.npnct06.log, S.npnct06.log, A.npnct15.log, H.npnct14.log, S.take.log, A.take.log, PubDate.minute.fctr, S.new.log, A.new.log, S.npnct13.log, A.npnct13.log, PubDate.wkday.fctr, S.npnct30.log, A.npnct30.log, S.day.log, A.day.log, H.X2014.log, A.show.log, S.show.log, A.npnct14.log, A.report.log, S.report.log, A.year.log, S.year.log, H.npnct04.log, A.share.log, S.share.log, S.compani.log, A.compani.log, H.new.log, S.npnct14.log, A.first.log, S.first.log, S.time.log, A.time.log, H.newyork.log, A.articl.log, S.articl.log, S.will.log, A.will.log, H.npnct15.log, A.newyork.log, S.newyork.log, H.day.log, A.npnct04.log, S.npnct04.log, H.today.log, H.report.log, H.X2015.log, S.npnct16.log, A.intern.log, S.intern.log, A.npnct16.log, H.daili.log, H.week.log, H.has.year.colon, H.fashion.log, H.npnct16.log, A.fashion.log, S.fashion.log, A.week.log, S.week.log, H.npnct30.log, S.npnct12.log, A.npnct12.log, H.ndgts.log, S.ndgts.log, A.ndgts.log, H.nuppr.log, H.nchrs.log, H.nwrds.log, H.nwrds.unq.log, A.nchrs.log, S.nchrs.log, A.nwrds.log, S.nwrds.log, A.nwrds.unq.log, S.nwrds.unq.log, S.nuppr.log, A.nuppr.log"
 ## Aggregating results
 ## Selecting tuning parameters
 ## Fitting cp = 0.0113 on full training set
@@ -7334,7 +7292,7 @@ for (method in glb_models_method_vctr) {
 ##   left son=2 (4106 obs) right son=3 (369 obs)
 ##   Primary splits:
 ##       myCategory.fctrOpEd#Opinion#              < 0.5       to the left,  improve=297.02950, (0 missing)
-##       WordCount.log                             < 6.524296  to the left,  improve=104.85530, (0 missing)
+##       WordCount.log                             < 6.524296  to the left,  improve=105.72630, (0 missing)
 ##       S.nuppr.log                               < 1.497866  to the right, improve= 86.35796, (0 missing)
 ##       A.nuppr.log                               < 1.497866  to the right, improve= 86.35796, (0 missing)
 ##       myCategory.fctrBusiness#Crosswords/Games# < 0.5       to the left,  improve= 85.77765, (0 missing)
@@ -7352,7 +7310,7 @@ for (method in glb_models_method_vctr) {
 ##   left son=4 (4023 obs) right son=5 (83 obs)
 ##   Primary splits:
 ##       myCategory.fctrBusiness#Crosswords/Games# < 0.5       to the left,  improve=99.60741, (0 missing)
-##       WordCount.log                             < 6.470025  to the left,  improve=94.06998, (0 missing)
+##       WordCount.log                             < 6.485398  to the left,  improve=94.68604, (0 missing)
 ##       myCategory.fctrStyles#U.S.#               < 0.5       to the left,  improve=50.94648, (0 missing)
 ##       S.nuppr.log                               < 1.497866  to the right, improve=31.44556, (0 missing)
 ##       A.nuppr.log                               < 1.497866  to the right, improve=31.44556, (0 missing)
@@ -7461,10 +7419,10 @@ for (method in glb_models_method_vctr) {
 ##   5.783557e-12   2.026854e-22 
 ##               model_id model_method
 ## 1 All.X.no.rnorm.rpart        rpart
-##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            feats
-## 1 WordCount.log, PubDate.hour.fctr, H.npnct21.log, PubDate.wkend, S.npnct21.log, A.npnct21.log, H.npnct08.log, H.npnct09.log, PubDate.last10.log, PubDate.last1.log, H.npnct06.log, A.can.log, A.npnct01.log, S.npnct01.log, S.can.log, H.npnct17.log, S.npnct23.log, S.npnct25.log, H.has.ebola, A.make.log, S.make.log, H.npnct01.log, A.npnct23.log, A.npnct25.log, H.npnct12.log, myCategory.fctr, H.npnct03.log, S.state.log, A.state.log, S.one.log, A.one.log, A.said.log, S.said.log, A.npnct17.log, S.npnct17.log, S.npnct08.log, A.npnct08.log, S.npnct09.log, A.npnct09.log, A.npnct27.log, A.npnct11.log, H.npnct11.log, H.npnct22.log, S.npnct02.log, S.npnct11.log, PubDate.last100.log, H.npnct05.log, PubDate.date.fctr, PubDate.second.fctr, H.npnct07.log, A.npnct07.log, S.npnct07.log, S.npnct03.log, A.npnct19.log, H.npnct13.log, A.has.http, A.npnct03.log, A.npnct02.log, A.npnct18.log, A.npnct20.log, A.has.year.colon, S.has.year.colon, A.npnct22.log, S.npnct22.log, H.npnct02.log, A.presid.log, S.presid.log, S.npnct15.log, A.npnct06.log, S.npnct06.log, A.npnct15.log, H.npnct14.log, S.take.log, A.take.log, PubDate.minute.fctr, S.new.log, A.new.log, S.npnct13.log, A.npnct13.log, PubDate.wkday.fctr, S.npnct30.log, A.npnct30.log, S.day.log, A.day.log, H.X2014.log, A.show.log, S.show.log, A.npnct14.log, A.report.log, S.report.log, A.year.log, S.year.log, H.npnct04.log, A.share.log, S.share.log, S.compani.log, A.compani.log, H.new.log, S.npnct14.log, A.first.log, S.first.log, S.time.log, A.time.log, H.newyork.log, A.articl.log, S.articl.log, S.will.log, A.will.log, H.npnct15.log, A.newyork.log, S.newyork.log, H.day.log, A.npnct04.log, S.npnct04.log, H.today.log, H.report.log, H.X2015.log, S.npnct16.log, A.intern.log, S.intern.log, A.npnct16.log, H.daili.log, H.week.log, H.has.year.colon, H.fashion.log, H.npnct16.log, A.fashion.log, S.fashion.log, A.week.log, S.week.log, H.npnct30.log, S.npnct12.log, A.npnct12.log, H.ndgts.log, S.ndgts.log, A.ndgts.log, H.nuppr.log, H.nchrs.log, H.nwrds.log, H.nwrds.unq.log, A.nchrs.log, S.nchrs.log, A.nwrds.log, S.nwrds.log, A.nwrds.unq.log, S.nwrds.unq.log, S.nuppr.log, A.nuppr.log
+##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       feats
+## 1 WordCount.log, PubDate.hour.fctr, H.npnct21.log, PubDate.wkend, S.npnct21.log, A.npnct21.log, H.npnct08.log, H.npnct09.log, PubDate.last10.log, PubDate.last1.log, H.npnct06.log, A.can.log, A.npnct01.log, S.npnct01.log, S.can.log, H.npnct17.log, H.has.ebola, A.make.log, S.make.log, H.npnct01.log, H.npnct12.log, myCategory.fctr, S.state.log, A.state.log, S.one.log, A.one.log, A.said.log, S.said.log, A.npnct17.log, S.npnct17.log, S.npnct08.log, A.npnct08.log, S.npnct09.log, A.npnct09.log, PubDate.last100.log, H.npnct05.log, PubDate.date.fctr, PubDate.second.fctr, H.npnct07.log, A.npnct07.log, S.npnct07.log, S.npnct03.log, A.npnct19.log, H.npnct13.log, A.has.http, A.npnct03.log, A.npnct02.log, A.npnct18.log, A.npnct20.log, A.has.year.colon, S.has.year.colon, A.npnct22.log, S.npnct22.log, H.npnct02.log, A.presid.log, S.presid.log, S.npnct15.log, A.npnct06.log, S.npnct06.log, A.npnct15.log, H.npnct14.log, S.take.log, A.take.log, PubDate.minute.fctr, S.new.log, A.new.log, S.npnct13.log, A.npnct13.log, PubDate.wkday.fctr, S.npnct30.log, A.npnct30.log, S.day.log, A.day.log, H.X2014.log, A.show.log, S.show.log, A.npnct14.log, A.report.log, S.report.log, A.year.log, S.year.log, H.npnct04.log, A.share.log, S.share.log, S.compani.log, A.compani.log, H.new.log, S.npnct14.log, A.first.log, S.first.log, S.time.log, A.time.log, H.newyork.log, A.articl.log, S.articl.log, S.will.log, A.will.log, H.npnct15.log, A.newyork.log, S.newyork.log, H.day.log, A.npnct04.log, S.npnct04.log, H.today.log, H.report.log, H.X2015.log, S.npnct16.log, A.intern.log, S.intern.log, A.npnct16.log, H.daili.log, H.week.log, H.has.year.colon, H.fashion.log, H.npnct16.log, A.fashion.log, S.fashion.log, A.week.log, S.week.log, H.npnct30.log, S.npnct12.log, A.npnct12.log, H.ndgts.log, S.ndgts.log, A.ndgts.log, H.nuppr.log, H.nchrs.log, H.nwrds.log, H.nwrds.unq.log, A.nchrs.log, S.nchrs.log, A.nwrds.log, S.nwrds.log, A.nwrds.unq.log, S.nwrds.unq.log, S.nuppr.log, A.nuppr.log
 ##   max.nTuningRuns min.elapsedtime.everything min.elapsedtime.final
-## 1               3                      10.65                 1.924
+## 1               3                      8.419                 1.976
 ##   max.auc.fit opt.prob.threshold.fit max.f.score.fit max.Accuracy.fit
 ## 1   0.7277461                    0.7       0.5978351        0.8934084
 ##   max.AccuracyLower.fit max.AccuracyUpper.fit max.Kappa.fit max.auc.OOB
@@ -7475,8 +7433,12 @@ for (method in glb_models_method_vctr) {
 ## 1             0.8717239             0.8996488     0.5054039
 ##   max.AccuracySD.fit max.KappaSD.fit
 ## 1        0.003041136      0.02922293
+##                label step_major step_minor     bgn     end elapsed
+## 3 fit.models_1_rpart          3          0 250.408 263.087  12.679
+## 4    fit.models_1_rf          4          0 263.087      NA      NA
 ## [1] "fitting model: All.X.no.rnorm.rf"
-## [1] "    indep_vars: WordCount.log, PubDate.hour.fctr, H.npnct21.log, PubDate.wkend, S.npnct21.log, A.npnct21.log, H.npnct08.log, H.npnct09.log, PubDate.last10.log, PubDate.last1.log, H.npnct06.log, A.can.log, A.npnct01.log, S.npnct01.log, S.can.log, H.npnct17.log, S.npnct23.log, S.npnct25.log, H.has.ebola, A.make.log, S.make.log, H.npnct01.log, A.npnct23.log, A.npnct25.log, H.npnct12.log, myCategory.fctr, H.npnct03.log, S.state.log, A.state.log, S.one.log, A.one.log, A.said.log, S.said.log, A.npnct17.log, S.npnct17.log, S.npnct08.log, A.npnct08.log, S.npnct09.log, A.npnct09.log, A.npnct27.log, A.npnct11.log, H.npnct11.log, H.npnct22.log, S.npnct02.log, S.npnct11.log, PubDate.last100.log, H.npnct05.log, PubDate.date.fctr, PubDate.second.fctr, H.npnct07.log, A.npnct07.log, S.npnct07.log, S.npnct03.log, A.npnct19.log, H.npnct13.log, A.has.http, A.npnct03.log, A.npnct02.log, A.npnct18.log, A.npnct20.log, A.has.year.colon, S.has.year.colon, A.npnct22.log, S.npnct22.log, H.npnct02.log, A.presid.log, S.presid.log, S.npnct15.log, A.npnct06.log, S.npnct06.log, A.npnct15.log, H.npnct14.log, S.take.log, A.take.log, PubDate.minute.fctr, S.new.log, A.new.log, S.npnct13.log, A.npnct13.log, PubDate.wkday.fctr, S.npnct30.log, A.npnct30.log, S.day.log, A.day.log, H.X2014.log, A.show.log, S.show.log, A.npnct14.log, A.report.log, S.report.log, A.year.log, S.year.log, H.npnct04.log, A.share.log, S.share.log, S.compani.log, A.compani.log, H.new.log, S.npnct14.log, A.first.log, S.first.log, S.time.log, A.time.log, H.newyork.log, A.articl.log, S.articl.log, S.will.log, A.will.log, H.npnct15.log, A.newyork.log, S.newyork.log, H.day.log, A.npnct04.log, S.npnct04.log, H.today.log, H.report.log, H.X2015.log, S.npnct16.log, A.intern.log, S.intern.log, A.npnct16.log, H.daili.log, H.week.log, H.has.year.colon, H.fashion.log, H.npnct16.log, A.fashion.log, S.fashion.log, A.week.log, S.week.log, H.npnct30.log, S.npnct12.log, A.npnct12.log, H.ndgts.log, S.ndgts.log, A.ndgts.log, H.nuppr.log, H.nchrs.log, H.nwrds.log, H.nwrds.unq.log, A.nchrs.log, S.nchrs.log, A.nwrds.log, S.nwrds.log, A.nwrds.unq.log, S.nwrds.unq.log, S.nuppr.log, A.nuppr.log"
+## [1] "    indep_vars: WordCount.log, PubDate.hour.fctr, H.npnct21.log, PubDate.wkend, S.npnct21.log, A.npnct21.log, H.npnct08.log, H.npnct09.log, PubDate.last10.log, PubDate.last1.log, H.npnct06.log, A.can.log, A.npnct01.log, S.npnct01.log, S.can.log, H.npnct17.log, H.has.ebola, A.make.log, S.make.log, H.npnct01.log, H.npnct12.log, myCategory.fctr, S.state.log, A.state.log, S.one.log, A.one.log, A.said.log, S.said.log, A.npnct17.log, S.npnct17.log, S.npnct08.log, A.npnct08.log, S.npnct09.log, A.npnct09.log, PubDate.last100.log, H.npnct05.log, PubDate.date.fctr, PubDate.second.fctr, H.npnct07.log, A.npnct07.log, S.npnct07.log, S.npnct03.log, A.npnct19.log, H.npnct13.log, A.has.http, A.npnct03.log, A.npnct02.log, A.npnct18.log, A.npnct20.log, A.has.year.colon, S.has.year.colon, A.npnct22.log, S.npnct22.log, H.npnct02.log, A.presid.log, S.presid.log, S.npnct15.log, A.npnct06.log, S.npnct06.log, A.npnct15.log, H.npnct14.log, S.take.log, A.take.log, PubDate.minute.fctr, S.new.log, A.new.log, S.npnct13.log, A.npnct13.log, PubDate.wkday.fctr, S.npnct30.log, A.npnct30.log, S.day.log, A.day.log, H.X2014.log, A.show.log, S.show.log, A.npnct14.log, A.report.log, S.report.log, A.year.log, S.year.log, H.npnct04.log, A.share.log, S.share.log, S.compani.log, A.compani.log, H.new.log, S.npnct14.log, A.first.log, S.first.log, S.time.log, A.time.log, H.newyork.log, A.articl.log, S.articl.log, S.will.log, A.will.log, H.npnct15.log, A.newyork.log, S.newyork.log, H.day.log, A.npnct04.log, S.npnct04.log, H.today.log, H.report.log, H.X2015.log, S.npnct16.log, A.intern.log, S.intern.log, A.npnct16.log, H.daili.log, H.week.log, H.has.year.colon, H.fashion.log, H.npnct16.log, A.fashion.log, S.fashion.log, A.week.log, S.week.log, H.npnct30.log, S.npnct12.log, A.npnct12.log, H.ndgts.log, S.ndgts.log, A.ndgts.log, H.nuppr.log, H.nchrs.log, H.nwrds.log, H.nwrds.unq.log, A.nchrs.log, S.nchrs.log, A.nwrds.log, S.nwrds.log, A.nwrds.unq.log, S.nwrds.unq.log, S.nuppr.log, A.nuppr.log"
+## [1] "no pca pre-processing for rf"
 ```
 
 ```
@@ -7488,15 +7450,9 @@ for (method in glb_models_method_vctr) {
 ![](NYTBlogs_txtfeat_files/figure-html/fit.models_1-14.png) 
 
 ```
-## + : mtry=  2 
-## - : mtry=  2 
-## + : mtry= 90 
-## - : mtry= 90 
-## + : mtry=179 
-## - : mtry=179 
 ## Aggregating results
 ## Selecting tuning parameters
-## Fitting mtry = 90 on full training set
+## Fitting mtry = 85 on full training set
 ```
 
 ![](NYTBlogs_txtfeat_files/figure-html/fit.models_1-15.png) ![](NYTBlogs_txtfeat_files/figure-html/fit.models_1-16.png) 
@@ -7511,7 +7467,7 @@ for (method in glb_models_method_vctr) {
 ## votes           8950   matrix     numeric  
 ## oob.times       4475   -none-     numeric  
 ## classes            2   -none-     character
-## importance       179   -none-     numeric  
+## importance       168   -none-     numeric  
 ## importanceSD       0   -none-     NULL     
 ## localImportance    0   -none-     NULL     
 ## proximity          0   -none-     NULL     
@@ -7521,7 +7477,7 @@ for (method in glb_models_method_vctr) {
 ## y               4475   factor     numeric  
 ## test               0   -none-     NULL     
 ## inbag              0   -none-     NULL     
-## xNames           179   -none-     character
+## xNames           168   -none-     character
 ## problemType        1   -none-     character
 ## tuneValue          1   data.frame list     
 ## obsLevels          2   -none-     character
@@ -7534,14 +7490,14 @@ for (method in glb_models_method_vctr) {
 ##    threshold    f.score
 ## 1        0.0 0.28675345
 ## 2        0.1 0.78759201
-## 3        0.2 0.93159204
-## 4        0.3 0.98423127
+## 3        0.2 0.93217175
+## 4        0.3 0.98358503
 ## 5        0.4 1.00000000
 ## 6        0.5 1.00000000
 ## 7        0.6 0.99866310
-## 8        0.7 0.92230216
-## 9        0.8 0.78507705
-## 10       0.9 0.55544841
+## 8        0.7 0.91997116
+## 9        0.8 0.78704453
+## 10       0.9 0.54280156
 ## 11       1.0 0.01062417
 ```
 
@@ -7569,18 +7525,18 @@ for (method in glb_models_method_vctr) {
 ![](NYTBlogs_txtfeat_files/figure-html/fit.models_1-19.png) 
 
 ```
-##    threshold   f.score
-## 1        0.0 0.2865473
-## 2        0.1 0.5567190
-## 3        0.2 0.6438356
-## 4        0.3 0.6810229
-## 5        0.4 0.6725146
-## 6        0.5 0.6612111
-## 7        0.6 0.6276596
-## 8        0.7 0.5581395
-## 9        0.8 0.4478261
-## 10       0.9 0.2436548
-## 11       1.0 0.0000000
+##    threshold     f.score
+## 1        0.0 0.286547272
+## 2        0.1 0.560632689
+## 3        0.2 0.653802497
+## 4        0.3 0.678331090
+## 5        0.4 0.676384840
+## 6        0.5 0.654723127
+## 7        0.6 0.618962433
+## 8        0.7 0.563600783
+## 9        0.8 0.458515284
+## 10       0.9 0.230179028
+## 11       1.0 0.005797101
 ```
 
 ![](NYTBlogs_txtfeat_files/figure-html/fit.models_1-20.png) 
@@ -7588,33 +7544,33 @@ for (method in glb_models_method_vctr) {
 ```
 ## [1] "Classifier Probability Threshold: 0.3000 to maximize f.score.OOB"
 ##   Popular.fctr Popular.fctr.predict.All.X.no.rnorm.rf.N
-## 1            N                                     1567
-## 2            Y                                       91
+## 1            N                                     1566
+## 2            Y                                       92
 ##   Popular.fctr.predict.All.X.no.rnorm.rf.Y
-## 1                                      146
-## 2                                      253
+## 1                                      147
+## 2                                      252
 ##          Prediction
 ## Reference    N    Y
-##         N 1567  146
-##         Y   91  253
+##         N 1566  147
+##         Y   92  252
 ##       Accuracy          Kappa  AccuracyLower  AccuracyUpper   AccuracyNull 
-##   8.847837e-01   6.111869e-01   8.701915e-01   8.982687e-01   8.327662e-01 
+##   8.838114e-01   6.079058e-01   8.691702e-01   8.973483e-01   8.327662e-01 
 ## AccuracyPValue  McnemarPValue 
-##   2.209845e-11   4.520376e-04 
+##   5.275832e-11   4.776808e-04 
 ##            model_id model_method
 ## 1 All.X.no.rnorm.rf           rf
-##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            feats
-## 1 WordCount.log, PubDate.hour.fctr, H.npnct21.log, PubDate.wkend, S.npnct21.log, A.npnct21.log, H.npnct08.log, H.npnct09.log, PubDate.last10.log, PubDate.last1.log, H.npnct06.log, A.can.log, A.npnct01.log, S.npnct01.log, S.can.log, H.npnct17.log, S.npnct23.log, S.npnct25.log, H.has.ebola, A.make.log, S.make.log, H.npnct01.log, A.npnct23.log, A.npnct25.log, H.npnct12.log, myCategory.fctr, H.npnct03.log, S.state.log, A.state.log, S.one.log, A.one.log, A.said.log, S.said.log, A.npnct17.log, S.npnct17.log, S.npnct08.log, A.npnct08.log, S.npnct09.log, A.npnct09.log, A.npnct27.log, A.npnct11.log, H.npnct11.log, H.npnct22.log, S.npnct02.log, S.npnct11.log, PubDate.last100.log, H.npnct05.log, PubDate.date.fctr, PubDate.second.fctr, H.npnct07.log, A.npnct07.log, S.npnct07.log, S.npnct03.log, A.npnct19.log, H.npnct13.log, A.has.http, A.npnct03.log, A.npnct02.log, A.npnct18.log, A.npnct20.log, A.has.year.colon, S.has.year.colon, A.npnct22.log, S.npnct22.log, H.npnct02.log, A.presid.log, S.presid.log, S.npnct15.log, A.npnct06.log, S.npnct06.log, A.npnct15.log, H.npnct14.log, S.take.log, A.take.log, PubDate.minute.fctr, S.new.log, A.new.log, S.npnct13.log, A.npnct13.log, PubDate.wkday.fctr, S.npnct30.log, A.npnct30.log, S.day.log, A.day.log, H.X2014.log, A.show.log, S.show.log, A.npnct14.log, A.report.log, S.report.log, A.year.log, S.year.log, H.npnct04.log, A.share.log, S.share.log, S.compani.log, A.compani.log, H.new.log, S.npnct14.log, A.first.log, S.first.log, S.time.log, A.time.log, H.newyork.log, A.articl.log, S.articl.log, S.will.log, A.will.log, H.npnct15.log, A.newyork.log, S.newyork.log, H.day.log, A.npnct04.log, S.npnct04.log, H.today.log, H.report.log, H.X2015.log, S.npnct16.log, A.intern.log, S.intern.log, A.npnct16.log, H.daili.log, H.week.log, H.has.year.colon, H.fashion.log, H.npnct16.log, A.fashion.log, S.fashion.log, A.week.log, S.week.log, H.npnct30.log, S.npnct12.log, A.npnct12.log, H.ndgts.log, S.ndgts.log, A.ndgts.log, H.nuppr.log, H.nchrs.log, H.nwrds.log, H.nwrds.unq.log, A.nchrs.log, S.nchrs.log, A.nwrds.log, S.nwrds.log, A.nwrds.unq.log, S.nwrds.unq.log, S.nuppr.log, A.nuppr.log
+##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       feats
+## 1 WordCount.log, PubDate.hour.fctr, H.npnct21.log, PubDate.wkend, S.npnct21.log, A.npnct21.log, H.npnct08.log, H.npnct09.log, PubDate.last10.log, PubDate.last1.log, H.npnct06.log, A.can.log, A.npnct01.log, S.npnct01.log, S.can.log, H.npnct17.log, H.has.ebola, A.make.log, S.make.log, H.npnct01.log, H.npnct12.log, myCategory.fctr, S.state.log, A.state.log, S.one.log, A.one.log, A.said.log, S.said.log, A.npnct17.log, S.npnct17.log, S.npnct08.log, A.npnct08.log, S.npnct09.log, A.npnct09.log, PubDate.last100.log, H.npnct05.log, PubDate.date.fctr, PubDate.second.fctr, H.npnct07.log, A.npnct07.log, S.npnct07.log, S.npnct03.log, A.npnct19.log, H.npnct13.log, A.has.http, A.npnct03.log, A.npnct02.log, A.npnct18.log, A.npnct20.log, A.has.year.colon, S.has.year.colon, A.npnct22.log, S.npnct22.log, H.npnct02.log, A.presid.log, S.presid.log, S.npnct15.log, A.npnct06.log, S.npnct06.log, A.npnct15.log, H.npnct14.log, S.take.log, A.take.log, PubDate.minute.fctr, S.new.log, A.new.log, S.npnct13.log, A.npnct13.log, PubDate.wkday.fctr, S.npnct30.log, A.npnct30.log, S.day.log, A.day.log, H.X2014.log, A.show.log, S.show.log, A.npnct14.log, A.report.log, S.report.log, A.year.log, S.year.log, H.npnct04.log, A.share.log, S.share.log, S.compani.log, A.compani.log, H.new.log, S.npnct14.log, A.first.log, S.first.log, S.time.log, A.time.log, H.newyork.log, A.articl.log, S.articl.log, S.will.log, A.will.log, H.npnct15.log, A.newyork.log, S.newyork.log, H.day.log, A.npnct04.log, S.npnct04.log, H.today.log, H.report.log, H.X2015.log, S.npnct16.log, A.intern.log, S.intern.log, A.npnct16.log, H.daili.log, H.week.log, H.has.year.colon, H.fashion.log, H.npnct16.log, A.fashion.log, S.fashion.log, A.week.log, S.week.log, H.npnct30.log, S.npnct12.log, A.npnct12.log, H.ndgts.log, S.ndgts.log, A.ndgts.log, H.nuppr.log, H.nchrs.log, H.nwrds.log, H.nwrds.unq.log, A.nchrs.log, S.nchrs.log, A.nwrds.log, S.nwrds.log, A.nwrds.unq.log, S.nwrds.unq.log, S.nuppr.log, A.nuppr.log
 ##   max.nTuningRuns min.elapsedtime.everything min.elapsedtime.final
-## 1               3                    269.212                67.345
+## 1               3                    163.466                66.018
 ##   max.auc.fit opt.prob.threshold.fit max.f.score.fit max.Accuracy.fit
-## 1           1                    0.5               1        0.9054749
+## 1           1                    0.5               1        0.9065922
 ##   max.AccuracyLower.fit max.AccuracyUpper.fit max.Kappa.fit max.auc.OOB
-## 1              0.999176                     1      0.629002   0.9189958
+## 1              0.999176                     1     0.6331733   0.9217314
 ##   opt.prob.threshold.OOB max.f.score.OOB max.Accuracy.OOB
-## 1                    0.3       0.6810229        0.8847837
+## 1                    0.3       0.6783311        0.8838114
 ##   max.AccuracyLower.OOB max.AccuracyUpper.OOB max.Kappa.OOB
-## 1             0.8701915             0.8982687     0.6111869
+## 1             0.8691702             0.8973483     0.6079058
 ```
 
 ```r
@@ -7684,30 +7640,30 @@ print(glb_models_df)
 ## 9                  All.X.glm              glm
 ## 10      All.X.no.rnorm.rpart            rpart
 ## 11         All.X.no.rnorm.rf               rf
-##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     feats
-## 1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  .rnorm
-## 2                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  .rnorm
-## 3                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             A.nuppr.log
-## 4                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             A.nuppr.log
-## 5                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             A.nuppr.log
-## 6                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             A.nuppr.log
-## 7                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   A.nuppr.log, A.nuppr.log:A.npnct21.log, A.nuppr.log:H.npnct09.log, A.nuppr.log:H.npnct17.log, A.nuppr.log:S.can.log, A.nuppr.log:S.npnct01.log, A.nuppr.log:S.npnct25.log, A.nuppr.log:S.make.log, A.nuppr.log:S.npnct22.log, A.nuppr.log:S.presid.log, A.nuppr.log:S.npnct06.log, A.nuppr.log:S.take.log, A.nuppr.log:S.new.log, A.nuppr.log:S.npnct13.log, A.nuppr.log:S.npnct30.log, A.nuppr.log:S.day.log, A.nuppr.log:S.show.log, A.nuppr.log:S.report.log, A.nuppr.log:S.year.log, A.nuppr.log:S.share.log, A.nuppr.log:S.compani.log, A.nuppr.log:A.npnct14.log, A.nuppr.log:S.first.log, A.nuppr.log:S.time.log, A.nuppr.log:S.articl.log, A.nuppr.log:S.will.log, A.nuppr.log:S.newyork.log, A.nuppr.log:S.npnct04.log, A.nuppr.log:H.npnct15.log, A.nuppr.log:S.intern.log, A.nuppr.log:S.npnct16.log, A.nuppr.log:A.intern.log, A.nuppr.log:H.week.log, A.nuppr.log:S.fashion.log, A.nuppr.log:S.week.log, A.nuppr.log:S.npnct12.log, A.nuppr.log:S.ndgts.log, A.nuppr.log:H.nuppr.log, A.nuppr.log:A.nchrs.log, A.nuppr.log:A.nwrds.log, A.nuppr.log:S.nchrs.log, A.nuppr.log:S.nuppr.log
-## 8                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             WordCount.log, PubDate.hour.fctr, H.npnct21.log, PubDate.wkend, A.npnct21.log, H.npnct09.log, PubDate.last10.log, PubDate.last1.log, S.npnct01.log, S.can.log, H.npnct17.log, S.npnct25.log, H.has.ebola, S.make.log, H.npnct01.log, .rnorm, A.npnct23.log, A.npnct25.log, H.npnct12.log, myCategory.fctr, H.npnct03.log, S.state.log, A.state.log, S.one.log, A.one.log, A.said.log, S.said.log, A.npnct17.log, S.npnct17.log, S.npnct08.log, A.npnct08.log, S.npnct09.log, A.npnct09.log, A.npnct27.log, A.npnct11.log, H.npnct11.log, H.npnct22.log, S.npnct02.log, S.npnct11.log, PubDate.last100.log, H.npnct05.log, PubDate.date.fctr, PubDate.second.fctr, H.npnct07.log, A.npnct07.log, S.npnct07.log, S.npnct03.log, A.npnct19.log, H.npnct13.log, A.has.http, A.npnct03.log, A.npnct02.log, A.npnct18.log, A.npnct20.log, A.has.year.colon, S.has.year.colon, S.npnct22.log, H.npnct02.log, S.presid.log, S.npnct15.log, S.npnct06.log, A.npnct15.log, H.npnct14.log, S.take.log, PubDate.minute.fctr, S.new.log, S.npnct13.log, PubDate.wkday.fctr, S.npnct30.log, S.day.log, H.X2014.log, S.show.log, A.npnct14.log, S.report.log, S.year.log, H.npnct04.log, S.share.log, S.compani.log, H.new.log, S.first.log, S.time.log, H.newyork.log, S.articl.log, S.will.log, H.npnct15.log, S.newyork.log, H.day.log, S.npnct04.log, H.today.log, H.report.log, S.npnct16.log, S.intern.log, H.daili.log, H.week.log, H.npnct16.log, S.fashion.log, S.week.log, H.npnct30.log, S.npnct12.log, H.ndgts.log, S.ndgts.log, H.nuppr.log, H.nchrs.log, H.nwrds.log, A.nchrs.log, A.nwrds.log, A.nwrds.unq.log, S.nuppr.log
-## 9  WordCount.log, PubDate.hour.fctr, H.npnct21.log, PubDate.wkend, S.npnct21.log, A.npnct21.log, H.npnct08.log, H.npnct09.log, PubDate.last10.log, PubDate.last1.log, H.npnct06.log, A.can.log, A.npnct01.log, S.npnct01.log, S.can.log, H.npnct17.log, S.npnct23.log, S.npnct25.log, H.has.ebola, A.make.log, S.make.log, H.npnct01.log, .rnorm, A.npnct23.log, A.npnct25.log, H.npnct12.log, myCategory.fctr, H.npnct03.log, S.state.log, A.state.log, S.one.log, A.one.log, A.said.log, S.said.log, A.npnct17.log, S.npnct17.log, S.npnct08.log, A.npnct08.log, S.npnct09.log, A.npnct09.log, A.npnct27.log, A.npnct11.log, H.npnct11.log, H.npnct22.log, S.npnct02.log, S.npnct11.log, PubDate.last100.log, H.npnct05.log, PubDate.date.fctr, PubDate.second.fctr, H.npnct07.log, A.npnct07.log, S.npnct07.log, S.npnct03.log, A.npnct19.log, H.npnct13.log, A.has.http, A.npnct03.log, A.npnct02.log, A.npnct18.log, A.npnct20.log, A.has.year.colon, S.has.year.colon, A.npnct22.log, S.npnct22.log, H.npnct02.log, A.presid.log, S.presid.log, S.npnct15.log, A.npnct06.log, S.npnct06.log, A.npnct15.log, H.npnct14.log, S.take.log, A.take.log, PubDate.minute.fctr, S.new.log, A.new.log, S.npnct13.log, A.npnct13.log, PubDate.wkday.fctr, S.npnct30.log, A.npnct30.log, S.day.log, A.day.log, H.X2014.log, A.show.log, S.show.log, A.npnct14.log, A.report.log, S.report.log, A.year.log, S.year.log, H.npnct04.log, A.share.log, S.share.log, S.compani.log, A.compani.log, H.new.log, S.npnct14.log, A.first.log, S.first.log, S.time.log, A.time.log, H.newyork.log, A.articl.log, S.articl.log, S.will.log, A.will.log, H.npnct15.log, A.newyork.log, S.newyork.log, H.day.log, A.npnct04.log, S.npnct04.log, H.today.log, H.report.log, H.X2015.log, S.npnct16.log, A.intern.log, S.intern.log, A.npnct16.log, H.daili.log, H.week.log, H.has.year.colon, H.fashion.log, H.npnct16.log, A.fashion.log, S.fashion.log, A.week.log, S.week.log, H.npnct30.log, S.npnct12.log, A.npnct12.log, H.ndgts.log, S.ndgts.log, A.ndgts.log, H.nuppr.log, H.nchrs.log, H.nwrds.log, H.nwrds.unq.log, A.nchrs.log, S.nchrs.log, A.nwrds.log, S.nwrds.log, A.nwrds.unq.log, S.nwrds.unq.log, S.nuppr.log, A.nuppr.log
-## 10         WordCount.log, PubDate.hour.fctr, H.npnct21.log, PubDate.wkend, S.npnct21.log, A.npnct21.log, H.npnct08.log, H.npnct09.log, PubDate.last10.log, PubDate.last1.log, H.npnct06.log, A.can.log, A.npnct01.log, S.npnct01.log, S.can.log, H.npnct17.log, S.npnct23.log, S.npnct25.log, H.has.ebola, A.make.log, S.make.log, H.npnct01.log, A.npnct23.log, A.npnct25.log, H.npnct12.log, myCategory.fctr, H.npnct03.log, S.state.log, A.state.log, S.one.log, A.one.log, A.said.log, S.said.log, A.npnct17.log, S.npnct17.log, S.npnct08.log, A.npnct08.log, S.npnct09.log, A.npnct09.log, A.npnct27.log, A.npnct11.log, H.npnct11.log, H.npnct22.log, S.npnct02.log, S.npnct11.log, PubDate.last100.log, H.npnct05.log, PubDate.date.fctr, PubDate.second.fctr, H.npnct07.log, A.npnct07.log, S.npnct07.log, S.npnct03.log, A.npnct19.log, H.npnct13.log, A.has.http, A.npnct03.log, A.npnct02.log, A.npnct18.log, A.npnct20.log, A.has.year.colon, S.has.year.colon, A.npnct22.log, S.npnct22.log, H.npnct02.log, A.presid.log, S.presid.log, S.npnct15.log, A.npnct06.log, S.npnct06.log, A.npnct15.log, H.npnct14.log, S.take.log, A.take.log, PubDate.minute.fctr, S.new.log, A.new.log, S.npnct13.log, A.npnct13.log, PubDate.wkday.fctr, S.npnct30.log, A.npnct30.log, S.day.log, A.day.log, H.X2014.log, A.show.log, S.show.log, A.npnct14.log, A.report.log, S.report.log, A.year.log, S.year.log, H.npnct04.log, A.share.log, S.share.log, S.compani.log, A.compani.log, H.new.log, S.npnct14.log, A.first.log, S.first.log, S.time.log, A.time.log, H.newyork.log, A.articl.log, S.articl.log, S.will.log, A.will.log, H.npnct15.log, A.newyork.log, S.newyork.log, H.day.log, A.npnct04.log, S.npnct04.log, H.today.log, H.report.log, H.X2015.log, S.npnct16.log, A.intern.log, S.intern.log, A.npnct16.log, H.daili.log, H.week.log, H.has.year.colon, H.fashion.log, H.npnct16.log, A.fashion.log, S.fashion.log, A.week.log, S.week.log, H.npnct30.log, S.npnct12.log, A.npnct12.log, H.ndgts.log, S.ndgts.log, A.ndgts.log, H.nuppr.log, H.nchrs.log, H.nwrds.log, H.nwrds.unq.log, A.nchrs.log, S.nchrs.log, A.nwrds.log, S.nwrds.log, A.nwrds.unq.log, S.nwrds.unq.log, S.nuppr.log, A.nuppr.log
-## 11         WordCount.log, PubDate.hour.fctr, H.npnct21.log, PubDate.wkend, S.npnct21.log, A.npnct21.log, H.npnct08.log, H.npnct09.log, PubDate.last10.log, PubDate.last1.log, H.npnct06.log, A.can.log, A.npnct01.log, S.npnct01.log, S.can.log, H.npnct17.log, S.npnct23.log, S.npnct25.log, H.has.ebola, A.make.log, S.make.log, H.npnct01.log, A.npnct23.log, A.npnct25.log, H.npnct12.log, myCategory.fctr, H.npnct03.log, S.state.log, A.state.log, S.one.log, A.one.log, A.said.log, S.said.log, A.npnct17.log, S.npnct17.log, S.npnct08.log, A.npnct08.log, S.npnct09.log, A.npnct09.log, A.npnct27.log, A.npnct11.log, H.npnct11.log, H.npnct22.log, S.npnct02.log, S.npnct11.log, PubDate.last100.log, H.npnct05.log, PubDate.date.fctr, PubDate.second.fctr, H.npnct07.log, A.npnct07.log, S.npnct07.log, S.npnct03.log, A.npnct19.log, H.npnct13.log, A.has.http, A.npnct03.log, A.npnct02.log, A.npnct18.log, A.npnct20.log, A.has.year.colon, S.has.year.colon, A.npnct22.log, S.npnct22.log, H.npnct02.log, A.presid.log, S.presid.log, S.npnct15.log, A.npnct06.log, S.npnct06.log, A.npnct15.log, H.npnct14.log, S.take.log, A.take.log, PubDate.minute.fctr, S.new.log, A.new.log, S.npnct13.log, A.npnct13.log, PubDate.wkday.fctr, S.npnct30.log, A.npnct30.log, S.day.log, A.day.log, H.X2014.log, A.show.log, S.show.log, A.npnct14.log, A.report.log, S.report.log, A.year.log, S.year.log, H.npnct04.log, A.share.log, S.share.log, S.compani.log, A.compani.log, H.new.log, S.npnct14.log, A.first.log, S.first.log, S.time.log, A.time.log, H.newyork.log, A.articl.log, S.articl.log, S.will.log, A.will.log, H.npnct15.log, A.newyork.log, S.newyork.log, H.day.log, A.npnct04.log, S.npnct04.log, H.today.log, H.report.log, H.X2015.log, S.npnct16.log, A.intern.log, S.intern.log, A.npnct16.log, H.daili.log, H.week.log, H.has.year.colon, H.fashion.log, H.npnct16.log, A.fashion.log, S.fashion.log, A.week.log, S.week.log, H.npnct30.log, S.npnct12.log, A.npnct12.log, H.ndgts.log, S.ndgts.log, A.ndgts.log, H.nuppr.log, H.nchrs.log, H.nwrds.log, H.nwrds.unq.log, A.nchrs.log, S.nchrs.log, A.nwrds.log, S.nwrds.log, A.nwrds.unq.log, S.nwrds.unq.log, S.nuppr.log, A.nuppr.log
+##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                feats
+## 1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             .rnorm
+## 2                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             .rnorm
+## 3                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        A.nuppr.log
+## 4                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        A.nuppr.log
+## 5                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        A.nuppr.log
+## 6                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        A.nuppr.log
+## 7                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   A.nuppr.log, A.nuppr.log:A.npnct21.log, A.nuppr.log:H.npnct09.log, A.nuppr.log:H.npnct17.log, A.nuppr.log:S.can.log, A.nuppr.log:S.npnct01.log, A.nuppr.log:A.npnct23.log, A.nuppr.log:S.make.log, A.nuppr.log:A.npnct25.log, A.nuppr.log:S.npnct07.log, A.nuppr.log:A.npnct19.log, A.nuppr.log:S.npnct03.log, A.nuppr.log:A.npnct18.log, A.nuppr.log:A.npnct20.log, A.nuppr.log:S.has.year.colon, A.nuppr.log:S.npnct22.log, A.nuppr.log:S.presid.log, A.nuppr.log:S.npnct06.log, A.nuppr.log:A.npnct02.log, A.nuppr.log:S.take.log, A.nuppr.log:S.new.log, A.nuppr.log:S.npnct13.log, A.nuppr.log:S.npnct30.log, A.nuppr.log:S.day.log, A.nuppr.log:S.show.log, A.nuppr.log:S.report.log, A.nuppr.log:S.year.log, A.nuppr.log:S.share.log, A.nuppr.log:S.compani.log, A.nuppr.log:A.npnct14.log, A.nuppr.log:S.first.log, A.nuppr.log:S.time.log, A.nuppr.log:S.articl.log, A.nuppr.log:S.will.log, A.nuppr.log:S.newyork.log, A.nuppr.log:S.npnct04.log, A.nuppr.log:H.npnct15.log, A.nuppr.log:S.intern.log, A.nuppr.log:S.npnct16.log, A.nuppr.log:A.intern.log, A.nuppr.log:H.week.log, A.nuppr.log:S.fashion.log, A.nuppr.log:S.week.log, A.nuppr.log:S.npnct12.log, A.nuppr.log:S.ndgts.log, A.nuppr.log:H.nuppr.log, A.nuppr.log:A.nchrs.log, A.nuppr.log:A.nwrds.log, A.nuppr.log:S.nchrs.log, A.nuppr.log:S.nuppr.log
+## 8                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       WordCount.log, PubDate.hour.fctr, H.npnct21.log, PubDate.wkend, A.npnct21.log, H.npnct09.log, PubDate.last10.log, PubDate.last1.log, S.npnct01.log, S.can.log, H.npnct17.log, H.has.ebola, S.make.log, H.npnct01.log, H.npnct12.log, myCategory.fctr, S.state.log, A.state.log, S.one.log, A.one.log, A.said.log, S.said.log, A.npnct17.log, S.npnct17.log, S.npnct08.log, A.npnct08.log, S.npnct09.log, A.npnct09.log, PubDate.last100.log, .rnorm, H.npnct05.log, PubDate.date.fctr, PubDate.second.fctr, H.npnct07.log, S.npnct07.log, S.npnct03.log, A.npnct19.log, H.npnct13.log, A.npnct20.log, S.has.year.colon, S.npnct22.log, H.npnct02.log, S.presid.log, S.npnct15.log, S.npnct06.log, H.npnct14.log, S.take.log, PubDate.minute.fctr, S.new.log, S.npnct13.log, PubDate.wkday.fctr, S.npnct30.log, S.day.log, H.X2014.log, S.show.log, A.npnct14.log, S.report.log, S.year.log, H.npnct04.log, S.share.log, S.compani.log, H.new.log, S.first.log, S.time.log, H.newyork.log, S.articl.log, S.will.log, H.npnct15.log, S.newyork.log, H.day.log, S.npnct04.log, H.today.log, H.report.log, S.npnct16.log, S.intern.log, H.daili.log, H.week.log, H.npnct16.log, S.fashion.log, S.week.log, H.npnct30.log, S.npnct12.log, H.ndgts.log, S.ndgts.log, H.nuppr.log, H.nchrs.log, H.nwrds.log, A.nchrs.log, A.nwrds.log, A.nwrds.unq.log, S.nuppr.log
+## 9  WordCount.log, PubDate.hour.fctr, H.npnct21.log, PubDate.wkend, S.npnct21.log, A.npnct21.log, H.npnct08.log, H.npnct09.log, PubDate.last10.log, PubDate.last1.log, H.npnct06.log, A.can.log, A.npnct01.log, S.npnct01.log, S.can.log, H.npnct17.log, H.has.ebola, A.make.log, S.make.log, H.npnct01.log, H.npnct12.log, myCategory.fctr, S.state.log, A.state.log, S.one.log, A.one.log, A.said.log, S.said.log, A.npnct17.log, S.npnct17.log, S.npnct08.log, A.npnct08.log, S.npnct09.log, A.npnct09.log, PubDate.last100.log, .rnorm, H.npnct05.log, PubDate.date.fctr, PubDate.second.fctr, H.npnct07.log, A.npnct07.log, S.npnct07.log, S.npnct03.log, A.npnct19.log, H.npnct13.log, A.has.http, A.npnct03.log, A.npnct02.log, A.npnct18.log, A.npnct20.log, A.has.year.colon, S.has.year.colon, A.npnct22.log, S.npnct22.log, H.npnct02.log, A.presid.log, S.presid.log, S.npnct15.log, A.npnct06.log, S.npnct06.log, A.npnct15.log, H.npnct14.log, S.take.log, A.take.log, PubDate.minute.fctr, S.new.log, A.new.log, S.npnct13.log, A.npnct13.log, PubDate.wkday.fctr, S.npnct30.log, A.npnct30.log, S.day.log, A.day.log, H.X2014.log, A.show.log, S.show.log, A.npnct14.log, A.report.log, S.report.log, A.year.log, S.year.log, H.npnct04.log, A.share.log, S.share.log, S.compani.log, A.compani.log, H.new.log, S.npnct14.log, A.first.log, S.first.log, S.time.log, A.time.log, H.newyork.log, A.articl.log, S.articl.log, S.will.log, A.will.log, H.npnct15.log, A.newyork.log, S.newyork.log, H.day.log, A.npnct04.log, S.npnct04.log, H.today.log, H.report.log, H.X2015.log, S.npnct16.log, A.intern.log, S.intern.log, A.npnct16.log, H.daili.log, H.week.log, H.has.year.colon, H.fashion.log, H.npnct16.log, A.fashion.log, S.fashion.log, A.week.log, S.week.log, H.npnct30.log, S.npnct12.log, A.npnct12.log, H.ndgts.log, S.ndgts.log, A.ndgts.log, H.nuppr.log, H.nchrs.log, H.nwrds.log, H.nwrds.unq.log, A.nchrs.log, S.nchrs.log, A.nwrds.log, S.nwrds.log, A.nwrds.unq.log, S.nwrds.unq.log, S.nuppr.log, A.nuppr.log
+## 10         WordCount.log, PubDate.hour.fctr, H.npnct21.log, PubDate.wkend, S.npnct21.log, A.npnct21.log, H.npnct08.log, H.npnct09.log, PubDate.last10.log, PubDate.last1.log, H.npnct06.log, A.can.log, A.npnct01.log, S.npnct01.log, S.can.log, H.npnct17.log, H.has.ebola, A.make.log, S.make.log, H.npnct01.log, H.npnct12.log, myCategory.fctr, S.state.log, A.state.log, S.one.log, A.one.log, A.said.log, S.said.log, A.npnct17.log, S.npnct17.log, S.npnct08.log, A.npnct08.log, S.npnct09.log, A.npnct09.log, PubDate.last100.log, H.npnct05.log, PubDate.date.fctr, PubDate.second.fctr, H.npnct07.log, A.npnct07.log, S.npnct07.log, S.npnct03.log, A.npnct19.log, H.npnct13.log, A.has.http, A.npnct03.log, A.npnct02.log, A.npnct18.log, A.npnct20.log, A.has.year.colon, S.has.year.colon, A.npnct22.log, S.npnct22.log, H.npnct02.log, A.presid.log, S.presid.log, S.npnct15.log, A.npnct06.log, S.npnct06.log, A.npnct15.log, H.npnct14.log, S.take.log, A.take.log, PubDate.minute.fctr, S.new.log, A.new.log, S.npnct13.log, A.npnct13.log, PubDate.wkday.fctr, S.npnct30.log, A.npnct30.log, S.day.log, A.day.log, H.X2014.log, A.show.log, S.show.log, A.npnct14.log, A.report.log, S.report.log, A.year.log, S.year.log, H.npnct04.log, A.share.log, S.share.log, S.compani.log, A.compani.log, H.new.log, S.npnct14.log, A.first.log, S.first.log, S.time.log, A.time.log, H.newyork.log, A.articl.log, S.articl.log, S.will.log, A.will.log, H.npnct15.log, A.newyork.log, S.newyork.log, H.day.log, A.npnct04.log, S.npnct04.log, H.today.log, H.report.log, H.X2015.log, S.npnct16.log, A.intern.log, S.intern.log, A.npnct16.log, H.daili.log, H.week.log, H.has.year.colon, H.fashion.log, H.npnct16.log, A.fashion.log, S.fashion.log, A.week.log, S.week.log, H.npnct30.log, S.npnct12.log, A.npnct12.log, H.ndgts.log, S.ndgts.log, A.ndgts.log, H.nuppr.log, H.nchrs.log, H.nwrds.log, H.nwrds.unq.log, A.nchrs.log, S.nchrs.log, A.nwrds.log, S.nwrds.log, A.nwrds.unq.log, S.nwrds.unq.log, S.nuppr.log, A.nuppr.log
+## 11         WordCount.log, PubDate.hour.fctr, H.npnct21.log, PubDate.wkend, S.npnct21.log, A.npnct21.log, H.npnct08.log, H.npnct09.log, PubDate.last10.log, PubDate.last1.log, H.npnct06.log, A.can.log, A.npnct01.log, S.npnct01.log, S.can.log, H.npnct17.log, H.has.ebola, A.make.log, S.make.log, H.npnct01.log, H.npnct12.log, myCategory.fctr, S.state.log, A.state.log, S.one.log, A.one.log, A.said.log, S.said.log, A.npnct17.log, S.npnct17.log, S.npnct08.log, A.npnct08.log, S.npnct09.log, A.npnct09.log, PubDate.last100.log, H.npnct05.log, PubDate.date.fctr, PubDate.second.fctr, H.npnct07.log, A.npnct07.log, S.npnct07.log, S.npnct03.log, A.npnct19.log, H.npnct13.log, A.has.http, A.npnct03.log, A.npnct02.log, A.npnct18.log, A.npnct20.log, A.has.year.colon, S.has.year.colon, A.npnct22.log, S.npnct22.log, H.npnct02.log, A.presid.log, S.presid.log, S.npnct15.log, A.npnct06.log, S.npnct06.log, A.npnct15.log, H.npnct14.log, S.take.log, A.take.log, PubDate.minute.fctr, S.new.log, A.new.log, S.npnct13.log, A.npnct13.log, PubDate.wkday.fctr, S.npnct30.log, A.npnct30.log, S.day.log, A.day.log, H.X2014.log, A.show.log, S.show.log, A.npnct14.log, A.report.log, S.report.log, A.year.log, S.year.log, H.npnct04.log, A.share.log, S.share.log, S.compani.log, A.compani.log, H.new.log, S.npnct14.log, A.first.log, S.first.log, S.time.log, A.time.log, H.newyork.log, A.articl.log, S.articl.log, S.will.log, A.will.log, H.npnct15.log, A.newyork.log, S.newyork.log, H.day.log, A.npnct04.log, S.npnct04.log, H.today.log, H.report.log, H.X2015.log, S.npnct16.log, A.intern.log, S.intern.log, A.npnct16.log, H.daili.log, H.week.log, H.has.year.colon, H.fashion.log, H.npnct16.log, A.fashion.log, S.fashion.log, A.week.log, S.week.log, H.npnct30.log, S.npnct12.log, A.npnct12.log, H.ndgts.log, S.ndgts.log, A.ndgts.log, H.nuppr.log, H.nchrs.log, H.nwrds.log, H.nwrds.unq.log, A.nchrs.log, S.nchrs.log, A.nwrds.log, S.nwrds.log, A.nwrds.unq.log, S.nwrds.unq.log, S.nuppr.log, A.nuppr.log
 ##    max.nTuningRuns min.elapsedtime.everything min.elapsedtime.final
-## 1                0                      0.673                 0.003
-## 2                0                      0.338                 0.001
-## 3                0                      0.659                 0.054
-## 4                0                      0.595                 0.053
-## 5                1                      1.196                 0.053
-## 6                1                      1.122                 0.077
-## 7                1                      3.489                 0.818
-## 8                1                     14.959                 4.685
-## 9                1                     23.501                 7.287
-## 10               3                     10.650                 1.924
-## 11               3                    269.212                67.345
+## 1                0                      0.870                 0.003
+## 2                0                      0.341                 0.002
+## 3                0                      0.688                 0.053
+## 4                0                      0.607                 0.056
+## 5                1                      1.268                 0.056
+## 6                1                      1.224                 0.079
+## 7                1                      3.036                 1.064
+## 8                1                      6.939                 3.268
+## 9                1                     13.409                 6.870
+## 10               3                      8.419                 1.976
+## 11               3                    163.466                66.018
 ##    max.auc.fit opt.prob.threshold.fit max.f.score.fit max.Accuracy.fit
 ## 1    0.5000000                    0.5       0.0000000        0.8326257
 ## 2    0.5007516                    0.1       0.2867534        0.1673743
@@ -7715,11 +7671,11 @@ print(glb_models_df)
 ## 4    0.5000000                    0.5       0.0000000        0.8326257
 ## 5    0.5000000                    0.5       0.0000000        0.8326258
 ## 6    0.7073742                    0.2       0.3986014        0.8324022
-## 7    0.7922820                    0.3       0.4665885        0.8402235
-## 8    0.9487497                    0.3       0.7441860        0.8929586
-## 9    0.8237256                    0.9       0.6965562        0.8634728
+## 7    0.7936512                    0.3       0.4666667        0.8420117
+## 8    0.9486508                    0.4       0.7444668        0.9088264
+## 9    0.8100366                    0.9       0.7059659        0.9021193
 ## 10   0.7277461                    0.7       0.5978351        0.8934084
-## 11   1.0000000                    0.5       1.0000000        0.9054749
+## 11   1.0000000                    0.5       1.0000000        0.9065922
 ##    max.AccuracyLower.fit max.AccuracyUpper.fit max.Kappa.fit max.auc.OOB
 ## 1              0.8213602             0.8434553  0.0000000000   0.5000000
 ## 2              0.1565447             0.1786398  0.0000000000   0.4909227
@@ -7727,11 +7683,11 @@ print(glb_models_df)
 ## 4              0.8213602             0.8434553  0.0000000000   0.5000000
 ## 5              0.8213602             0.8434553  0.0000000000   0.5000000
 ## 6              0.7176970             0.7439004 -0.0004459345   0.7102060
-## 7              0.7845519             0.8083558  0.0995997038   0.7766863
-## 8              0.9002448             0.9173176  0.6067690411   0.9226367
-## 9              0.8863137             0.9044512  0.5545248700   0.8196249
+## 7              0.7840956             0.8079188  0.1154034120   0.7739949
+## 8              0.9062982             0.9228764  0.6544785876   0.9262548
+## 9              0.8986168             0.9158192  0.6295388414   0.7972982
 ## 10             0.8826068             0.9010121  0.5566658958   0.7084504
-## 11             0.9991760             1.0000000  0.6290019836   0.9189958
+## 11             0.9991760             1.0000000  0.6331732713   0.9217314
 ##    opt.prob.threshold.OOB max.f.score.OOB max.Accuracy.OOB
 ## 1                     0.5       0.0000000        0.8327662
 ## 2                     0.1       0.2865473        0.1672338
@@ -7739,11 +7695,11 @@ print(glb_models_df)
 ## 4                     0.5       0.0000000        0.8327662
 ## 5                     0.5       0.0000000        0.8327662
 ## 6                     0.2       0.3880266        0.7316480
-## 7                     0.3       0.4595635        0.7953330
-## 8                     0.3       0.7252747        0.9027710
-## 9                     0.9       0.6892655        0.8930481
+## 7                     0.3       0.4521073        0.7914439
+## 8                     0.3       0.7257618        0.9037433
+## 9                     0.9       0.6897638        0.9042295
 ## 10                    0.7       0.5650558        0.8862421
-## 11                    0.3       0.6810229        0.8847837
+## 11                    0.3       0.6783311        0.8838114
 ##    max.AccuracyLower.OOB max.AccuracyUpper.OOB max.Kappa.OOB
 ## 1              0.8159247             0.8486533     0.0000000
 ## 2              0.1513467             0.1840753     0.0000000
@@ -7751,11 +7707,11 @@ print(glb_models_df)
 ## 4              0.8159247             0.8486533     0.0000000
 ## 5              0.8159247             0.8486533     0.0000000
 ## 6              0.7119353             0.7506985     0.2283681
-## 7              0.7772394             0.8125808     0.3354449
-## 8              0.8891448             0.9152364     0.6664245
-## 9              0.8788850             0.9060795     0.6247359
+## 7              0.7732343             0.8088189     0.3256506
+## 8              0.8901728             0.9161500     0.6675461
+## 9              0.8906870             0.9166067     0.6336042
 ## 10             0.8717239             0.8996488     0.5054039
-## 11             0.8701915             0.8982687     0.6111869
+## 11             0.8691702             0.8973483     0.6079058
 ##    max.AccuracySD.fit max.KappaSD.fit min.aic.fit
 ## 1                  NA              NA          NA
 ## 2                  NA              NA          NA
@@ -7763,11 +7719,22 @@ print(glb_models_df)
 ## 4                  NA              NA          NA
 ## 5        0.0002791548    0.0000000000          NA
 ## 6        0.0000648833    0.0007723812    3714.601
-## 7        0.0003600752    0.0163976516    3419.307
-## 8        0.0155625583    0.0424230615    2092.942
-## 9        0.0774803506    0.1722790551   33948.772
+## 7        0.0020950664    0.0284927425    3424.717
+## 8        0.0018087297    0.0041211095    2079.176
+## 9        0.0140389674    0.0521779604   30122.145
 ## 10       0.0030411362    0.0292229339          NA
 ## 11                 NA              NA          NA
+```
+
+```r
+fit.models_1_chunk_df <- myadd_chunk(fit.models_1_chunk_df, "fit.models_1_end", 
+                                     major.inc=TRUE)
+```
+
+```
+##              label step_major step_minor     bgn     end elapsed
+## 4  fit.models_1_rf          4          0 263.087 432.436 169.349
+## 5 fit.models_1_end          5          0 432.437      NA      NA
 ```
 
 ```r
@@ -7776,8 +7743,8 @@ glb_chunks_df <- myadd_chunk(glb_chunks_df, "fit.models", major.inc=FALSE)
 
 ```
 ##         label step_major step_minor     bgn     end elapsed
-## 10 fit.models          6          1 222.291 544.291     322
-## 11 fit.models          6          2 544.291      NA      NA
+## 10 fit.models          6          1 228.568 432.444 203.876
+## 11 fit.models          6          2 432.444      NA      NA
 ```
 
 
@@ -7846,18 +7813,18 @@ print(plt_models_df)
 ## 9                  All.X.glm              glm
 ## 10      All.X.no.rnorm.rpart            rpart
 ## 11         All.X.no.rnorm.rf               rf
-##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     feats
-## 1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  .rnorm
-## 2                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  .rnorm
-## 3                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             A.nuppr.log
-## 4                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             A.nuppr.log
-## 5                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             A.nuppr.log
-## 6                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             A.nuppr.log
-## 7                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   A.nuppr.log, A.nuppr.log:A.npnct21.log, A.nuppr.log:H.npnct09.log, A.nuppr.log:H.npnct17.log, A.nuppr.log:S.can.log, A.nuppr.log:S.npnct01.log, A.nuppr.log:S.npnct25.log, A.nuppr.log:S.make.log, A.nuppr.log:S.npnct22.log, A.nuppr.log:S.presid.log, A.nuppr.log:S.npnct06.log, A.nuppr.log:S.take.log, A.nuppr.log:S.new.log, A.nuppr.log:S.npnct13.log, A.nuppr.log:S.npnct30.log, A.nuppr.log:S.day.log, A.nuppr.log:S.show.log, A.nuppr.log:S.report.log, A.nuppr.log:S.year.log, A.nuppr.log:S.share.log, A.nuppr.log:S.compani.log, A.nuppr.log:A.npnct14.log, A.nuppr.log:S.first.log, A.nuppr.log:S.time.log, A.nuppr.log:S.articl.log, A.nuppr.log:S.will.log, A.nuppr.log:S.newyork.log, A.nuppr.log:S.npnct04.log, A.nuppr.log:H.npnct15.log, A.nuppr.log:S.intern.log, A.nuppr.log:S.npnct16.log, A.nuppr.log:A.intern.log, A.nuppr.log:H.week.log, A.nuppr.log:S.fashion.log, A.nuppr.log:S.week.log, A.nuppr.log:S.npnct12.log, A.nuppr.log:S.ndgts.log, A.nuppr.log:H.nuppr.log, A.nuppr.log:A.nchrs.log, A.nuppr.log:A.nwrds.log, A.nuppr.log:S.nchrs.log, A.nuppr.log:S.nuppr.log
-## 8                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             WordCount.log, PubDate.hour.fctr, H.npnct21.log, PubDate.wkend, A.npnct21.log, H.npnct09.log, PubDate.last10.log, PubDate.last1.log, S.npnct01.log, S.can.log, H.npnct17.log, S.npnct25.log, H.has.ebola, S.make.log, H.npnct01.log, .rnorm, A.npnct23.log, A.npnct25.log, H.npnct12.log, myCategory.fctr, H.npnct03.log, S.state.log, A.state.log, S.one.log, A.one.log, A.said.log, S.said.log, A.npnct17.log, S.npnct17.log, S.npnct08.log, A.npnct08.log, S.npnct09.log, A.npnct09.log, A.npnct27.log, A.npnct11.log, H.npnct11.log, H.npnct22.log, S.npnct02.log, S.npnct11.log, PubDate.last100.log, H.npnct05.log, PubDate.date.fctr, PubDate.second.fctr, H.npnct07.log, A.npnct07.log, S.npnct07.log, S.npnct03.log, A.npnct19.log, H.npnct13.log, A.has.http, A.npnct03.log, A.npnct02.log, A.npnct18.log, A.npnct20.log, A.has.year.colon, S.has.year.colon, S.npnct22.log, H.npnct02.log, S.presid.log, S.npnct15.log, S.npnct06.log, A.npnct15.log, H.npnct14.log, S.take.log, PubDate.minute.fctr, S.new.log, S.npnct13.log, PubDate.wkday.fctr, S.npnct30.log, S.day.log, H.X2014.log, S.show.log, A.npnct14.log, S.report.log, S.year.log, H.npnct04.log, S.share.log, S.compani.log, H.new.log, S.first.log, S.time.log, H.newyork.log, S.articl.log, S.will.log, H.npnct15.log, S.newyork.log, H.day.log, S.npnct04.log, H.today.log, H.report.log, S.npnct16.log, S.intern.log, H.daili.log, H.week.log, H.npnct16.log, S.fashion.log, S.week.log, H.npnct30.log, S.npnct12.log, H.ndgts.log, S.ndgts.log, H.nuppr.log, H.nchrs.log, H.nwrds.log, A.nchrs.log, A.nwrds.log, A.nwrds.unq.log, S.nuppr.log
-## 9  WordCount.log, PubDate.hour.fctr, H.npnct21.log, PubDate.wkend, S.npnct21.log, A.npnct21.log, H.npnct08.log, H.npnct09.log, PubDate.last10.log, PubDate.last1.log, H.npnct06.log, A.can.log, A.npnct01.log, S.npnct01.log, S.can.log, H.npnct17.log, S.npnct23.log, S.npnct25.log, H.has.ebola, A.make.log, S.make.log, H.npnct01.log, .rnorm, A.npnct23.log, A.npnct25.log, H.npnct12.log, myCategory.fctr, H.npnct03.log, S.state.log, A.state.log, S.one.log, A.one.log, A.said.log, S.said.log, A.npnct17.log, S.npnct17.log, S.npnct08.log, A.npnct08.log, S.npnct09.log, A.npnct09.log, A.npnct27.log, A.npnct11.log, H.npnct11.log, H.npnct22.log, S.npnct02.log, S.npnct11.log, PubDate.last100.log, H.npnct05.log, PubDate.date.fctr, PubDate.second.fctr, H.npnct07.log, A.npnct07.log, S.npnct07.log, S.npnct03.log, A.npnct19.log, H.npnct13.log, A.has.http, A.npnct03.log, A.npnct02.log, A.npnct18.log, A.npnct20.log, A.has.year.colon, S.has.year.colon, A.npnct22.log, S.npnct22.log, H.npnct02.log, A.presid.log, S.presid.log, S.npnct15.log, A.npnct06.log, S.npnct06.log, A.npnct15.log, H.npnct14.log, S.take.log, A.take.log, PubDate.minute.fctr, S.new.log, A.new.log, S.npnct13.log, A.npnct13.log, PubDate.wkday.fctr, S.npnct30.log, A.npnct30.log, S.day.log, A.day.log, H.X2014.log, A.show.log, S.show.log, A.npnct14.log, A.report.log, S.report.log, A.year.log, S.year.log, H.npnct04.log, A.share.log, S.share.log, S.compani.log, A.compani.log, H.new.log, S.npnct14.log, A.first.log, S.first.log, S.time.log, A.time.log, H.newyork.log, A.articl.log, S.articl.log, S.will.log, A.will.log, H.npnct15.log, A.newyork.log, S.newyork.log, H.day.log, A.npnct04.log, S.npnct04.log, H.today.log, H.report.log, H.X2015.log, S.npnct16.log, A.intern.log, S.intern.log, A.npnct16.log, H.daili.log, H.week.log, H.has.year.colon, H.fashion.log, H.npnct16.log, A.fashion.log, S.fashion.log, A.week.log, S.week.log, H.npnct30.log, S.npnct12.log, A.npnct12.log, H.ndgts.log, S.ndgts.log, A.ndgts.log, H.nuppr.log, H.nchrs.log, H.nwrds.log, H.nwrds.unq.log, A.nchrs.log, S.nchrs.log, A.nwrds.log, S.nwrds.log, A.nwrds.unq.log, S.nwrds.unq.log, S.nuppr.log, A.nuppr.log
-## 10         WordCount.log, PubDate.hour.fctr, H.npnct21.log, PubDate.wkend, S.npnct21.log, A.npnct21.log, H.npnct08.log, H.npnct09.log, PubDate.last10.log, PubDate.last1.log, H.npnct06.log, A.can.log, A.npnct01.log, S.npnct01.log, S.can.log, H.npnct17.log, S.npnct23.log, S.npnct25.log, H.has.ebola, A.make.log, S.make.log, H.npnct01.log, A.npnct23.log, A.npnct25.log, H.npnct12.log, myCategory.fctr, H.npnct03.log, S.state.log, A.state.log, S.one.log, A.one.log, A.said.log, S.said.log, A.npnct17.log, S.npnct17.log, S.npnct08.log, A.npnct08.log, S.npnct09.log, A.npnct09.log, A.npnct27.log, A.npnct11.log, H.npnct11.log, H.npnct22.log, S.npnct02.log, S.npnct11.log, PubDate.last100.log, H.npnct05.log, PubDate.date.fctr, PubDate.second.fctr, H.npnct07.log, A.npnct07.log, S.npnct07.log, S.npnct03.log, A.npnct19.log, H.npnct13.log, A.has.http, A.npnct03.log, A.npnct02.log, A.npnct18.log, A.npnct20.log, A.has.year.colon, S.has.year.colon, A.npnct22.log, S.npnct22.log, H.npnct02.log, A.presid.log, S.presid.log, S.npnct15.log, A.npnct06.log, S.npnct06.log, A.npnct15.log, H.npnct14.log, S.take.log, A.take.log, PubDate.minute.fctr, S.new.log, A.new.log, S.npnct13.log, A.npnct13.log, PubDate.wkday.fctr, S.npnct30.log, A.npnct30.log, S.day.log, A.day.log, H.X2014.log, A.show.log, S.show.log, A.npnct14.log, A.report.log, S.report.log, A.year.log, S.year.log, H.npnct04.log, A.share.log, S.share.log, S.compani.log, A.compani.log, H.new.log, S.npnct14.log, A.first.log, S.first.log, S.time.log, A.time.log, H.newyork.log, A.articl.log, S.articl.log, S.will.log, A.will.log, H.npnct15.log, A.newyork.log, S.newyork.log, H.day.log, A.npnct04.log, S.npnct04.log, H.today.log, H.report.log, H.X2015.log, S.npnct16.log, A.intern.log, S.intern.log, A.npnct16.log, H.daili.log, H.week.log, H.has.year.colon, H.fashion.log, H.npnct16.log, A.fashion.log, S.fashion.log, A.week.log, S.week.log, H.npnct30.log, S.npnct12.log, A.npnct12.log, H.ndgts.log, S.ndgts.log, A.ndgts.log, H.nuppr.log, H.nchrs.log, H.nwrds.log, H.nwrds.unq.log, A.nchrs.log, S.nchrs.log, A.nwrds.log, S.nwrds.log, A.nwrds.unq.log, S.nwrds.unq.log, S.nuppr.log, A.nuppr.log
-## 11         WordCount.log, PubDate.hour.fctr, H.npnct21.log, PubDate.wkend, S.npnct21.log, A.npnct21.log, H.npnct08.log, H.npnct09.log, PubDate.last10.log, PubDate.last1.log, H.npnct06.log, A.can.log, A.npnct01.log, S.npnct01.log, S.can.log, H.npnct17.log, S.npnct23.log, S.npnct25.log, H.has.ebola, A.make.log, S.make.log, H.npnct01.log, A.npnct23.log, A.npnct25.log, H.npnct12.log, myCategory.fctr, H.npnct03.log, S.state.log, A.state.log, S.one.log, A.one.log, A.said.log, S.said.log, A.npnct17.log, S.npnct17.log, S.npnct08.log, A.npnct08.log, S.npnct09.log, A.npnct09.log, A.npnct27.log, A.npnct11.log, H.npnct11.log, H.npnct22.log, S.npnct02.log, S.npnct11.log, PubDate.last100.log, H.npnct05.log, PubDate.date.fctr, PubDate.second.fctr, H.npnct07.log, A.npnct07.log, S.npnct07.log, S.npnct03.log, A.npnct19.log, H.npnct13.log, A.has.http, A.npnct03.log, A.npnct02.log, A.npnct18.log, A.npnct20.log, A.has.year.colon, S.has.year.colon, A.npnct22.log, S.npnct22.log, H.npnct02.log, A.presid.log, S.presid.log, S.npnct15.log, A.npnct06.log, S.npnct06.log, A.npnct15.log, H.npnct14.log, S.take.log, A.take.log, PubDate.minute.fctr, S.new.log, A.new.log, S.npnct13.log, A.npnct13.log, PubDate.wkday.fctr, S.npnct30.log, A.npnct30.log, S.day.log, A.day.log, H.X2014.log, A.show.log, S.show.log, A.npnct14.log, A.report.log, S.report.log, A.year.log, S.year.log, H.npnct04.log, A.share.log, S.share.log, S.compani.log, A.compani.log, H.new.log, S.npnct14.log, A.first.log, S.first.log, S.time.log, A.time.log, H.newyork.log, A.articl.log, S.articl.log, S.will.log, A.will.log, H.npnct15.log, A.newyork.log, S.newyork.log, H.day.log, A.npnct04.log, S.npnct04.log, H.today.log, H.report.log, H.X2015.log, S.npnct16.log, A.intern.log, S.intern.log, A.npnct16.log, H.daili.log, H.week.log, H.has.year.colon, H.fashion.log, H.npnct16.log, A.fashion.log, S.fashion.log, A.week.log, S.week.log, H.npnct30.log, S.npnct12.log, A.npnct12.log, H.ndgts.log, S.ndgts.log, A.ndgts.log, H.nuppr.log, H.nchrs.log, H.nwrds.log, H.nwrds.unq.log, A.nchrs.log, S.nchrs.log, A.nwrds.log, S.nwrds.log, A.nwrds.unq.log, S.nwrds.unq.log, S.nuppr.log, A.nuppr.log
+##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                feats
+## 1                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             .rnorm
+## 2                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             .rnorm
+## 3                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        A.nuppr.log
+## 4                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        A.nuppr.log
+## 5                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        A.nuppr.log
+## 6                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        A.nuppr.log
+## 7                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   A.nuppr.log, A.nuppr.log:A.npnct21.log, A.nuppr.log:H.npnct09.log, A.nuppr.log:H.npnct17.log, A.nuppr.log:S.can.log, A.nuppr.log:S.npnct01.log, A.nuppr.log:A.npnct23.log, A.nuppr.log:S.make.log, A.nuppr.log:A.npnct25.log, A.nuppr.log:S.npnct07.log, A.nuppr.log:A.npnct19.log, A.nuppr.log:S.npnct03.log, A.nuppr.log:A.npnct18.log, A.nuppr.log:A.npnct20.log, A.nuppr.log:S.has.year.colon, A.nuppr.log:S.npnct22.log, A.nuppr.log:S.presid.log, A.nuppr.log:S.npnct06.log, A.nuppr.log:A.npnct02.log, A.nuppr.log:S.take.log, A.nuppr.log:S.new.log, A.nuppr.log:S.npnct13.log, A.nuppr.log:S.npnct30.log, A.nuppr.log:S.day.log, A.nuppr.log:S.show.log, A.nuppr.log:S.report.log, A.nuppr.log:S.year.log, A.nuppr.log:S.share.log, A.nuppr.log:S.compani.log, A.nuppr.log:A.npnct14.log, A.nuppr.log:S.first.log, A.nuppr.log:S.time.log, A.nuppr.log:S.articl.log, A.nuppr.log:S.will.log, A.nuppr.log:S.newyork.log, A.nuppr.log:S.npnct04.log, A.nuppr.log:H.npnct15.log, A.nuppr.log:S.intern.log, A.nuppr.log:S.npnct16.log, A.nuppr.log:A.intern.log, A.nuppr.log:H.week.log, A.nuppr.log:S.fashion.log, A.nuppr.log:S.week.log, A.nuppr.log:S.npnct12.log, A.nuppr.log:S.ndgts.log, A.nuppr.log:H.nuppr.log, A.nuppr.log:A.nchrs.log, A.nuppr.log:A.nwrds.log, A.nuppr.log:S.nchrs.log, A.nuppr.log:S.nuppr.log
+## 8                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       WordCount.log, PubDate.hour.fctr, H.npnct21.log, PubDate.wkend, A.npnct21.log, H.npnct09.log, PubDate.last10.log, PubDate.last1.log, S.npnct01.log, S.can.log, H.npnct17.log, H.has.ebola, S.make.log, H.npnct01.log, H.npnct12.log, myCategory.fctr, S.state.log, A.state.log, S.one.log, A.one.log, A.said.log, S.said.log, A.npnct17.log, S.npnct17.log, S.npnct08.log, A.npnct08.log, S.npnct09.log, A.npnct09.log, PubDate.last100.log, .rnorm, H.npnct05.log, PubDate.date.fctr, PubDate.second.fctr, H.npnct07.log, S.npnct07.log, S.npnct03.log, A.npnct19.log, H.npnct13.log, A.npnct20.log, S.has.year.colon, S.npnct22.log, H.npnct02.log, S.presid.log, S.npnct15.log, S.npnct06.log, H.npnct14.log, S.take.log, PubDate.minute.fctr, S.new.log, S.npnct13.log, PubDate.wkday.fctr, S.npnct30.log, S.day.log, H.X2014.log, S.show.log, A.npnct14.log, S.report.log, S.year.log, H.npnct04.log, S.share.log, S.compani.log, H.new.log, S.first.log, S.time.log, H.newyork.log, S.articl.log, S.will.log, H.npnct15.log, S.newyork.log, H.day.log, S.npnct04.log, H.today.log, H.report.log, S.npnct16.log, S.intern.log, H.daili.log, H.week.log, H.npnct16.log, S.fashion.log, S.week.log, H.npnct30.log, S.npnct12.log, H.ndgts.log, S.ndgts.log, H.nuppr.log, H.nchrs.log, H.nwrds.log, A.nchrs.log, A.nwrds.log, A.nwrds.unq.log, S.nuppr.log
+## 9  WordCount.log, PubDate.hour.fctr, H.npnct21.log, PubDate.wkend, S.npnct21.log, A.npnct21.log, H.npnct08.log, H.npnct09.log, PubDate.last10.log, PubDate.last1.log, H.npnct06.log, A.can.log, A.npnct01.log, S.npnct01.log, S.can.log, H.npnct17.log, H.has.ebola, A.make.log, S.make.log, H.npnct01.log, H.npnct12.log, myCategory.fctr, S.state.log, A.state.log, S.one.log, A.one.log, A.said.log, S.said.log, A.npnct17.log, S.npnct17.log, S.npnct08.log, A.npnct08.log, S.npnct09.log, A.npnct09.log, PubDate.last100.log, .rnorm, H.npnct05.log, PubDate.date.fctr, PubDate.second.fctr, H.npnct07.log, A.npnct07.log, S.npnct07.log, S.npnct03.log, A.npnct19.log, H.npnct13.log, A.has.http, A.npnct03.log, A.npnct02.log, A.npnct18.log, A.npnct20.log, A.has.year.colon, S.has.year.colon, A.npnct22.log, S.npnct22.log, H.npnct02.log, A.presid.log, S.presid.log, S.npnct15.log, A.npnct06.log, S.npnct06.log, A.npnct15.log, H.npnct14.log, S.take.log, A.take.log, PubDate.minute.fctr, S.new.log, A.new.log, S.npnct13.log, A.npnct13.log, PubDate.wkday.fctr, S.npnct30.log, A.npnct30.log, S.day.log, A.day.log, H.X2014.log, A.show.log, S.show.log, A.npnct14.log, A.report.log, S.report.log, A.year.log, S.year.log, H.npnct04.log, A.share.log, S.share.log, S.compani.log, A.compani.log, H.new.log, S.npnct14.log, A.first.log, S.first.log, S.time.log, A.time.log, H.newyork.log, A.articl.log, S.articl.log, S.will.log, A.will.log, H.npnct15.log, A.newyork.log, S.newyork.log, H.day.log, A.npnct04.log, S.npnct04.log, H.today.log, H.report.log, H.X2015.log, S.npnct16.log, A.intern.log, S.intern.log, A.npnct16.log, H.daili.log, H.week.log, H.has.year.colon, H.fashion.log, H.npnct16.log, A.fashion.log, S.fashion.log, A.week.log, S.week.log, H.npnct30.log, S.npnct12.log, A.npnct12.log, H.ndgts.log, S.ndgts.log, A.ndgts.log, H.nuppr.log, H.nchrs.log, H.nwrds.log, H.nwrds.unq.log, A.nchrs.log, S.nchrs.log, A.nwrds.log, S.nwrds.log, A.nwrds.unq.log, S.nwrds.unq.log, S.nuppr.log, A.nuppr.log
+## 10         WordCount.log, PubDate.hour.fctr, H.npnct21.log, PubDate.wkend, S.npnct21.log, A.npnct21.log, H.npnct08.log, H.npnct09.log, PubDate.last10.log, PubDate.last1.log, H.npnct06.log, A.can.log, A.npnct01.log, S.npnct01.log, S.can.log, H.npnct17.log, H.has.ebola, A.make.log, S.make.log, H.npnct01.log, H.npnct12.log, myCategory.fctr, S.state.log, A.state.log, S.one.log, A.one.log, A.said.log, S.said.log, A.npnct17.log, S.npnct17.log, S.npnct08.log, A.npnct08.log, S.npnct09.log, A.npnct09.log, PubDate.last100.log, H.npnct05.log, PubDate.date.fctr, PubDate.second.fctr, H.npnct07.log, A.npnct07.log, S.npnct07.log, S.npnct03.log, A.npnct19.log, H.npnct13.log, A.has.http, A.npnct03.log, A.npnct02.log, A.npnct18.log, A.npnct20.log, A.has.year.colon, S.has.year.colon, A.npnct22.log, S.npnct22.log, H.npnct02.log, A.presid.log, S.presid.log, S.npnct15.log, A.npnct06.log, S.npnct06.log, A.npnct15.log, H.npnct14.log, S.take.log, A.take.log, PubDate.minute.fctr, S.new.log, A.new.log, S.npnct13.log, A.npnct13.log, PubDate.wkday.fctr, S.npnct30.log, A.npnct30.log, S.day.log, A.day.log, H.X2014.log, A.show.log, S.show.log, A.npnct14.log, A.report.log, S.report.log, A.year.log, S.year.log, H.npnct04.log, A.share.log, S.share.log, S.compani.log, A.compani.log, H.new.log, S.npnct14.log, A.first.log, S.first.log, S.time.log, A.time.log, H.newyork.log, A.articl.log, S.articl.log, S.will.log, A.will.log, H.npnct15.log, A.newyork.log, S.newyork.log, H.day.log, A.npnct04.log, S.npnct04.log, H.today.log, H.report.log, H.X2015.log, S.npnct16.log, A.intern.log, S.intern.log, A.npnct16.log, H.daili.log, H.week.log, H.has.year.colon, H.fashion.log, H.npnct16.log, A.fashion.log, S.fashion.log, A.week.log, S.week.log, H.npnct30.log, S.npnct12.log, A.npnct12.log, H.ndgts.log, S.ndgts.log, A.ndgts.log, H.nuppr.log, H.nchrs.log, H.nwrds.log, H.nwrds.unq.log, A.nchrs.log, S.nchrs.log, A.nwrds.log, S.nwrds.log, A.nwrds.unq.log, S.nwrds.unq.log, S.nuppr.log, A.nuppr.log
+## 11         WordCount.log, PubDate.hour.fctr, H.npnct21.log, PubDate.wkend, S.npnct21.log, A.npnct21.log, H.npnct08.log, H.npnct09.log, PubDate.last10.log, PubDate.last1.log, H.npnct06.log, A.can.log, A.npnct01.log, S.npnct01.log, S.can.log, H.npnct17.log, H.has.ebola, A.make.log, S.make.log, H.npnct01.log, H.npnct12.log, myCategory.fctr, S.state.log, A.state.log, S.one.log, A.one.log, A.said.log, S.said.log, A.npnct17.log, S.npnct17.log, S.npnct08.log, A.npnct08.log, S.npnct09.log, A.npnct09.log, PubDate.last100.log, H.npnct05.log, PubDate.date.fctr, PubDate.second.fctr, H.npnct07.log, A.npnct07.log, S.npnct07.log, S.npnct03.log, A.npnct19.log, H.npnct13.log, A.has.http, A.npnct03.log, A.npnct02.log, A.npnct18.log, A.npnct20.log, A.has.year.colon, S.has.year.colon, A.npnct22.log, S.npnct22.log, H.npnct02.log, A.presid.log, S.presid.log, S.npnct15.log, A.npnct06.log, S.npnct06.log, A.npnct15.log, H.npnct14.log, S.take.log, A.take.log, PubDate.minute.fctr, S.new.log, A.new.log, S.npnct13.log, A.npnct13.log, PubDate.wkday.fctr, S.npnct30.log, A.npnct30.log, S.day.log, A.day.log, H.X2014.log, A.show.log, S.show.log, A.npnct14.log, A.report.log, S.report.log, A.year.log, S.year.log, H.npnct04.log, A.share.log, S.share.log, S.compani.log, A.compani.log, H.new.log, S.npnct14.log, A.first.log, S.first.log, S.time.log, A.time.log, H.newyork.log, A.articl.log, S.articl.log, S.will.log, A.will.log, H.npnct15.log, A.newyork.log, S.newyork.log, H.day.log, A.npnct04.log, S.npnct04.log, H.today.log, H.report.log, H.X2015.log, S.npnct16.log, A.intern.log, S.intern.log, A.npnct16.log, H.daili.log, H.week.log, H.has.year.colon, H.fashion.log, H.npnct16.log, A.fashion.log, S.fashion.log, A.week.log, S.week.log, H.npnct30.log, S.npnct12.log, A.npnct12.log, H.ndgts.log, S.ndgts.log, A.ndgts.log, H.nuppr.log, H.nchrs.log, H.nwrds.log, H.nwrds.unq.log, A.nchrs.log, S.nchrs.log, A.nwrds.log, S.nwrds.log, A.nwrds.unq.log, S.nwrds.unq.log, S.nuppr.log, A.nuppr.log
 ##    max.nTuningRuns max.auc.fit opt.prob.threshold.fit max.f.score.fit
 ## 1                0   0.5000000                    0.5       0.0000000
 ## 2                0   0.5007516                    0.1       0.2867534
@@ -7865,9 +7832,9 @@ print(plt_models_df)
 ## 4                0   0.5000000                    0.5       0.0000000
 ## 5                1   0.5000000                    0.5       0.0000000
 ## 6                1   0.7073742                    0.2       0.3986014
-## 7                1   0.7922820                    0.3       0.4665885
-## 8                1   0.9487497                    0.3       0.7441860
-## 9                1   0.8237256                    0.9       0.6965562
+## 7                1   0.7936512                    0.3       0.4666667
+## 8                1   0.9486508                    0.4       0.7444668
+## 9                1   0.8100366                    0.9       0.7059659
 ## 10               3   0.7277461                    0.7       0.5978351
 ## 11               3   1.0000000                    0.5       1.0000000
 ##    max.Accuracy.fit max.Kappa.fit max.auc.OOB opt.prob.threshold.OOB
@@ -7877,11 +7844,11 @@ print(plt_models_df)
 ## 4         0.8326257  0.0000000000   0.5000000                    0.5
 ## 5         0.8326258  0.0000000000   0.5000000                    0.5
 ## 6         0.8324022 -0.0004459345   0.7102060                    0.2
-## 7         0.8402235  0.0995997038   0.7766863                    0.3
-## 8         0.8929586  0.6067690411   0.9226367                    0.3
-## 9         0.8634728  0.5545248700   0.8196249                    0.9
+## 7         0.8420117  0.1154034120   0.7739949                    0.3
+## 8         0.9088264  0.6544785876   0.9262548                    0.3
+## 9         0.9021193  0.6295388414   0.7972982                    0.9
 ## 10        0.8934084  0.5566658958   0.7084504                    0.7
-## 11        0.9054749  0.6290019836   0.9189958                    0.3
+## 11        0.9065922  0.6331732713   0.9217314                    0.3
 ##    max.f.score.OOB max.Accuracy.OOB max.Kappa.OOB
 ## 1        0.0000000        0.8327662     0.0000000
 ## 2        0.2865473        0.1672338     0.0000000
@@ -7889,23 +7856,23 @@ print(plt_models_df)
 ## 4        0.0000000        0.8327662     0.0000000
 ## 5        0.0000000        0.8327662     0.0000000
 ## 6        0.3880266        0.7316480     0.2283681
-## 7        0.4595635        0.7953330     0.3354449
-## 8        0.7252747        0.9027710     0.6664245
-## 9        0.6892655        0.8930481     0.6247359
+## 7        0.4521073        0.7914439     0.3256506
+## 8        0.7257618        0.9037433     0.6675461
+## 9        0.6897638        0.9042295     0.6336042
 ## 10       0.5650558        0.8862421     0.5054039
-## 11       0.6810229        0.8847837     0.6111869
+## 11       0.6783311        0.8838114     0.6079058
 ##    inv.elapsedtime.everything inv.elapsedtime.final  inv.aic.fit
-## 1                 1.485884101          3.333333e+02           NA
-## 2                 2.958579882          1.000000e+03           NA
-## 3                 1.517450683          1.851852e+01           NA
-## 4                 1.680672269          1.886792e+01           NA
-## 5                 0.836120401          1.886792e+01           NA
-## 6                 0.891265597          1.298701e+01 2.692079e-04
-## 7                 0.286615076          1.222494e+00 2.924569e-04
-## 8                 0.066849388          2.134472e-01 4.777963e-04
-## 9                 0.042551381          1.372307e-01 2.945615e-05
-## 10                0.093896714          5.197505e-01           NA
-## 11                0.003714545          1.484891e-02           NA
+## 1                  1.14942529          333.33333333           NA
+## 2                  2.93255132          500.00000000           NA
+## 3                  1.45348837           18.86792453           NA
+## 4                  1.64744646           17.85714286           NA
+## 5                  0.78864353           17.85714286           NA
+## 6                  0.81699346           12.65822785 2.692079e-04
+## 7                  0.32938076            0.93984962 2.919949e-04
+## 8                  0.14411298            0.30599755 4.809597e-04
+## 9                  0.07457678            0.14556041 3.319817e-05
+## 10                 0.11877895            0.50607287           NA
+## 11                 0.00611748            0.01514738           NA
 ```
 
 ```r
@@ -8106,27 +8073,27 @@ print(dsp_models_df <- orderBy(model_sel_frmla, glb_models_df)
 
 ```
 ##                     model_id max.Accuracy.OOB max.auc.OOB max.Kappa.OOB
-## 8              Low.cor.X.glm        0.9027710   0.9226367     0.6664245
-## 9                  All.X.glm        0.8930481   0.8196249     0.6247359
+## 9                  All.X.glm        0.9042295   0.7972982     0.6336042
+## 8              Low.cor.X.glm        0.9037433   0.9262548     0.6675461
 ## 10      All.X.no.rnorm.rpart        0.8862421   0.7084504     0.5054039
-## 11         All.X.no.rnorm.rf        0.8847837   0.9189958     0.6111869
+## 11         All.X.no.rnorm.rf        0.8838114   0.9217314     0.6079058
 ## 1          MFO.myMFO_classfr        0.8327662   0.5000000     0.0000000
 ## 3       Max.cor.Y.cv.0.rpart        0.8327662   0.5000000     0.0000000
 ## 4  Max.cor.Y.cv.0.cp.0.rpart        0.8327662   0.5000000     0.0000000
 ## 5            Max.cor.Y.rpart        0.8327662   0.5000000     0.0000000
-## 7    Interact.High.cor.Y.glm        0.7953330   0.7766863     0.3354449
+## 7    Interact.High.cor.Y.glm        0.7914439   0.7739949     0.3256506
 ## 6              Max.cor.Y.glm        0.7316480   0.7102060     0.2283681
 ## 2    Random.myrandom_classfr        0.1672338   0.4909227     0.0000000
 ##    min.aic.fit opt.prob.threshold.OOB
-## 8     2092.942                    0.3
-## 9    33948.772                    0.9
+## 9    30122.145                    0.9
+## 8     2079.176                    0.3
 ## 10          NA                    0.7
 ## 11          NA                    0.3
 ## 1           NA                    0.5
 ## 3           NA                    0.5
 ## 4           NA                    0.5
 ## 5           NA                    0.5
-## 7     3419.307                    0.3
+## 7     3424.717                    0.3
 ## 6     3714.601                    0.2
 ## 2           NA                    0.1
 ```
@@ -8185,7 +8152,7 @@ print(sprintf("Best model id: %s", dsp_models_df[1, "model_id"]))
 ```
 
 ```
-## [1] "Best model id: Low.cor.X.glm"
+## [1] "Best model id: All.X.glm"
 ```
 
 ```r
@@ -8203,14 +8170,14 @@ myprint_mdl(glb_sel_mdl <- glb_models_lst[[glb_sel_mdl_id]])
 
 ```
 ## Warning: not plotting observations with leverage one:
-##   1143, 1977, 2501, 2502, 3637, 4105, 4408
+##   1143, 2501, 3625, 3637, 3799, 4105, 4408
 ```
 
 ![](NYTBlogs_txtfeat_files/figure-html/fit.models_2-4.png) ![](NYTBlogs_txtfeat_files/figure-html/fit.models_2-5.png) 
 
 ```
 ## Warning: not plotting observations with leverage one:
-##   1143, 1977, 2501, 2502, 3637, 4105, 4408
+##   1143, 2501, 3625, 3637, 3799, 4105, 4408
 ```
 
 ![](NYTBlogs_txtfeat_files/figure-html/fit.models_2-6.png) 
@@ -8231,582 +8198,702 @@ myprint_mdl(glb_sel_mdl <- glb_models_lst[[glb_sel_mdl_id]])
 ## NULL
 ## 
 ## Deviance Residuals: 
-##     Min       1Q   Median       3Q      Max  
-## -2.7515  -0.3148  -0.1351   0.0000   3.5187  
+##    Min      1Q  Median      3Q     Max  
+##  -8.49    0.00    0.00    0.00    8.49  
 ## 
-## Coefficients: (15 not defined because of singularities)
+## Coefficients: (31 not defined because of singularities)
 ##                                                         Estimate
-## (Intercept)                                           -4.260e+00
-## WordCount.log                                          1.098e+00
-## `PubDate.hour.fctr(7.67,15.3]`                         8.798e-02
-## `PubDate.hour.fctr(15.3,23]`                           2.505e-01
-## H.npnct21.log                                          1.506e+00
-## PubDate.wkend                                         -2.575e-01
-## A.npnct21.log                                          1.446e+00
-## H.npnct09.log                                          2.087e+00
-## PubDate.last10.log                                     2.386e-01
-## PubDate.last1.log                                     -4.989e-02
-## S.npnct01.log                                          1.950e+00
-## S.can.log                                             -7.442e-01
-## H.npnct17.log                                          1.000e+00
-## S.npnct25.log                                                 NA
-## H.has.ebola                                           -3.483e-01
-## S.make.log                                            -4.046e-01
-## H.npnct01.log                                         -1.305e+00
-## .rnorm                                                -5.272e-03
-## A.npnct23.log                                         -6.497e+15
-## A.npnct25.log                                                 NA
-## H.npnct12.log                                          4.260e-01
-## `myCategory.fctrForeign#World#Asia Pacific`           -4.060e+00
-## `myCategory.fctr#Multimedia#`                         -4.337e+00
-## `myCategory.fctrCulture#Arts#`                        -2.850e+00
-## `myCategory.fctrBusiness#Business Day#Dealbook`       -2.405e+00
-## myCategory.fctrmyOther                                -1.984e+01
-## `myCategory.fctrBusiness#Technology#`                 -1.836e+00
-## `myCategory.fctrBusiness#Crosswords/Games#`            8.832e-01
-## `myCategory.fctrTStyle##`                             -4.200e+00
-## `myCategory.fctrForeign#World#`                       -1.213e+01
-## `myCategory.fctrOpEd#Opinion#`                         6.999e-01
-## `myCategory.fctrStyles##Fashion`                      -2.669e+01
-## `myCategory.fctr#Opinion#Room For Debate`             -5.515e+00
-## `myCategory.fctr#U.S.#Education`                      -2.212e+01
-## `myCategory.fctr##`                                   -2.718e+00
-## `myCategory.fctrMetro#N.Y. / Region#`                 -1.877e+00
-## `myCategory.fctrBusiness#Business Day#Small Business` -4.512e+00
-## `myCategory.fctrStyles#U.S.#`                         -4.994e-01
-## `myCategory.fctrTravel#Travel#`                       -4.033e+00
-## `myCategory.fctr#Opinion#The Public Editor`            1.218e+00
-## H.npnct03.log                                                 NA
-## S.state.log                                            2.443e+14
-## A.state.log                                           -2.443e+14
-## S.one.log                                              3.281e+01
-## A.one.log                                             -3.320e+01
-## A.said.log                                             8.717e-01
+## (Intercept)                                           -9.447e+14
+## WordCount.log                                          4.908e+14
+## `PubDate.hour.fctr(7.67,15.3]`                         1.748e+14
+## `PubDate.hour.fctr(15.3,23]`                           6.615e+14
+## H.npnct21.log                                          1.242e+15
+## PubDate.wkend                                         -3.716e+13
+## S.npnct21.log                                         -2.188e+15
+## A.npnct21.log                                          3.821e+15
+## H.npnct08.log                                          1.041e+15
+## H.npnct09.log                                                 NA
+## PubDate.last10.log                                     1.468e+14
+## PubDate.last1.log                                     -5.579e+12
+## H.npnct06.log                                          8.977e+14
+## A.can.log                                              9.731e+15
+## A.npnct01.log                                          9.868e+14
+## S.npnct01.log                                                 NA
+## S.can.log                                             -8.487e+15
+## H.npnct17.log                                         -2.481e+14
+## H.has.ebola                                            9.863e+13
+## A.make.log                                             1.094e+15
+## S.make.log                                                    NA
+## H.npnct01.log                                          2.972e+14
+## H.npnct12.log                                         -8.269e+13
+## `myCategory.fctrForeign#World#Asia Pacific`           -3.868e+15
+## `myCategory.fctr#Multimedia#`                         -3.856e+15
+## `myCategory.fctrCulture#Arts#`                        -2.956e+15
+## `myCategory.fctrBusiness#Business Day#Dealbook`       -3.209e+15
+## myCategory.fctrmyOther                                -3.205e+15
+## `myCategory.fctrBusiness#Technology#`                 -2.871e+15
+## `myCategory.fctrBusiness#Crosswords/Games#`           -1.662e+14
+## `myCategory.fctrTStyle##`                             -2.835e+15
+## `myCategory.fctrForeign#World#`                       -2.009e+15
+## `myCategory.fctrOpEd#Opinion#`                         9.667e+14
+## `myCategory.fctrStyles##Fashion`                      -4.023e+15
+## `myCategory.fctr#Opinion#Room For Debate`             -5.282e+15
+## `myCategory.fctr#U.S.#Education`                      -6.503e+15
+## `myCategory.fctr##`                                   -3.413e+15
+## `myCategory.fctrMetro#N.Y. / Region#`                 -3.186e+15
+## `myCategory.fctrBusiness#Business Day#Small Business` -3.525e+15
+## `myCategory.fctrStyles#U.S.#`                         -8.377e+13
+## `myCategory.fctrTravel#Travel#`                       -2.945e+15
+## `myCategory.fctr#Opinion#The Public Editor`            1.634e+15
+## S.state.log                                            1.774e+16
+## A.state.log                                           -1.452e+16
+## S.one.log                                             -5.269e+15
+## A.one.log                                              5.178e+15
+## A.said.log                                             6.214e+14
 ## S.said.log                                                    NA
-## A.npnct17.log                                         -3.669e-01
+## A.npnct17.log                                         -8.489e+14
 ## S.npnct17.log                                                 NA
-## S.npnct08.log                                          1.817e+01
+## S.npnct08.log                                          2.157e+15
 ## A.npnct08.log                                                 NA
-## S.npnct09.log                                         -1.664e+01
+## S.npnct09.log                                         -1.195e+15
 ## A.npnct09.log                                                 NA
-## A.npnct27.log                                          2.443e+14
-## A.npnct11.log                                                 NA
-## H.npnct11.log                                         -3.110e+01
-## H.npnct22.log                                         -1.868e+00
-## S.npnct02.log                                         -2.462e+01
-## S.npnct11.log                                                 NA
-## PubDate.last100.log                                    2.272e-02
-## H.npnct05.log                                         -3.408e+01
-## `PubDate.date.fctr(7,13]`                             -3.726e-02
-## `PubDate.date.fctr(13,19]`                            -1.508e-01
-## `PubDate.date.fctr(19,25]`                            -9.796e-02
-## `PubDate.date.fctr(25,31]`                             1.253e-01
-## `PubDate.second.fctr(14.8,29.5]`                       8.011e-02
-## `PubDate.second.fctr(29.5,44.2]`                      -1.157e-02
-## `PubDate.second.fctr(44.2,59.1]`                      -2.946e-01
-## H.npnct07.log                                          2.201e-01
-## A.npnct07.log                                         -3.585e+01
+## PubDate.last100.log                                    2.795e+13
+## .rnorm                                                -6.296e+13
+## H.npnct05.log                                         -1.567e+15
+## `PubDate.date.fctr(7,13]`                              9.714e+13
+## `PubDate.date.fctr(13,19]`                            -1.235e+13
+## `PubDate.date.fctr(19,25]`                             1.877e+13
+## `PubDate.date.fctr(25,31]`                             1.610e+14
+## `PubDate.second.fctr(14.8,29.5]`                       2.563e+13
+## `PubDate.second.fctr(29.5,44.2]`                       5.194e+13
+## `PubDate.second.fctr(44.2,59.1]`                      -7.845e+13
+## H.npnct07.log                                          1.655e+14
+## A.npnct07.log                                         -6.395e+14
 ## S.npnct07.log                                                 NA
-## S.npnct03.log                                         -3.765e+01
-## A.npnct19.log                                         -7.406e+00
-## H.npnct13.log                                          3.428e-01
+## S.npnct03.log                                          3.179e+14
+## A.npnct19.log                                          3.597e+16
+## H.npnct13.log                                          2.953e+14
 ## A.has.http                                                    NA
 ## A.npnct03.log                                                 NA
-## A.npnct02.log                                                 NA
-## A.npnct18.log                                          4.430e+00
+## A.npnct02.log                                          4.811e+14
+## A.npnct18.log                                          1.205e+16
 ## A.npnct20.log                                                 NA
-## A.has.year.colon                                      -1.906e+01
+## A.has.year.colon                                       1.478e+14
 ## S.has.year.colon                                              NA
-## S.npnct22.log                                         -3.387e+01
-## H.npnct02.log                                         -2.358e+01
-## S.presid.log                                           4.570e-01
-## S.npnct15.log                                          1.313e+01
-## S.npnct06.log                                          3.211e-02
-## A.npnct15.log                                         -1.231e+01
-## H.npnct14.log                                         -2.163e-01
-## S.take.log                                            -6.539e-01
-## `PubDate.minute.fctr(14.8,29.5]`                      -1.175e-01
-## `PubDate.minute.fctr(29.5,44.2]`                      -1.994e-01
-## `PubDate.minute.fctr(44.2,59.1]`                       6.085e-02
-## S.new.log                                              1.426e-02
-## S.npnct13.log                                         -1.447e-01
-## PubDate.wkday.fctr1                                   -5.031e-01
-## PubDate.wkday.fctr2                                   -1.130e+00
-## PubDate.wkday.fctr3                                   -7.418e-01
-## PubDate.wkday.fctr4                                   -9.712e-01
-## PubDate.wkday.fctr5                                   -8.478e-01
-## PubDate.wkday.fctr6                                   -1.317e+00
-## S.npnct30.log                                         -2.088e+01
-## S.day.log                                             -1.872e-01
-## H.X2014.log                                           -1.054e+00
-## S.show.log                                            -6.204e-01
-## A.npnct14.log                                          9.695e-01
-## S.report.log                                          -1.293e+00
-## S.year.log                                            -3.837e-01
-## H.npnct04.log                                         -1.874e+00
-## S.share.log                                           -9.823e-01
-## S.compani.log                                         -4.461e-01
-## H.new.log                                             -8.862e-01
-## S.first.log                                           -1.510e-01
-## S.time.log                                            -2.793e-01
-## H.newyork.log                                          1.200e-01
-## S.articl.log                                          -1.955e-01
-## S.will.log                                            -5.070e-01
-## H.npnct15.log                                         -3.039e+01
-## S.newyork.log                                          1.082e+00
-## H.day.log                                             -1.155e+00
-## S.npnct04.log                                         -1.149e+00
-## H.today.log                                           -3.444e+00
-## H.report.log                                          -7.682e-01
-## S.npnct16.log                                          4.628e-01
-## S.intern.log                                          -9.615e-01
-## H.daili.log                                           -1.370e+01
-## H.week.log                                            -6.305e-01
-## H.npnct16.log                                         -2.355e-01
-## S.fashion.log                                         -3.088e+01
-## S.week.log                                            -2.581e-01
-## H.npnct30.log                                         -1.576e-01
-## S.npnct12.log                                         -1.554e-01
-## H.ndgts.log                                            4.681e-01
-## S.ndgts.log                                           -3.416e-01
-## H.nuppr.log                                            1.271e+00
-## H.nchrs.log                                           -9.599e-01
-## H.nwrds.log                                           -7.825e-01
-## A.nchrs.log                                            2.540e-01
-## A.nwrds.log                                            8.726e-01
-## A.nwrds.unq.log                                       -1.618e+00
-## S.nuppr.log                                           -6.755e-01
+## A.npnct22.log                                          1.087e+15
+## S.npnct22.log                                                 NA
+## H.npnct02.log                                         -3.379e+13
+## A.presid.log                                           3.207e+14
+## S.presid.log                                                  NA
+## S.npnct15.log                                          2.152e+16
+## A.npnct06.log                                         -2.430e+14
+## S.npnct06.log                                                 NA
+## A.npnct15.log                                         -2.113e+16
+## H.npnct14.log                                         -1.404e+13
+## S.take.log                                            -2.134e+14
+## A.take.log                                                    NA
+## `PubDate.minute.fctr(14.8,29.5]`                      -1.461e+14
+## `PubDate.minute.fctr(29.5,44.2]`                      -9.707e+13
+## `PubDate.minute.fctr(44.2,59.1]`                      -1.399e+13
+## S.new.log                                              3.170e+15
+## A.new.log                                             -3.070e+15
+## S.npnct13.log                                         -2.045e+15
+## A.npnct13.log                                          2.039e+15
+## PubDate.wkday.fctr1                                   -7.566e+13
+## PubDate.wkday.fctr2                                   -2.884e+14
+## PubDate.wkday.fctr3                                   -1.565e+14
+## PubDate.wkday.fctr4                                   -1.658e+14
+## PubDate.wkday.fctr5                                   -2.091e+14
+## PubDate.wkday.fctr6                                   -4.855e+14
+## S.npnct30.log                                         -3.633e+15
+## A.npnct30.log                                          2.711e+15
+## S.day.log                                             -2.921e+14
+## A.day.log                                                     NA
+## H.X2014.log                                            4.301e+14
+## A.show.log                                            -4.676e+14
+## S.show.log                                                    NA
+## A.npnct14.log                                          2.796e+14
+## A.report.log                                          -9.455e+14
+## S.report.log                                                  NA
+## A.year.log                                            -2.529e+14
+## S.year.log                                                    NA
+## H.npnct04.log                                         -8.797e+14
+## A.share.log                                           -8.119e+14
+## S.share.log                                                   NA
+## S.compani.log                                         -2.613e+14
+## A.compani.log                                                 NA
+## H.new.log                                             -6.768e+14
+## S.npnct14.log                                          2.368e+14
+## A.first.log                                           -6.177e+13
+## S.first.log                                                   NA
+## S.time.log                                            -3.788e+14
+## A.time.log                                                    NA
+## H.newyork.log                                         -6.853e+13
+## A.articl.log                                           1.199e+15
+## S.articl.log                                                  NA
+## S.will.log                                             3.765e+15
+## A.will.log                                            -4.114e+15
+## H.npnct15.log                                         -4.845e+14
+## A.newyork.log                                          4.852e+14
+## S.newyork.log                                                 NA
+## H.day.log                                              7.724e+13
+## A.npnct04.log                                         -7.641e+14
+## S.npnct04.log                                                 NA
+## H.today.log                                           -1.053e+15
+## H.report.log                                          -3.294e+14
+## H.X2015.log                                            2.301e+15
+## S.npnct16.log                                          3.428e+14
+## A.intern.log                                          -8.385e+14
+## S.intern.log                                                  NA
+## A.npnct16.log                                                 NA
+## H.daili.log                                            1.739e+13
+## H.week.log                                            -6.011e+14
+## H.has.year.colon                                       1.197e+15
+## H.fashion.log                                          3.386e+14
+## H.npnct16.log                                         -2.156e+13
+## A.fashion.log                                         -1.494e+15
+## S.fashion.log                                                 NA
+## A.week.log                                            -3.959e+14
+## S.week.log                                                    NA
+## H.npnct30.log                                          1.581e+15
+## S.npnct12.log                                         -8.402e+15
+## A.npnct12.log                                          8.350e+15
+## H.ndgts.log                                            3.205e+14
+## S.ndgts.log                                           -1.457e+15
+## A.ndgts.log                                            1.320e+15
+## H.nuppr.log                                            3.456e+14
+## H.nchrs.log                                           -2.818e+14
+## H.nwrds.log                                           -1.434e+14
+## H.nwrds.unq.log                                       -4.929e+14
+## A.nchrs.log                                           -8.539e+15
+## S.nchrs.log                                            8.168e+15
+## A.nwrds.log                                           -8.951e+15
+## S.nwrds.log                                            9.525e+15
+## A.nwrds.unq.log                                        1.404e+16
+## S.nwrds.unq.log                                       -1.464e+16
+## S.nuppr.log                                           -4.014e+15
+## A.nuppr.log                                            3.559e+15
 ##                                                       Std. Error
-## (Intercept)                                            2.125e+00
-## WordCount.log                                          8.980e-02
-## `PubDate.hour.fctr(7.67,15.3]`                         2.464e-01
-## `PubDate.hour.fctr(15.3,23]`                           2.508e-01
-## H.npnct21.log                                          3.163e-01
-## PubDate.wkend                                          4.455e-01
-## A.npnct21.log                                          3.294e-01
-## H.npnct09.log                                          7.189e-01
-## PubDate.last10.log                                     1.258e-01
-## PubDate.last1.log                                      4.379e-02
-## S.npnct01.log                                          1.748e+00
-## S.can.log                                              4.617e-01
-## H.npnct17.log                                          5.705e-01
-## S.npnct25.log                                                 NA
-## H.has.ebola                                            4.452e-01
-## S.make.log                                             4.226e-01
-## H.npnct01.log                                          1.255e+00
-## .rnorm                                                 6.323e-02
-## A.npnct23.log                                          6.846e+07
-## A.npnct25.log                                                 NA
-## H.npnct12.log                                          2.088e-01
-## `myCategory.fctrForeign#World#Asia Pacific`            6.372e-01
-## `myCategory.fctr#Multimedia#`                          7.849e-01
-## `myCategory.fctrCulture#Arts#`                         3.664e-01
-## `myCategory.fctrBusiness#Business Day#Dealbook`        3.037e-01
-## myCategory.fctrmyOther                                 1.737e+03
-## `myCategory.fctrBusiness#Technology#`                  3.208e-01
-## `myCategory.fctrBusiness#Crosswords/Games#`            4.971e-01
-## `myCategory.fctrTStyle##`                              4.932e-01
-## `myCategory.fctrForeign#World#`                        4.026e+01
-## `myCategory.fctrOpEd#Opinion#`                         2.930e-01
-## `myCategory.fctrStyles##Fashion`                       3.319e+04
-## `myCategory.fctr#Opinion#Room For Debate`              6.235e-01
-## `myCategory.fctr#U.S.#Education`                       1.105e+03
-## `myCategory.fctr##`                                    2.858e-01
-## `myCategory.fctrMetro#N.Y. / Region#`                  4.681e-01
-## `myCategory.fctrBusiness#Business Day#Small Business`  6.882e-01
-## `myCategory.fctrStyles#U.S.#`                          3.342e-01
-## `myCategory.fctrTravel#Travel#`                        1.073e+00
-## `myCategory.fctr#Opinion#The Public Editor`            1.193e+00
-## H.npnct03.log                                                 NA
-## S.state.log                                            2.825e+14
-## A.state.log                                            2.825e+14
-## S.one.log                                              5.072e+05
-## A.one.log                                              5.072e+05
-## A.said.log                                             4.127e-01
+## (Intercept)                                            3.559e+07
+## WordCount.log                                          1.219e+06
+## `PubDate.hour.fctr(7.67,15.3]`                         3.797e+06
+## `PubDate.hour.fctr(15.3,23]`                           4.044e+06
+## H.npnct21.log                                          6.619e+06
+## PubDate.wkend                                          7.776e+06
+## S.npnct21.log                                          9.958e+07
+## A.npnct21.log                                          9.953e+07
+## H.npnct08.log                                          1.489e+07
+## H.npnct09.log                                                 NA
+## PubDate.last10.log                                     1.954e+06
+## PubDate.last1.log                                      7.091e+05
+## H.npnct06.log                                          1.670e+07
+## A.can.log                                              2.057e+08
+## A.npnct01.log                                          2.679e+07
+## S.npnct01.log                                                 NA
+## S.can.log                                              2.062e+08
+## H.npnct17.log                                          1.784e+07
+## H.has.ebola                                            8.881e+06
+## A.make.log                                             7.668e+06
+## S.make.log                                                    NA
+## H.npnct01.log                                          2.340e+07
+## H.npnct12.log                                          3.661e+06
+## `myCategory.fctrForeign#World#Asia Pacific`            8.774e+06
+## `myCategory.fctr#Multimedia#`                          1.018e+07
+## `myCategory.fctrCulture#Arts#`                         7.372e+06
+## `myCategory.fctrBusiness#Business Day#Dealbook`        7.183e+06
+## myCategory.fctrmyOther                                 1.513e+07
+## `myCategory.fctrBusiness#Technology#`                  7.949e+06
+## `myCategory.fctrBusiness#Crosswords/Games#`            1.047e+07
+## `myCategory.fctrTStyle##`                              7.317e+06
+## `myCategory.fctrForeign#World#`                        1.735e+07
+## `myCategory.fctrOpEd#Opinion#`                         7.377e+06
+## `myCategory.fctrStyles##Fashion`                       1.128e+07
+## `myCategory.fctr#Opinion#Room For Debate`              1.181e+07
+## `myCategory.fctr#U.S.#Education`                       1.138e+07
+## `myCategory.fctr##`                                    6.801e+06
+## `myCategory.fctrMetro#N.Y. / Region#`                  9.712e+06
+## `myCategory.fctrBusiness#Business Day#Small Business`  9.909e+06
+## `myCategory.fctrStyles#U.S.#`                          8.958e+06
+## `myCategory.fctrTravel#Travel#`                        9.798e+06
+## `myCategory.fctr#Opinion#The Public Editor`            2.252e+07
+## S.state.log                                            3.414e+08
+## A.state.log                                            3.414e+08
+## S.one.log                                              1.684e+08
+## A.one.log                                              1.686e+08
+## A.said.log                                             7.938e+06
 ## S.said.log                                                    NA
-## A.npnct17.log                                          1.288e+00
+## A.npnct17.log                                          2.100e+07
 ## S.npnct17.log                                                 NA
-## S.npnct08.log                                          2.523e+05
+## S.npnct08.log                                          5.207e+07
 ## A.npnct08.log                                                 NA
-## S.npnct09.log                                          2.523e+05
+## S.npnct09.log                                          4.868e+07
 ## A.npnct09.log                                                 NA
-## A.npnct27.log                                          2.825e+14
-## A.npnct11.log                                                 NA
-## H.npnct11.log                                          4.926e+05
-## H.npnct22.log                                          5.145e+05
-## S.npnct02.log                                          3.321e+05
-## S.npnct11.log                                                 NA
-## PubDate.last100.log                                    4.592e-02
-## H.npnct05.log                                          1.920e+05
-## `PubDate.date.fctr(7,13]`                              1.952e-01
-## `PubDate.date.fctr(13,19]`                             1.930e-01
-## `PubDate.date.fctr(19,25]`                             1.898e-01
-## `PubDate.date.fctr(25,31]`                             2.031e-01
-## `PubDate.second.fctr(14.8,29.5]`                       1.728e-01
-## `PubDate.second.fctr(29.5,44.2]`                       1.697e-01
-## `PubDate.second.fctr(44.2,59.1]`                       1.771e-01
-## H.npnct07.log                                          1.852e-01
-## A.npnct07.log                                          2.252e+05
+## PubDate.last100.log                                    7.782e+05
+## .rnorm                                                 1.028e+06
+## H.npnct05.log                                          4.048e+07
+## `PubDate.date.fctr(7,13]`                              3.232e+06
+## `PubDate.date.fctr(13,19]`                             3.186e+06
+## `PubDate.date.fctr(19,25]`                             3.079e+06
+## `PubDate.date.fctr(25,31]`                             3.432e+06
+## `PubDate.second.fctr(14.8,29.5]`                       2.860e+06
+## `PubDate.second.fctr(29.5,44.2]`                       2.823e+06
+## `PubDate.second.fctr(44.2,59.1]`                       2.883e+06
+## H.npnct07.log                                          2.982e+06
+## A.npnct07.log                                          5.011e+07
 ## S.npnct07.log                                                 NA
-## S.npnct03.log                                          1.704e+05
-## A.npnct19.log                                          3.311e+06
-## H.npnct13.log                                          3.097e-01
+## S.npnct03.log                                          4.404e+07
+## A.npnct19.log                                          7.276e+08
+## H.npnct13.log                                          5.228e+06
 ## A.has.http                                                    NA
 ## A.npnct03.log                                                 NA
-## A.npnct02.log                                                 NA
-## A.npnct18.log                                          1.127e+06
+## A.npnct02.log                                          6.300e+07
+## A.npnct18.log                                          2.198e+08
 ## A.npnct20.log                                                 NA
-## A.has.year.colon                                       6.842e+04
+## A.has.year.colon                                       2.385e+07
 ## S.has.year.colon                                              NA
-## S.npnct22.log                                          1.436e+05
-## H.npnct02.log                                          9.238e+04
-## S.presid.log                                           4.670e-01
-## S.npnct15.log                                          1.786e+06
-## S.npnct06.log                                          1.520e+00
-## A.npnct15.log                                          1.786e+06
-## H.npnct14.log                                          1.961e-01
-## S.take.log                                             5.543e-01
-## `PubDate.minute.fctr(14.8,29.5]`                       1.809e-01
-## `PubDate.minute.fctr(29.5,44.2]`                       1.747e-01
-## `PubDate.minute.fctr(44.2,59.1]`                       1.815e-01
-## S.new.log                                              3.091e-01
-## S.npnct13.log                                          1.981e-01
-## PubDate.wkday.fctr1                                    5.211e-01
-## PubDate.wkday.fctr2                                    5.670e-01
-## PubDate.wkday.fctr3                                    5.595e-01
-## PubDate.wkday.fctr4                                    5.530e-01
-## PubDate.wkday.fctr5                                    5.593e-01
-## PubDate.wkday.fctr6                                    4.646e-01
-## S.npnct30.log                                          3.906e+04
-## S.day.log                                              6.270e-01
-## H.X2014.log                                            1.435e+00
-## S.show.log                                             6.103e-01
-## A.npnct14.log                                          2.615e-01
-## S.report.log                                           6.076e-01
-## S.year.log                                             4.567e-01
-## H.npnct04.log                                          9.402e-01
-## S.share.log                                            6.562e-01
-## S.compani.log                                          4.137e-01
-## H.new.log                                              6.220e-01
-## S.first.log                                            6.227e-01
-## S.time.log                                             4.609e-01
-## H.newyork.log                                          7.020e-01
-## S.articl.log                                           1.147e+00
-## S.will.log                                             3.714e-01
-## H.npnct15.log                                          4.316e+04
-## S.newyork.log                                          5.143e-01
-## H.day.log                                              1.044e+00
-## S.npnct04.log                                          6.879e-01
-## H.today.log                                            9.766e-01
-## H.report.log                                           1.007e+00
-## S.npnct16.log                                          4.770e-01
-## S.intern.log                                           1.208e+00
-## H.daili.log                                            1.122e+02
-## H.week.log                                             9.343e-01
-## H.npnct16.log                                          2.848e-01
-## S.fashion.log                                          2.957e+04
-## S.week.log                                             4.751e-01
-## H.npnct30.log                                          1.714e+00
-## S.npnct12.log                                          1.429e-01
-## H.ndgts.log                                            2.474e-01
-## S.ndgts.log                                            1.543e-01
-## H.nuppr.log                                            4.208e-01
-## H.nchrs.log                                            4.345e-01
-## H.nwrds.log                                            4.444e-01
-## A.nchrs.log                                            5.061e-01
-## A.nwrds.log                                            1.647e+00
-## A.nwrds.unq.log                                        1.587e+00
-## S.nuppr.log                                            1.558e-01
+## A.npnct22.log                                          3.172e+07
+## S.npnct22.log                                                 NA
+## H.npnct02.log                                          2.532e+07
+## A.presid.log                                           7.645e+06
+## S.presid.log                                                  NA
+## S.npnct15.log                                          3.378e+08
+## A.npnct06.log                                          1.791e+07
+## S.npnct06.log                                                 NA
+## A.npnct15.log                                          3.373e+08
+## H.npnct14.log                                          3.444e+06
+## S.take.log                                             8.391e+06
+## A.take.log                                                    NA
+## `PubDate.minute.fctr(14.8,29.5]`                       2.937e+06
+## `PubDate.minute.fctr(29.5,44.2]`                       2.776e+06
+## `PubDate.minute.fctr(44.2,59.1]`                       2.998e+06
+## S.new.log                                              1.496e+08
+## A.new.log                                              1.494e+08
+## S.npnct13.log                                          4.866e+07
+## A.npnct13.log                                          4.851e+07
+## PubDate.wkday.fctr1                                    9.451e+06
+## PubDate.wkday.fctr2                                    1.006e+07
+## PubDate.wkday.fctr3                                    1.001e+07
+## PubDate.wkday.fctr4                                    9.860e+06
+## PubDate.wkday.fctr5                                    9.986e+06
+## PubDate.wkday.fctr6                                    7.826e+06
+## S.npnct30.log                                          2.072e+08
+## A.npnct30.log                                          2.058e+08
+## S.day.log                                              8.907e+06
+## A.day.log                                                     NA
+## H.X2014.log                                            1.620e+07
+## A.show.log                                             8.303e+06
+## S.show.log                                                    NA
+## A.npnct14.log                                          2.831e+07
+## A.report.log                                           9.142e+06
+## S.report.log                                                  NA
+## A.year.log                                             6.828e+06
+## S.year.log                                                    NA
+## H.npnct04.log                                          1.190e+07
+## A.share.log                                            8.761e+06
+## S.share.log                                                   NA
+## S.compani.log                                          6.664e+06
+## A.compani.log                                                 NA
+## H.new.log                                              8.030e+06
+## S.npnct14.log                                          2.810e+07
+## A.first.log                                            8.267e+06
+## S.first.log                                                   NA
+## S.time.log                                             6.816e+06
+## A.time.log                                                    NA
+## H.newyork.log                                          9.799e+06
+## A.articl.log                                           1.201e+07
+## S.articl.log                                                  NA
+## S.will.log                                             1.030e+08
+## A.will.log                                             1.029e+08
+## H.npnct15.log                                          2.330e+07
+## A.newyork.log                                          7.217e+06
+## S.newyork.log                                                 NA
+## H.day.log                                              1.027e+07
+## A.npnct04.log                                          8.063e+06
+## S.npnct04.log                                                 NA
+## H.today.log                                            1.208e+07
+## H.report.log                                           1.258e+07
+## H.X2015.log                                            2.464e+07
+## S.npnct16.log                                          8.188e+06
+## A.intern.log                                           1.491e+07
+## S.intern.log                                                  NA
+## A.npnct16.log                                                 NA
+## H.daili.log                                            1.584e+07
+## H.week.log                                             1.319e+07
+## H.has.year.colon                                       1.430e+07
+## H.fashion.log                                          1.501e+07
+## H.npnct16.log                                          4.811e+06
+## A.fashion.log                                          1.136e+07
+## S.fashion.log                                                 NA
+## A.week.log                                             6.934e+06
+## S.week.log                                                    NA
+## H.npnct30.log                                          1.469e+07
+## S.npnct12.log                                          1.791e+08
+## A.npnct12.log                                          1.790e+08
+## H.ndgts.log                                            4.098e+06
+## S.ndgts.log                                            3.677e+07
+## A.ndgts.log                                            3.667e+07
+## H.nuppr.log                                            7.529e+06
+## H.nchrs.log                                            7.535e+06
+## H.nwrds.log                                            3.854e+07
+## H.nwrds.unq.log                                        3.787e+07
+## A.nchrs.log                                            4.519e+08
+## S.nchrs.log                                            4.518e+08
+## A.nwrds.log                                            7.378e+08
+## S.nwrds.log                                            7.379e+08
+## A.nwrds.unq.log                                        5.933e+08
+## S.nwrds.unq.log                                        5.932e+08
+## S.nuppr.log                                            1.054e+08
+## A.nuppr.log                                            1.054e+08
 ##                                                          z value Pr(>|z|)
-## (Intercept)                                           -2.004e+00 0.045039
-## WordCount.log                                          1.223e+01  < 2e-16
-## `PubDate.hour.fctr(7.67,15.3]`                         3.570e-01 0.721020
-## `PubDate.hour.fctr(15.3,23]`                           9.990e-01 0.317879
-## H.npnct21.log                                          4.763e+00 1.91e-06
-## PubDate.wkend                                         -5.780e-01 0.563328
-## A.npnct21.log                                          4.390e+00 1.13e-05
-## H.npnct09.log                                          2.903e+00 0.003692
-## PubDate.last10.log                                     1.896e+00 0.057944
-## PubDate.last1.log                                     -1.139e+00 0.254600
-## S.npnct01.log                                          1.116e+00 0.264568
-## S.can.log                                             -1.612e+00 0.107046
-## H.npnct17.log                                          1.753e+00 0.079565
-## S.npnct25.log                                                 NA       NA
-## H.has.ebola                                           -7.820e-01 0.434109
-## S.make.log                                            -9.570e-01 0.338350
-## H.npnct01.log                                         -1.040e+00 0.298319
-## .rnorm                                                -8.300e-02 0.933553
-## A.npnct23.log                                         -9.491e+07  < 2e-16
-## A.npnct25.log                                                 NA       NA
-## H.npnct12.log                                          2.040e+00 0.041372
-## `myCategory.fctrForeign#World#Asia Pacific`           -6.372e+00 1.87e-10
-## `myCategory.fctr#Multimedia#`                         -5.525e+00 3.30e-08
-## `myCategory.fctrCulture#Arts#`                        -7.778e+00 7.37e-15
-## `myCategory.fctrBusiness#Business Day#Dealbook`       -7.920e+00 2.37e-15
-## myCategory.fctrmyOther                                -1.100e-02 0.990884
-## `myCategory.fctrBusiness#Technology#`                 -5.724e+00 1.04e-08
-## `myCategory.fctrBusiness#Crosswords/Games#`            1.777e+00 0.075618
-## `myCategory.fctrTStyle##`                             -8.516e+00  < 2e-16
-## `myCategory.fctrForeign#World#`                       -3.010e-01 0.763229
-## `myCategory.fctrOpEd#Opinion#`                         2.389e+00 0.016888
-## `myCategory.fctrStyles##Fashion`                      -1.000e-03 0.999358
-## `myCategory.fctr#Opinion#Room For Debate`             -8.846e+00  < 2e-16
-## `myCategory.fctr#U.S.#Education`                      -2.000e-02 0.984027
-## `myCategory.fctr##`                                   -9.512e+00  < 2e-16
-## `myCategory.fctrMetro#N.Y. / Region#`                 -4.010e+00 6.07e-05
-## `myCategory.fctrBusiness#Business Day#Small Business` -6.556e+00 5.51e-11
-## `myCategory.fctrStyles#U.S.#`                         -1.494e+00 0.135116
-## `myCategory.fctrTravel#Travel#`                       -3.760e+00 0.000170
-## `myCategory.fctr#Opinion#The Public Editor`            1.021e+00 0.307391
-## H.npnct03.log                                                 NA       NA
-## S.state.log                                            8.650e-01 0.387232
-## A.state.log                                           -8.650e-01 0.387232
-## S.one.log                                              0.000e+00 0.999948
-## A.one.log                                              0.000e+00 0.999948
-## A.said.log                                             2.112e+00 0.034659
+## (Intercept)                                            -26544426   <2e-16
+## WordCount.log                                          402748115   <2e-16
+## `PubDate.hour.fctr(7.67,15.3]`                          46035233   <2e-16
+## `PubDate.hour.fctr(15.3,23]`                           163594019   <2e-16
+## H.npnct21.log                                          187659261   <2e-16
+## PubDate.wkend                                           -4778830   <2e-16
+## S.npnct21.log                                          -21970579   <2e-16
+## A.npnct21.log                                           38389620   <2e-16
+## H.npnct08.log                                           69905112   <2e-16
+## H.npnct09.log                                                 NA       NA
+## PubDate.last10.log                                      75105174   <2e-16
+## PubDate.last1.log                                       -7868539   <2e-16
+## H.npnct06.log                                           53768602   <2e-16
+## A.can.log                                               47310920   <2e-16
+## A.npnct01.log                                           36827222   <2e-16
+## S.npnct01.log                                                 NA       NA
+## S.can.log                                              -41149445   <2e-16
+## H.npnct17.log                                          -13906966   <2e-16
+## H.has.ebola                                             11105687   <2e-16
+## A.make.log                                             142663085   <2e-16
+## S.make.log                                                    NA       NA
+## H.npnct01.log                                           12702040   <2e-16
+## H.npnct12.log                                          -22585094   <2e-16
+## `myCategory.fctrForeign#World#Asia Pacific`           -440918229   <2e-16
+## `myCategory.fctr#Multimedia#`                         -378666617   <2e-16
+## `myCategory.fctrCulture#Arts#`                        -400964516   <2e-16
+## `myCategory.fctrBusiness#Business Day#Dealbook`       -446802417   <2e-16
+## myCategory.fctrmyOther                                -211785090   <2e-16
+## `myCategory.fctrBusiness#Technology#`                 -361145227   <2e-16
+## `myCategory.fctrBusiness#Crosswords/Games#`            -15869663   <2e-16
+## `myCategory.fctrTStyle##`                             -387523258   <2e-16
+## `myCategory.fctrForeign#World#`                       -115739228   <2e-16
+## `myCategory.fctrOpEd#Opinion#`                         131038302   <2e-16
+## `myCategory.fctrStyles##Fashion`                      -356671576   <2e-16
+## `myCategory.fctr#Opinion#Room For Debate`             -447081085   <2e-16
+## `myCategory.fctr#U.S.#Education`                      -571361362   <2e-16
+## `myCategory.fctr##`                                   -501870028   <2e-16
+## `myCategory.fctrMetro#N.Y. / Region#`                 -328006158   <2e-16
+## `myCategory.fctrBusiness#Business Day#Small Business` -355738103   <2e-16
+## `myCategory.fctrStyles#U.S.#`                           -9351322   <2e-16
+## `myCategory.fctrTravel#Travel#`                       -300556630   <2e-16
+## `myCategory.fctr#Opinion#The Public Editor`             72559625   <2e-16
+## S.state.log                                             51970619   <2e-16
+## A.state.log                                            -42516911   <2e-16
+## S.one.log                                              -31289229   <2e-16
+## A.one.log                                               30714676   <2e-16
+## A.said.log                                              78280670   <2e-16
 ## S.said.log                                                    NA       NA
-## A.npnct17.log                                         -2.850e-01 0.775847
+## A.npnct17.log                                          -40431083   <2e-16
 ## S.npnct17.log                                                 NA       NA
-## S.npnct08.log                                          0.000e+00 0.999943
+## S.npnct08.log                                           41419696   <2e-16
 ## A.npnct08.log                                                 NA       NA
-## S.npnct09.log                                          0.000e+00 0.999947
+## S.npnct09.log                                          -24549282   <2e-16
 ## A.npnct09.log                                                 NA       NA
-## A.npnct27.log                                          8.650e-01 0.387232
-## A.npnct11.log                                                 NA       NA
-## H.npnct11.log                                          0.000e+00 0.999950
-## H.npnct22.log                                          0.000e+00 0.999997
-## S.npnct02.log                                          0.000e+00 0.999941
-## S.npnct11.log                                                 NA       NA
-## PubDate.last100.log                                    4.950e-01 0.620815
-## H.npnct05.log                                          0.000e+00 0.999858
-## `PubDate.date.fctr(7,13]`                             -1.910e-01 0.848639
-## `PubDate.date.fctr(13,19]`                            -7.810e-01 0.434583
-## `PubDate.date.fctr(19,25]`                            -5.160e-01 0.605781
-## `PubDate.date.fctr(25,31]`                             6.170e-01 0.537249
-## `PubDate.second.fctr(14.8,29.5]`                       4.640e-01 0.642967
-## `PubDate.second.fctr(29.5,44.2]`                      -6.800e-02 0.945649
-## `PubDate.second.fctr(44.2,59.1]`                      -1.663e+00 0.096295
-## H.npnct07.log                                          1.188e+00 0.234838
-## A.npnct07.log                                          0.000e+00 0.999873
+## PubDate.last100.log                                     35917907   <2e-16
+## .rnorm                                                 -61275955   <2e-16
+## H.npnct05.log                                          -38720733   <2e-16
+## `PubDate.date.fctr(7,13]`                               30052149   <2e-16
+## `PubDate.date.fctr(13,19]`                              -3875972   <2e-16
+## `PubDate.date.fctr(19,25]`                               6096550   <2e-16
+## `PubDate.date.fctr(25,31]`                              46922910   <2e-16
+## `PubDate.second.fctr(14.8,29.5]`                         8962778   <2e-16
+## `PubDate.second.fctr(29.5,44.2]`                        18402512   <2e-16
+## `PubDate.second.fctr(44.2,59.1]`                       -27213882   <2e-16
+## H.npnct07.log                                           55482694   <2e-16
+## A.npnct07.log                                          -12761386   <2e-16
 ## S.npnct07.log                                                 NA       NA
-## S.npnct03.log                                          0.000e+00 0.999824
-## A.npnct19.log                                          0.000e+00 0.999998
-## H.npnct13.log                                          1.107e+00 0.268403
+## S.npnct03.log                                            7218966   <2e-16
+## A.npnct19.log                                           49439608   <2e-16
+## H.npnct13.log                                           56482498   <2e-16
 ## A.has.http                                                    NA       NA
 ## A.npnct03.log                                                 NA       NA
-## A.npnct02.log                                                 NA       NA
-## A.npnct18.log                                          0.000e+00 0.999997
+## A.npnct02.log                                            7636804   <2e-16
+## A.npnct18.log                                           54815431   <2e-16
 ## A.npnct20.log                                                 NA       NA
-## A.has.year.colon                                       0.000e+00 0.999778
+## A.has.year.colon                                         6196380   <2e-16
 ## S.has.year.colon                                              NA       NA
-## S.npnct22.log                                          0.000e+00 0.999812
-## H.npnct02.log                                          0.000e+00 0.999796
-## S.presid.log                                           9.790e-01 0.327731
-## S.npnct15.log                                          0.000e+00 0.999994
-## S.npnct06.log                                          2.100e-02 0.983146
-## A.npnct15.log                                          0.000e+00 0.999995
-## H.npnct14.log                                         -1.103e+00 0.270021
-## S.take.log                                            -1.180e+00 0.238180
-## `PubDate.minute.fctr(14.8,29.5]`                      -6.490e-01 0.516016
-## `PubDate.minute.fctr(29.5,44.2]`                      -1.141e+00 0.253727
-## `PubDate.minute.fctr(44.2,59.1]`                       3.350e-01 0.737411
-## S.new.log                                              4.600e-02 0.963189
-## S.npnct13.log                                         -7.300e-01 0.465188
-## PubDate.wkday.fctr1                                   -9.650e-01 0.334319
-## PubDate.wkday.fctr2                                   -1.993e+00 0.046307
-## PubDate.wkday.fctr3                                   -1.326e+00 0.184906
-## PubDate.wkday.fctr4                                   -1.756e+00 0.079020
-## PubDate.wkday.fctr5                                   -1.516e+00 0.129572
-## PubDate.wkday.fctr6                                   -2.834e+00 0.004598
-## S.npnct30.log                                         -1.000e-03 0.999573
-## S.day.log                                             -2.990e-01 0.765265
-## H.X2014.log                                           -7.350e-01 0.462577
-## S.show.log                                            -1.017e+00 0.309388
-## A.npnct14.log                                          3.707e+00 0.000209
-## S.report.log                                          -2.128e+00 0.033373
-## S.year.log                                            -8.400e-01 0.400871
-## H.npnct04.log                                         -1.994e+00 0.046206
-## S.share.log                                           -1.497e+00 0.134392
-## S.compani.log                                         -1.078e+00 0.280906
-## H.new.log                                             -1.425e+00 0.154226
-## S.first.log                                           -2.430e-01 0.808364
-## S.time.log                                            -6.060e-01 0.544586
-## H.newyork.log                                          1.710e-01 0.864293
-## S.articl.log                                          -1.700e-01 0.864648
-## S.will.log                                            -1.365e+00 0.172295
-## H.npnct15.log                                         -1.000e-03 0.999438
-## S.newyork.log                                          2.103e+00 0.035459
-## H.day.log                                             -1.106e+00 0.268689
-## S.npnct04.log                                         -1.670e+00 0.094837
-## H.today.log                                           -3.527e+00 0.000421
-## H.report.log                                          -7.630e-01 0.445472
-## S.npnct16.log                                          9.700e-01 0.331910
-## S.intern.log                                          -7.960e-01 0.426005
-## H.daili.log                                           -1.220e-01 0.902775
-## H.week.log                                            -6.750e-01 0.499793
-## H.npnct16.log                                         -8.270e-01 0.408408
-## S.fashion.log                                         -1.000e-03 0.999167
-## S.week.log                                            -5.430e-01 0.586991
-## H.npnct30.log                                         -9.200e-02 0.926752
-## S.npnct12.log                                         -1.088e+00 0.276810
-## H.ndgts.log                                            1.892e+00 0.058486
-## S.ndgts.log                                           -2.214e+00 0.026796
-## H.nuppr.log                                            3.020e+00 0.002528
-## H.nchrs.log                                           -2.209e+00 0.027161
-## H.nwrds.log                                           -1.761e+00 0.078289
-## A.nchrs.log                                            5.020e-01 0.615783
-## A.nwrds.log                                            5.300e-01 0.596341
-## A.nwrds.unq.log                                       -1.019e+00 0.308053
-## S.nuppr.log                                           -4.337e+00 1.45e-05
+## A.npnct22.log                                           34281885   <2e-16
+## S.npnct22.log                                                 NA       NA
+## H.npnct02.log                                           -1334378   <2e-16
+## A.presid.log                                            41945768   <2e-16
+## S.presid.log                                                  NA       NA
+## S.npnct15.log                                           63704223   <2e-16
+## A.npnct06.log                                          -13567638   <2e-16
+## S.npnct06.log                                                 NA       NA
+## A.npnct15.log                                          -62646168   <2e-16
+## H.npnct14.log                                           -4076244   <2e-16
+## S.take.log                                             -25432453   <2e-16
+## A.take.log                                                    NA       NA
+## `PubDate.minute.fctr(14.8,29.5]`                       -49746763   <2e-16
+## `PubDate.minute.fctr(29.5,44.2]`                       -34971274   <2e-16
+## `PubDate.minute.fctr(44.2,59.1]`                        -4664975   <2e-16
+## S.new.log                                               21186768   <2e-16
+## A.new.log                                              -20549279   <2e-16
+## S.npnct13.log                                          -42037279   <2e-16
+## A.npnct13.log                                           42030083   <2e-16
+## PubDate.wkday.fctr1                                     -8005232   <2e-16
+## PubDate.wkday.fctr2                                    -28661306   <2e-16
+## PubDate.wkday.fctr3                                    -15634792   <2e-16
+## PubDate.wkday.fctr4                                    -16811492   <2e-16
+## PubDate.wkday.fctr5                                    -20935621   <2e-16
+## PubDate.wkday.fctr6                                    -62035818   <2e-16
+## S.npnct30.log                                          -17529790   <2e-16
+## A.npnct30.log                                           13176029   <2e-16
+## S.day.log                                              -32790424   <2e-16
+## A.day.log                                                     NA       NA
+## H.X2014.log                                             26558128   <2e-16
+## A.show.log                                             -56322215   <2e-16
+## S.show.log                                                    NA       NA
+## A.npnct14.log                                            9876652   <2e-16
+## A.report.log                                          -103425376   <2e-16
+## S.report.log                                                  NA       NA
+## A.year.log                                             -37043182   <2e-16
+## S.year.log                                                    NA       NA
+## H.npnct04.log                                          -73915998   <2e-16
+## A.share.log                                            -92668869   <2e-16
+## S.share.log                                                   NA       NA
+## S.compani.log                                          -39209719   <2e-16
+## A.compani.log                                                 NA       NA
+## H.new.log                                              -84292376   <2e-16
+## S.npnct14.log                                            8426715   <2e-16
+## A.first.log                                             -7471487   <2e-16
+## S.first.log                                                   NA       NA
+## S.time.log                                             -55576089   <2e-16
+## A.time.log                                                    NA       NA
+## H.newyork.log                                           -6993368   <2e-16
+## A.articl.log                                            99843475   <2e-16
+## S.articl.log                                                  NA       NA
+## S.will.log                                              36567174   <2e-16
+## A.will.log                                             -39972218   <2e-16
+## H.npnct15.log                                          -20793499   <2e-16
+## A.newyork.log                                           67232099   <2e-16
+## S.newyork.log                                                 NA       NA
+## H.day.log                                                7522782   <2e-16
+## A.npnct04.log                                          -94776214   <2e-16
+## S.npnct04.log                                                 NA       NA
+## H.today.log                                            -87153602   <2e-16
+## H.report.log                                           -26190720   <2e-16
+## H.X2015.log                                             93410695   <2e-16
+## S.npnct16.log                                           41868159   <2e-16
+## A.intern.log                                           -56220975   <2e-16
+## S.intern.log                                                  NA       NA
+## A.npnct16.log                                                 NA       NA
+## H.daili.log                                              1097436   <2e-16
+## H.week.log                                             -45556770   <2e-16
+## H.has.year.colon                                        83708330   <2e-16
+## H.fashion.log                                           22561643   <2e-16
+## H.npnct16.log                                           -4481965   <2e-16
+## A.fashion.log                                         -131505345   <2e-16
+## S.fashion.log                                                 NA       NA
+## A.week.log                                             -57095008   <2e-16
+## S.week.log                                                    NA       NA
+## H.npnct30.log                                          107559412   <2e-16
+## S.npnct12.log                                          -46916170   <2e-16
+## A.npnct12.log                                           46639912   <2e-16
+## H.ndgts.log                                             78211121   <2e-16
+## S.ndgts.log                                            -39634064   <2e-16
+## A.ndgts.log                                             36010722   <2e-16
+## H.nuppr.log                                             45899612   <2e-16
+## H.nchrs.log                                            -37398480   <2e-16
+## H.nwrds.log                                             -3721869   <2e-16
+## H.nwrds.unq.log                                        -13016909   <2e-16
+## A.nchrs.log                                            -18894333   <2e-16
+## S.nchrs.log                                             18080056   <2e-16
+## A.nwrds.log                                            -12132798   <2e-16
+## S.nwrds.log                                             12909056   <2e-16
+## A.nwrds.unq.log                                         23662101   <2e-16
+## S.nwrds.unq.log                                        -24676382   <2e-16
+## S.nuppr.log                                            -38091413   <2e-16
+## A.nuppr.log                                             33776771   <2e-16
 ##                                                          
-## (Intercept)                                           *  
+## (Intercept)                                           ***
 ## WordCount.log                                         ***
-## `PubDate.hour.fctr(7.67,15.3]`                           
-## `PubDate.hour.fctr(15.3,23]`                             
+## `PubDate.hour.fctr(7.67,15.3]`                        ***
+## `PubDate.hour.fctr(15.3,23]`                          ***
 ## H.npnct21.log                                         ***
-## PubDate.wkend                                            
+## PubDate.wkend                                         ***
+## S.npnct21.log                                         ***
 ## A.npnct21.log                                         ***
-## H.npnct09.log                                         ** 
-## PubDate.last10.log                                    .  
-## PubDate.last1.log                                        
+## H.npnct08.log                                         ***
+## H.npnct09.log                                            
+## PubDate.last10.log                                    ***
+## PubDate.last1.log                                     ***
+## H.npnct06.log                                         ***
+## A.can.log                                             ***
+## A.npnct01.log                                         ***
 ## S.npnct01.log                                            
-## S.can.log                                                
-## H.npnct17.log                                         .  
-## S.npnct25.log                                            
-## H.has.ebola                                              
+## S.can.log                                             ***
+## H.npnct17.log                                         ***
+## H.has.ebola                                           ***
+## A.make.log                                            ***
 ## S.make.log                                               
-## H.npnct01.log                                            
-## .rnorm                                                   
-## A.npnct23.log                                         ***
-## A.npnct25.log                                            
-## H.npnct12.log                                         *  
+## H.npnct01.log                                         ***
+## H.npnct12.log                                         ***
 ## `myCategory.fctrForeign#World#Asia Pacific`           ***
 ## `myCategory.fctr#Multimedia#`                         ***
 ## `myCategory.fctrCulture#Arts#`                        ***
 ## `myCategory.fctrBusiness#Business Day#Dealbook`       ***
-## myCategory.fctrmyOther                                   
+## myCategory.fctrmyOther                                ***
 ## `myCategory.fctrBusiness#Technology#`                 ***
-## `myCategory.fctrBusiness#Crosswords/Games#`           .  
+## `myCategory.fctrBusiness#Crosswords/Games#`           ***
 ## `myCategory.fctrTStyle##`                             ***
-## `myCategory.fctrForeign#World#`                          
-## `myCategory.fctrOpEd#Opinion#`                        *  
-## `myCategory.fctrStyles##Fashion`                         
+## `myCategory.fctrForeign#World#`                       ***
+## `myCategory.fctrOpEd#Opinion#`                        ***
+## `myCategory.fctrStyles##Fashion`                      ***
 ## `myCategory.fctr#Opinion#Room For Debate`             ***
-## `myCategory.fctr#U.S.#Education`                         
+## `myCategory.fctr#U.S.#Education`                      ***
 ## `myCategory.fctr##`                                   ***
 ## `myCategory.fctrMetro#N.Y. / Region#`                 ***
 ## `myCategory.fctrBusiness#Business Day#Small Business` ***
-## `myCategory.fctrStyles#U.S.#`                            
+## `myCategory.fctrStyles#U.S.#`                         ***
 ## `myCategory.fctrTravel#Travel#`                       ***
-## `myCategory.fctr#Opinion#The Public Editor`              
-## H.npnct03.log                                            
-## S.state.log                                              
-## A.state.log                                              
-## S.one.log                                                
-## A.one.log                                                
-## A.said.log                                            *  
+## `myCategory.fctr#Opinion#The Public Editor`           ***
+## S.state.log                                           ***
+## A.state.log                                           ***
+## S.one.log                                             ***
+## A.one.log                                             ***
+## A.said.log                                            ***
 ## S.said.log                                               
-## A.npnct17.log                                            
+## A.npnct17.log                                         ***
 ## S.npnct17.log                                            
-## S.npnct08.log                                            
+## S.npnct08.log                                         ***
 ## A.npnct08.log                                            
-## S.npnct09.log                                            
+## S.npnct09.log                                         ***
 ## A.npnct09.log                                            
-## A.npnct27.log                                            
-## A.npnct11.log                                            
-## H.npnct11.log                                            
-## H.npnct22.log                                            
-## S.npnct02.log                                            
-## S.npnct11.log                                            
-## PubDate.last100.log                                      
-## H.npnct05.log                                            
-## `PubDate.date.fctr(7,13]`                                
-## `PubDate.date.fctr(13,19]`                               
-## `PubDate.date.fctr(19,25]`                               
-## `PubDate.date.fctr(25,31]`                               
-## `PubDate.second.fctr(14.8,29.5]`                         
-## `PubDate.second.fctr(29.5,44.2]`                         
-## `PubDate.second.fctr(44.2,59.1]`                      .  
-## H.npnct07.log                                            
-## A.npnct07.log                                            
+## PubDate.last100.log                                   ***
+## .rnorm                                                ***
+## H.npnct05.log                                         ***
+## `PubDate.date.fctr(7,13]`                             ***
+## `PubDate.date.fctr(13,19]`                            ***
+## `PubDate.date.fctr(19,25]`                            ***
+## `PubDate.date.fctr(25,31]`                            ***
+## `PubDate.second.fctr(14.8,29.5]`                      ***
+## `PubDate.second.fctr(29.5,44.2]`                      ***
+## `PubDate.second.fctr(44.2,59.1]`                      ***
+## H.npnct07.log                                         ***
+## A.npnct07.log                                         ***
 ## S.npnct07.log                                            
-## S.npnct03.log                                            
-## A.npnct19.log                                            
-## H.npnct13.log                                            
+## S.npnct03.log                                         ***
+## A.npnct19.log                                         ***
+## H.npnct13.log                                         ***
 ## A.has.http                                               
 ## A.npnct03.log                                            
-## A.npnct02.log                                            
-## A.npnct18.log                                            
+## A.npnct02.log                                         ***
+## A.npnct18.log                                         ***
 ## A.npnct20.log                                            
-## A.has.year.colon                                         
+## A.has.year.colon                                      ***
 ## S.has.year.colon                                         
+## A.npnct22.log                                         ***
 ## S.npnct22.log                                            
-## H.npnct02.log                                            
+## H.npnct02.log                                         ***
+## A.presid.log                                          ***
 ## S.presid.log                                             
-## S.npnct15.log                                            
+## S.npnct15.log                                         ***
+## A.npnct06.log                                         ***
 ## S.npnct06.log                                            
-## A.npnct15.log                                            
-## H.npnct14.log                                            
-## S.take.log                                               
-## `PubDate.minute.fctr(14.8,29.5]`                         
-## `PubDate.minute.fctr(29.5,44.2]`                         
-## `PubDate.minute.fctr(44.2,59.1]`                         
-## S.new.log                                                
-## S.npnct13.log                                            
-## PubDate.wkday.fctr1                                      
-## PubDate.wkday.fctr2                                   *  
-## PubDate.wkday.fctr3                                      
-## PubDate.wkday.fctr4                                   .  
-## PubDate.wkday.fctr5                                      
-## PubDate.wkday.fctr6                                   ** 
-## S.npnct30.log                                            
-## S.day.log                                                
-## H.X2014.log                                              
+## A.npnct15.log                                         ***
+## H.npnct14.log                                         ***
+## S.take.log                                            ***
+## A.take.log                                               
+## `PubDate.minute.fctr(14.8,29.5]`                      ***
+## `PubDate.minute.fctr(29.5,44.2]`                      ***
+## `PubDate.minute.fctr(44.2,59.1]`                      ***
+## S.new.log                                             ***
+## A.new.log                                             ***
+## S.npnct13.log                                         ***
+## A.npnct13.log                                         ***
+## PubDate.wkday.fctr1                                   ***
+## PubDate.wkday.fctr2                                   ***
+## PubDate.wkday.fctr3                                   ***
+## PubDate.wkday.fctr4                                   ***
+## PubDate.wkday.fctr5                                   ***
+## PubDate.wkday.fctr6                                   ***
+## S.npnct30.log                                         ***
+## A.npnct30.log                                         ***
+## S.day.log                                             ***
+## A.day.log                                                
+## H.X2014.log                                           ***
+## A.show.log                                            ***
 ## S.show.log                                               
 ## A.npnct14.log                                         ***
-## S.report.log                                          *  
+## A.report.log                                          ***
+## S.report.log                                             
+## A.year.log                                            ***
 ## S.year.log                                               
-## H.npnct04.log                                         *  
+## H.npnct04.log                                         ***
+## A.share.log                                           ***
 ## S.share.log                                              
-## S.compani.log                                            
-## H.new.log                                                
+## S.compani.log                                         ***
+## A.compani.log                                            
+## H.new.log                                             ***
+## S.npnct14.log                                         ***
+## A.first.log                                           ***
 ## S.first.log                                              
-## S.time.log                                               
-## H.newyork.log                                            
+## S.time.log                                            ***
+## A.time.log                                               
+## H.newyork.log                                         ***
+## A.articl.log                                          ***
 ## S.articl.log                                             
-## S.will.log                                               
-## H.npnct15.log                                            
-## S.newyork.log                                         *  
-## H.day.log                                                
-## S.npnct04.log                                         .  
+## S.will.log                                            ***
+## A.will.log                                            ***
+## H.npnct15.log                                         ***
+## A.newyork.log                                         ***
+## S.newyork.log                                            
+## H.day.log                                             ***
+## A.npnct04.log                                         ***
+## S.npnct04.log                                            
 ## H.today.log                                           ***
-## H.report.log                                             
-## S.npnct16.log                                            
+## H.report.log                                          ***
+## H.X2015.log                                           ***
+## S.npnct16.log                                         ***
+## A.intern.log                                          ***
 ## S.intern.log                                             
-## H.daili.log                                              
-## H.week.log                                               
-## H.npnct16.log                                            
+## A.npnct16.log                                            
+## H.daili.log                                           ***
+## H.week.log                                            ***
+## H.has.year.colon                                      ***
+## H.fashion.log                                         ***
+## H.npnct16.log                                         ***
+## A.fashion.log                                         ***
 ## S.fashion.log                                            
+## A.week.log                                            ***
 ## S.week.log                                               
-## H.npnct30.log                                            
-## S.npnct12.log                                            
-## H.ndgts.log                                           .  
-## S.ndgts.log                                           *  
-## H.nuppr.log                                           ** 
-## H.nchrs.log                                           *  
-## H.nwrds.log                                           .  
-## A.nchrs.log                                              
-## A.nwrds.log                                              
-## A.nwrds.unq.log                                          
+## H.npnct30.log                                         ***
+## S.npnct12.log                                         ***
+## A.npnct12.log                                         ***
+## H.ndgts.log                                           ***
+## S.ndgts.log                                           ***
+## A.ndgts.log                                           ***
+## H.nuppr.log                                           ***
+## H.nchrs.log                                           ***
+## H.nwrds.log                                           ***
+## H.nwrds.unq.log                                       ***
+## A.nchrs.log                                           ***
+## S.nchrs.log                                           ***
+## A.nwrds.log                                           ***
+## S.nwrds.log                                           ***
+## A.nwrds.unq.log                                       ***
+## S.nwrds.unq.log                                       ***
 ## S.nuppr.log                                           ***
+## A.nuppr.log                                           ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ## (Dispersion parameter for binomial family taken to be 1)
 ## 
-##     Null deviance: 4042.7  on 4474  degrees of freedom
-## Residual deviance: 1842.9  on 4350  degrees of freedom
-## AIC: 2092.9
+##     Null deviance:  4042.7  on 4474  degrees of freedom
+## Residual deviance: 29844.1  on 4336  degrees of freedom
+## AIC: 30122
 ## 
 ## Number of Fisher Scoring iterations: 25
 ```
@@ -8884,154 +8971,144 @@ print(glb_feats_df)
 
 ```
 ##                                      id         cor.y exclude.as.feat
-## A.npnct23.log             A.npnct23.log  1.537569e-02           FALSE
-## WordCount.log             WordCount.log  2.649604e-01           FALSE
 ## myCategory.fctr         myCategory.fctr  1.234541e-02           FALSE
+## WordCount.log             WordCount.log  2.656836e-01           FALSE
 ## H.npnct21.log             H.npnct21.log  1.283641e-01           FALSE
-## A.npnct21.log             A.npnct21.log  5.482747e-02           FALSE
-## S.nuppr.log                 S.nuppr.log -2.718459e-01           FALSE
-## A.npnct14.log             A.npnct14.log -4.999563e-02           FALSE
-## H.today.log                 H.today.log -6.372306e-02           FALSE
-## H.nuppr.log                 H.nuppr.log -1.278085e-01           FALSE
-## H.npnct09.log             H.npnct09.log  5.375262e-02           FALSE
-## PubDate.wkday.fctr   PubDate.wkday.fctr -3.980129e-02           FALSE
-## S.ndgts.log                 S.ndgts.log -1.242046e-01           FALSE
-## H.nchrs.log                 H.nchrs.log -1.710624e-01           FALSE
-## S.report.log               S.report.log -5.032801e-02           FALSE
-## A.said.log                   A.said.log  3.735051e-04           FALSE
-## S.newyork.log             S.newyork.log -6.219997e-02           FALSE
-## H.npnct12.log             H.npnct12.log  1.333613e-02           FALSE
-## H.npnct04.log             H.npnct04.log -5.126277e-02           FALSE
-## PubDate.last10.log   PubDate.last10.log  4.931702e-02           FALSE
-## H.ndgts.log                 H.ndgts.log -1.196633e-01           FALSE
-## H.nwrds.log                 H.nwrds.log -2.006864e-01           FALSE
-## H.npnct17.log             H.npnct17.log  3.039622e-02           FALSE
-## S.npnct04.log             S.npnct04.log -6.294642e-02           FALSE
-## PubDate.second.fctr PubDate.second.fctr -1.187946e-02           FALSE
-## S.can.log                     S.can.log  3.077833e-02           FALSE
-## S.share.log                 S.share.log -5.138139e-02           FALSE
-## H.new.log                     H.new.log -5.313316e-02           FALSE
-## S.will.log                   S.will.log -6.103349e-02           FALSE
-## H.npnct07.log             H.npnct07.log -1.201741e-02           FALSE
-## S.take.log                   S.take.log -2.569295e-02           FALSE
-## PubDate.minute.fctr PubDate.minute.fctr -3.407385e-02           FALSE
-## PubDate.last1.log     PubDate.last1.log  4.635751e-02           FALSE
-## S.npnct01.log             S.npnct01.log  3.093101e-02           FALSE
-## H.npnct13.log             H.npnct13.log -1.305305e-02           FALSE
-## H.day.log                     H.day.log -6.272898e-02           FALSE
-## H.npnct14.log             H.npnct14.log -2.524770e-02           FALSE
-## S.npnct12.log             S.npnct12.log -9.158156e-02           FALSE
-## S.compani.log             S.compani.log -5.261812e-02           FALSE
-## H.npnct01.log             H.npnct01.log  2.271577e-02           FALSE
-## A.nwrds.unq.log         A.nwrds.unq.log -2.506012e-01           FALSE
-## S.show.log                   S.show.log -4.897915e-02           FALSE
 ## PubDate.hour.fctr     PubDate.hour.fctr  1.354368e-01           FALSE
-## S.presid.log               S.presid.log -2.014404e-02           FALSE
-## S.npnct16.log             S.npnct16.log -6.770952e-02           FALSE
-## S.make.log                   S.make.log  2.334962e-02           FALSE
-## S.state.log                 S.state.log  7.050791e-03           FALSE
-## A.state.log                 A.state.log  6.668101e-03           FALSE
-## A.npnct27.log             A.npnct27.log -5.547032e-03           FALSE
-## S.year.log                   S.year.log -5.094457e-02           FALSE
-## H.npnct16.log             H.npnct16.log -8.273237e-02           FALSE
-## S.intern.log               S.intern.log -6.864274e-02           FALSE
-## H.has.ebola                 H.has.ebola  2.588140e-02           FALSE
-## PubDate.date.fctr     PubDate.date.fctr -1.164756e-02           FALSE
-## H.report.log               H.report.log -6.494810e-02           FALSE
-## H.X2014.log                 H.X2014.log -4.620638e-02           FALSE
-## S.npnct13.log             S.npnct13.log -3.638891e-02           FALSE
-## H.week.log                   H.week.log -7.510522e-02           FALSE
-## S.time.log                   S.time.log -5.759227e-02           FALSE
-## PubDate.wkend             PubDate.wkend  1.067288e-01           FALSE
-## S.week.log                   S.week.log -8.840293e-02           FALSE
-## A.nwrds.log                 A.nwrds.log -2.450733e-01           FALSE
-## A.nchrs.log                 A.nchrs.log -2.245488e-01           FALSE
-## PubDate.last100.log PubDate.last100.log -7.663322e-03           FALSE
-## S.day.log                     S.day.log -4.555421e-02           FALSE
-## A.npnct17.log             A.npnct17.log -1.587454e-03           FALSE
-## S.first.log                 S.first.log -5.345938e-02           FALSE
-## H.newyork.log             H.newyork.log -5.797009e-02           FALSE
-## S.articl.log               S.articl.log -5.952055e-02           FALSE
-## H.daili.log                 H.daili.log -6.919298e-02           FALSE
+## A.make.log                   A.make.log  2.334962e-02           FALSE
+## A.fashion.log             A.fashion.log -8.724932e-02           FALSE
 ## H.npnct30.log             H.npnct30.log -8.917338e-02           FALSE
-## .rnorm                           .rnorm  1.756172e-02           FALSE
-## S.new.log                     S.new.log -3.483189e-02           FALSE
-## S.npnct06.log             S.npnct06.log -2.389145e-02           FALSE
-## S.fashion.log             S.fashion.log -8.724932e-02           FALSE
-## H.npnct15.log             H.npnct15.log -6.158577e-02           FALSE
-## S.npnct30.log             S.npnct30.log -4.370037e-02           FALSE
-## A.has.year.colon       A.has.year.colon -1.755336e-02           FALSE
-## H.npnct02.log             H.npnct02.log -2.001851e-02           FALSE
-## S.npnct22.log             S.npnct22.log -1.923169e-02           FALSE
-## S.npnct03.log             S.npnct03.log -1.240734e-02           FALSE
-## H.npnct05.log             H.npnct05.log -9.653967e-03           FALSE
-## A.npnct07.log             A.npnct07.log -1.214357e-02           FALSE
-## S.npnct02.log             S.npnct02.log -5.547032e-03           FALSE
-## S.npnct08.log             S.npnct08.log -2.413868e-03           FALSE
-## S.npnct09.log             S.npnct09.log -3.986882e-03           FALSE
-## A.one.log                     A.one.log  4.368856e-03           FALSE
-## S.one.log                     S.one.log  4.891059e-03           FALSE
-## H.npnct11.log             H.npnct11.log -5.547032e-03           FALSE
+## A.report.log               A.report.log -5.032801e-02           FALSE
+## A.articl.log               A.articl.log -5.952055e-02           FALSE
+## A.npnct04.log             A.npnct04.log -6.294642e-02           FALSE
+## H.X2015.log                 H.X2015.log -6.658489e-02           FALSE
+## A.share.log                 A.share.log -5.138139e-02           FALSE
+## H.today.log                 H.today.log -6.372306e-02           FALSE
+## H.new.log                     H.new.log -5.313316e-02           FALSE
+## H.has.year.colon       H.has.year.colon -7.842875e-02           FALSE
+## A.said.log                   A.said.log  3.735051e-04           FALSE
+## H.ndgts.log                 H.ndgts.log -1.196633e-01           FALSE
+## PubDate.last10.log   PubDate.last10.log  4.931702e-02           FALSE
+## H.npnct04.log             H.npnct04.log -5.126277e-02           FALSE
+## H.npnct08.log             H.npnct08.log  5.375262e-02           FALSE
+## A.newyork.log             A.newyork.log -6.219997e-02           FALSE
 ## S.npnct15.log             S.npnct15.log -2.121844e-02           FALSE
 ## A.npnct15.log             A.npnct15.log -2.407715e-02           FALSE
+## PubDate.wkday.fctr   PubDate.wkday.fctr -3.980129e-02           FALSE
+## .rnorm                           .rnorm -8.244230e-03           FALSE
+## A.week.log                   A.week.log -8.840293e-02           FALSE
+## H.npnct13.log             H.npnct13.log -1.305305e-02           FALSE
+## A.show.log                   A.show.log -4.897915e-02           FALSE
+## A.intern.log               A.intern.log -6.864274e-02           FALSE
+## S.time.log                   S.time.log -5.759227e-02           FALSE
+## H.npnct07.log             H.npnct07.log -1.201741e-02           FALSE
 ## A.npnct18.log             A.npnct18.log -1.451467e-02           FALSE
-## H.npnct22.log             H.npnct22.log -5.547032e-03           FALSE
+## H.npnct06.log             H.npnct06.log  3.190718e-02           FALSE
+## S.state.log                 S.state.log  7.050791e-03           FALSE
+## PubDate.minute.fctr PubDate.minute.fctr -3.407385e-02           FALSE
 ## A.npnct19.log             A.npnct19.log -1.271661e-02           FALSE
-## A.articl.log               A.articl.log -5.952055e-02           FALSE
 ## A.can.log                     A.can.log  3.169296e-02           FALSE
+## PubDate.date.fctr     PubDate.date.fctr -1.164756e-02           FALSE
+## S.npnct12.log             S.npnct12.log -9.158156e-02           FALSE
+## A.npnct12.log             A.npnct12.log -9.183870e-02           FALSE
+## H.nuppr.log                 H.nuppr.log -1.278085e-01           FALSE
+## H.week.log                   H.week.log -7.510522e-02           FALSE
+## A.state.log                 A.state.log  6.668101e-03           FALSE
+## S.npnct13.log             S.npnct13.log -3.638891e-02           FALSE
+## A.npnct13.log             A.npnct13.log -3.760012e-02           FALSE
+## A.presid.log               A.presid.log -2.014404e-02           FALSE
+## S.npnct16.log             S.npnct16.log -6.770952e-02           FALSE
+## S.npnct08.log             S.npnct08.log -2.413868e-03           FALSE
+## S.can.log                     S.can.log  3.077833e-02           FALSE
+## A.npnct17.log             A.npnct17.log -1.587454e-03           FALSE
+## A.will.log                   A.will.log -6.147068e-02           FALSE
+## S.ndgts.log                 S.ndgts.log -1.242046e-01           FALSE
+## S.compani.log             S.compani.log -5.261812e-02           FALSE
+## H.npnct05.log             H.npnct05.log -9.653967e-03           FALSE
+## A.npnct21.log             A.npnct21.log  5.482747e-02           FALSE
+## S.nuppr.log                 S.nuppr.log -2.718459e-01           FALSE
+## H.nchrs.log                 H.nchrs.log -1.710624e-01           FALSE
+## A.year.log                   A.year.log -5.094457e-02           FALSE
+## A.npnct01.log             A.npnct01.log  3.093101e-02           FALSE
+## S.will.log                   S.will.log -6.103349e-02           FALSE
+## A.ndgts.log                 A.ndgts.log -1.249484e-01           FALSE
+## PubDate.last100.log PubDate.last100.log -7.663322e-03           FALSE
+## A.npnct22.log             A.npnct22.log -1.923169e-02           FALSE
+## A.nuppr.log                 A.nuppr.log -2.720962e-01           FALSE
+## S.day.log                     S.day.log -4.555421e-02           FALSE
+## S.one.log                     S.one.log  4.891059e-03           FALSE
+## A.one.log                     A.one.log  4.368856e-03           FALSE
+## PubDate.second.fctr PubDate.second.fctr -1.187946e-02           FALSE
+## H.X2014.log                 H.X2014.log -4.620638e-02           FALSE
+## H.report.log               H.report.log -6.494810e-02           FALSE
+## S.take.log                   S.take.log -2.569295e-02           FALSE
+## S.nwrds.unq.log         S.nwrds.unq.log -2.507969e-01           FALSE
+## S.npnct09.log             S.npnct09.log -3.986882e-03           FALSE
+## A.nwrds.unq.log         A.nwrds.unq.log -2.506012e-01           FALSE
+## H.npnct12.log             H.npnct12.log  1.333613e-02           FALSE
+## H.fashion.log             H.fashion.log -8.204998e-02           FALSE
+## S.npnct21.log             S.npnct21.log  5.503894e-02           FALSE
+## S.new.log                     S.new.log -3.483189e-02           FALSE
+## H.npnct15.log             H.npnct15.log -6.158577e-02           FALSE
+## A.new.log                     A.new.log -3.524871e-02           FALSE
+## A.nchrs.log                 A.nchrs.log -2.245488e-01           FALSE
+## S.nchrs.log                 S.nchrs.log -2.246930e-01           FALSE
+## S.npnct30.log             S.npnct30.log -4.370037e-02           FALSE
+## H.npnct17.log             H.npnct17.log  3.039622e-02           FALSE
+## A.npnct06.log             A.npnct06.log -2.389145e-02           FALSE
+## A.npnct30.log             A.npnct30.log -4.373349e-02           FALSE
+## H.nwrds.unq.log         H.nwrds.unq.log -2.044964e-01           FALSE
+## S.nwrds.log                 S.nwrds.log -2.453541e-01           FALSE
+## A.npnct07.log             A.npnct07.log -1.214357e-02           FALSE
+## H.npnct01.log             H.npnct01.log  2.271577e-02           FALSE
+## A.nwrds.log                 A.nwrds.log -2.450733e-01           FALSE
+## H.has.ebola                 H.has.ebola  2.588140e-02           FALSE
+## A.npnct14.log             A.npnct14.log -4.999563e-02           FALSE
+## S.npnct14.log             S.npnct14.log -5.332519e-02           FALSE
+## PubDate.last1.log     PubDate.last1.log  4.635751e-02           FALSE
+## A.npnct02.log             A.npnct02.log -1.451467e-02           FALSE
+## H.day.log                     H.day.log -6.272898e-02           FALSE
+## A.first.log                 A.first.log -5.345938e-02           FALSE
+## S.npnct03.log             S.npnct03.log -1.240734e-02           FALSE
+## H.newyork.log             H.newyork.log -5.797009e-02           FALSE
+## A.has.year.colon       A.has.year.colon -1.755336e-02           FALSE
+## PubDate.wkend             PubDate.wkend  1.067288e-01           FALSE
+## H.npnct16.log             H.npnct16.log -8.273237e-02           FALSE
+## H.npnct14.log             H.npnct14.log -2.524770e-02           FALSE
+## H.nwrds.log                 H.nwrds.log -2.006864e-01           FALSE
+## H.npnct02.log             H.npnct02.log -2.001851e-02           FALSE
+## H.daili.log                 H.daili.log -6.919298e-02           FALSE
 ## A.compani.log             A.compani.log -5.268413e-02           FALSE
 ## A.day.log                     A.day.log -4.581783e-02           FALSE
-## A.fashion.log             A.fashion.log -8.724932e-02           FALSE
-## A.first.log                 A.first.log -5.345938e-02           FALSE
 ## A.has.http                   A.has.http -1.359260e-02           FALSE
-## A.intern.log               A.intern.log -6.864274e-02           FALSE
-## A.make.log                   A.make.log  2.334962e-02           FALSE
-## A.ndgts.log                 A.ndgts.log -1.249484e-01           FALSE
-## A.new.log                     A.new.log -3.524871e-02           FALSE
-## A.newyork.log             A.newyork.log -6.219997e-02           FALSE
-## A.npnct01.log             A.npnct01.log  3.093101e-02           FALSE
-## A.npnct02.log             A.npnct02.log -1.451467e-02           FALSE
 ## A.npnct03.log             A.npnct03.log -1.359260e-02           FALSE
-## A.npnct04.log             A.npnct04.log -6.294642e-02           FALSE
 ## A.npnct05.log             A.npnct05.log            NA           FALSE
-## A.npnct06.log             A.npnct06.log -2.389145e-02           FALSE
 ## A.npnct08.log             A.npnct08.log -3.258100e-03           FALSE
 ## A.npnct09.log             A.npnct09.log -4.775988e-03           FALSE
 ## A.npnct10.log             A.npnct10.log            NA           FALSE
 ## A.npnct11.log             A.npnct11.log -5.547032e-03           FALSE
-## A.npnct12.log             A.npnct12.log -9.183870e-02           FALSE
-## A.npnct13.log             A.npnct13.log -3.760012e-02           FALSE
 ## A.npnct16.log             A.npnct16.log -6.893301e-02           FALSE
 ## A.npnct20.log             A.npnct20.log -1.451467e-02           FALSE
-## A.npnct22.log             A.npnct22.log -1.923169e-02           FALSE
+## A.npnct23.log             A.npnct23.log  1.537569e-02           FALSE
 ## A.npnct24.log             A.npnct24.log            NA           FALSE
 ## A.npnct25.log             A.npnct25.log  1.537569e-02           FALSE
 ## A.npnct26.log             A.npnct26.log -9.890046e-19           FALSE
+## A.npnct27.log             A.npnct27.log -5.547032e-03           FALSE
 ## A.npnct28.log             A.npnct28.log            NA           FALSE
 ## A.npnct29.log             A.npnct29.log            NA           FALSE
-## A.npnct30.log             A.npnct30.log -4.373349e-02           FALSE
 ## A.npnct31.log             A.npnct31.log            NA           FALSE
 ## A.npnct32.log             A.npnct32.log            NA           FALSE
-## A.nuppr.log                 A.nuppr.log -2.720962e-01           FALSE
-## A.presid.log               A.presid.log -2.014404e-02           FALSE
-## A.report.log               A.report.log -5.032801e-02           FALSE
-## A.share.log                 A.share.log -5.138139e-02           FALSE
-## A.show.log                   A.show.log -4.897915e-02           FALSE
 ## A.take.log                   A.take.log -2.601772e-02           FALSE
 ## A.time.log                   A.time.log -5.779371e-02           FALSE
-## A.week.log                   A.week.log -8.840293e-02           FALSE
-## A.will.log                   A.will.log -6.147068e-02           FALSE
-## A.year.log                   A.year.log -5.094457e-02           FALSE
-## H.fashion.log             H.fashion.log -8.204998e-02           FALSE
 ## H.has.http                   H.has.http            NA           FALSE
-## H.has.year.colon       H.has.year.colon -7.842875e-02           FALSE
 ## H.npnct03.log             H.npnct03.log  9.533020e-03           FALSE
-## H.npnct06.log             H.npnct06.log  3.190718e-02           FALSE
-## H.npnct08.log             H.npnct08.log  5.375262e-02           FALSE
+## H.npnct09.log             H.npnct09.log  5.375262e-02           FALSE
 ## H.npnct10.log             H.npnct10.log            NA           FALSE
+## H.npnct11.log             H.npnct11.log -5.547032e-03           FALSE
 ## H.npnct18.log             H.npnct18.log            NA           FALSE
 ## H.npnct19.log             H.npnct19.log            NA           FALSE
 ## H.npnct20.log             H.npnct20.log            NA           FALSE
+## H.npnct22.log             H.npnct22.log -5.547032e-03           FALSE
 ## H.npnct23.log             H.npnct23.log            NA           FALSE
 ## H.npnct24.log             H.npnct24.log            NA           FALSE
 ## H.npnct25.log             H.npnct25.log            NA           FALSE
@@ -9041,8 +9118,6 @@ print(glb_feats_df)
 ## H.npnct29.log             H.npnct29.log            NA           FALSE
 ## H.npnct31.log             H.npnct31.log            NA           FALSE
 ## H.npnct32.log             H.npnct32.log            NA           FALSE
-## H.nwrds.unq.log         H.nwrds.unq.log -2.044964e-01           FALSE
-## H.X2015.log                 H.X2015.log -6.658489e-02           FALSE
 ## Popular                         Popular  1.000000e+00            TRUE
 ## Popular.fctr               Popular.fctr            NA            TRUE
 ## PubDate.last1             PubDate.last1  3.592267e-02            TRUE
@@ -9052,19 +9127,27 @@ print(glb_feats_df)
 ## PubDate.POSIX             PubDate.POSIX  1.568326e-02            TRUE
 ## PubDate.year.fctr     PubDate.year.fctr            NA           FALSE
 ## PubDate.zoo                 PubDate.zoo  1.568326e-02            TRUE
+## S.articl.log               S.articl.log -5.952055e-02           FALSE
+## S.fashion.log             S.fashion.log -8.724932e-02           FALSE
+## S.first.log                 S.first.log -5.345938e-02           FALSE
 ## S.has.http                   S.has.http            NA           FALSE
 ## S.has.year.colon       S.has.year.colon -1.755336e-02           FALSE
-## S.nchrs.log                 S.nchrs.log -2.246930e-01           FALSE
+## S.intern.log               S.intern.log -6.864274e-02           FALSE
+## S.make.log                   S.make.log  2.334962e-02           FALSE
+## S.newyork.log             S.newyork.log -6.219997e-02           FALSE
+## S.npnct01.log             S.npnct01.log  3.093101e-02           FALSE
+## S.npnct02.log             S.npnct02.log -5.547032e-03           FALSE
+## S.npnct04.log             S.npnct04.log -6.294642e-02           FALSE
 ## S.npnct05.log             S.npnct05.log            NA           FALSE
+## S.npnct06.log             S.npnct06.log -2.389145e-02           FALSE
 ## S.npnct07.log             S.npnct07.log -1.214357e-02           FALSE
 ## S.npnct10.log             S.npnct10.log            NA           FALSE
 ## S.npnct11.log             S.npnct11.log -5.547032e-03           FALSE
-## S.npnct14.log             S.npnct14.log -5.332519e-02           FALSE
 ## S.npnct17.log             S.npnct17.log -1.587454e-03           FALSE
 ## S.npnct18.log             S.npnct18.log            NA           FALSE
 ## S.npnct19.log             S.npnct19.log            NA           FALSE
 ## S.npnct20.log             S.npnct20.log            NA           FALSE
-## S.npnct21.log             S.npnct21.log  5.503894e-02           FALSE
+## S.npnct22.log             S.npnct22.log -1.923169e-02           FALSE
 ## S.npnct23.log             S.npnct23.log  2.760321e-02           FALSE
 ## S.npnct24.log             S.npnct24.log            NA           FALSE
 ## S.npnct25.log             S.npnct25.log  2.760321e-02           FALSE
@@ -9074,599 +9157,799 @@ print(glb_feats_df)
 ## S.npnct29.log             S.npnct29.log            NA           FALSE
 ## S.npnct31.log             S.npnct31.log            NA           FALSE
 ## S.npnct32.log             S.npnct32.log            NA           FALSE
-## S.nwrds.log                 S.nwrds.log -2.453541e-01           FALSE
-## S.nwrds.unq.log         S.nwrds.unq.log -2.507969e-01           FALSE
+## S.presid.log               S.presid.log -2.014404e-02           FALSE
+## S.report.log               S.report.log -5.032801e-02           FALSE
 ## S.said.log                   S.said.log  3.735051e-04           FALSE
+## S.share.log                 S.share.log -5.138139e-02           FALSE
+## S.show.log                   S.show.log -4.897915e-02           FALSE
+## S.week.log                   S.week.log -8.840293e-02           FALSE
+## S.year.log                   S.year.log -5.094457e-02           FALSE
 ## UniqueID                       UniqueID  1.182492e-02            TRUE
 ## WordCount                     WordCount  2.575265e-01            TRUE
-##                        cor.y.abs    cor.high.X   freqRatio percentUnique
-## A.npnct23.log       1.537569e-02          <NA> 3264.500000    0.04592774
-## WordCount.log       2.649604e-01          <NA>    1.266667   24.15799143
-## myCategory.fctr     1.234541e-02          <NA>    1.337185    0.30618494
-## H.npnct21.log       1.283641e-01          <NA>   14.995098    0.06123699
-## A.npnct21.log       5.482747e-02          <NA>   12.798715    0.07654623
-## S.nuppr.log         2.718459e-01          <NA>    1.152620    0.33680343
-## A.npnct14.log       4.999563e-02          <NA>    4.603330    0.16840171
-## H.today.log         6.372306e-02          <NA>   36.757225    0.03061849
-## H.nuppr.log         1.278085e-01          <NA>    1.033930    0.29087569
-## H.npnct09.log       5.375262e-02          <NA>  111.620690    0.03061849
-## PubDate.wkday.fctr  3.980129e-02          <NA>    1.003268    0.10716473
-## S.ndgts.log         1.242046e-01          <NA>   10.511247    0.26025720
-## H.nchrs.log         1.710624e-01          <NA>    1.023810    1.57685242
-## S.report.log        5.032801e-02          <NA>   24.204633    0.06123699
-## A.said.log          3.735051e-04          <NA>   25.212851    0.04592774
-## S.newyork.log       6.219997e-02          <NA>   15.153465    0.06123699
-## H.npnct12.log       1.333613e-02          <NA>    4.937442    0.07654623
-## H.npnct04.log       5.126277e-02          <NA>   38.325301    0.04592774
-## PubDate.last10.log  4.931702e-02          <NA>    1.666667   79.05695040
-## H.ndgts.log         1.196633e-01          <NA>   13.616137    0.18371096
-## H.nwrds.log         2.006864e-01          <NA>    1.019119    0.21432945
-## H.npnct17.log       3.039622e-02          <NA>   96.104478    0.06123699
-## S.npnct04.log       6.294642e-02          <NA>   28.536364    0.07654623
-## PubDate.second.fctr 1.187946e-02          <NA>    1.018204    0.06123699
-## S.can.log           3.077833e-02          <NA>   26.058091    0.04592774
-## S.share.log         5.138139e-02          <NA>   32.654639    0.04592774
-## H.new.log           5.313316e-02          <NA>   25.228916    0.04592774
-## S.will.log          6.103349e-02          <NA>   11.237288    0.06123699
-## H.npnct07.log       1.201741e-02          <NA>    5.437234    0.12247397
-## S.take.log          2.569295e-02          <NA>   29.376744    0.04592774
-## PubDate.minute.fctr 3.407385e-02          <NA>    1.483365    0.06123699
-## PubDate.last1.log   4.635751e-02          <NA>    1.142857   36.49724434
-## S.npnct01.log       3.093101e-02          <NA>  309.952381    0.06123699
-## H.npnct13.log       1.305305e-02          <NA>   13.126638    0.09185548
-## H.day.log           6.272898e-02          <NA>   29.801887    0.04592774
-## H.npnct14.log       2.524770e-02          <NA>   22.802326    0.12247397
-## S.npnct12.log       9.158156e-02          <NA>    1.660473    0.13778322
-## S.compani.log       5.261812e-02          <NA>   18.093842    0.04592774
-## H.npnct01.log       2.271577e-02          <NA>  282.913043    0.04592774
-## A.nwrds.unq.log     2.506012e-01          <NA>    1.061567    0.55113288
-## S.show.log          4.897915e-02          <NA>   30.512077    0.06123699
-## PubDate.hour.fctr   1.354368e-01          <NA>    1.835040    0.04592774
-## S.presid.log        2.014404e-02          <NA>   26.854701    0.06123699
-## S.npnct16.log       6.770952e-02          <NA>   13.647191    0.04592774
-## S.make.log          2.334962e-02          <NA>   27.378261    0.04592774
-## S.state.log         7.050791e-03          <NA>   30.655340    0.04592774
-## A.state.log         6.668101e-03          <NA>   30.502415    0.04592774
-## A.npnct27.log       5.547032e-03          <NA> 6531.000000    0.03061849
-## S.year.log          5.094457e-02          <NA>   18.456716    0.06123699
-## H.npnct16.log       8.273237e-02          <NA>    3.914910    0.04592774
-## S.intern.log        6.864274e-02          <NA>   29.801887    0.04592774
-## H.has.ebola         2.588140e-02          <NA>   73.227273    0.03061849
-## PubDate.date.fctr   1.164756e-02          <NA>    1.021394    0.07654623
-## H.report.log        6.494810e-02          <NA>   30.403846    0.03061849
-## H.X2014.log         4.620638e-02          <NA>   63.673267    0.03061849
-## S.npnct13.log       3.638891e-02          <NA>    5.706263    0.09185548
-## H.week.log          7.510522e-02          <NA>   24.818182    0.03061849
-## S.time.log          5.759227e-02          <NA>   13.483296    0.04592774
-## PubDate.wkend       1.067288e-01          <NA>    9.095827    0.03061849
-## S.week.log          8.840293e-02          <NA>   13.278509    0.04592774
-## A.nwrds.log         2.450733e-01          <NA>    1.029183    0.59706062
-## A.nchrs.log         2.245488e-01          <NA>    1.328571    4.39375383
-## PubDate.last100.log 7.663322e-03          <NA>   25.000000   92.19228414
-## S.day.log           4.555421e-02          <NA>   24.692913    0.04592774
-## A.npnct17.log       1.587454e-03          <NA>  434.133333    0.04592774
-## S.first.log         5.345938e-02          <NA>   29.509346    0.04592774
-## H.newyork.log       5.797009e-02          <NA>   26.795745    0.03061849
-## S.articl.log        5.952055e-02          <NA>   30.863415    0.03061849
-## H.daili.log         6.919298e-02          <NA>   41.973684    0.03061849
-## H.npnct30.log       8.917338e-02          <NA>   24.123077    0.03061849
-## .rnorm              1.756172e-02          <NA>    1.000000  100.00000000
-## S.new.log           3.483189e-02          <NA>   10.124573    0.04592774
-## S.npnct06.log       2.389145e-02          <NA>  115.642857    0.03061849
-## S.fashion.log       8.724932e-02          <NA>   25.737705    0.04592774
-## H.npnct15.log       6.158577e-02          <NA>   52.983471    0.03061849
-## S.npnct30.log       4.370037e-02          <NA>  134.791667    0.04592774
-## A.has.year.colon    1.755336e-02          <NA>  652.200000    0.03061849
-## H.npnct02.log       2.001851e-02          <NA>  501.461538    0.03061849
-## S.npnct22.log       1.923169e-02          <NA>  543.333333    0.03061849
-## S.npnct03.log       1.240734e-02          <NA> 1305.400000    0.03061849
-## H.npnct05.log       9.653967e-03          <NA>  543.333333    0.03061849
-## A.npnct07.log       1.214357e-02          <NA> 1631.750000    0.04592774
-## S.npnct02.log       5.547032e-03          <NA> 6531.000000    0.03061849
-## S.npnct08.log       2.413868e-03          <NA>  175.513514    0.04592774
-## S.npnct09.log       3.986882e-03          <NA>  175.486486    0.06123699
-## A.one.log           4.368856e-03          <NA>   22.773723    0.04592774
-## S.one.log           4.891059e-03          <NA>   22.777372    0.04592774
-## H.npnct11.log       5.547032e-03          <NA> 6531.000000    0.03061849
-## S.npnct15.log       2.121844e-02          <NA>  203.062500    0.04592774
-## A.npnct15.log       2.407715e-02          <NA>  196.696970    0.10716473
-## A.npnct18.log       1.451467e-02          <NA> 1087.500000    0.04592774
-## H.npnct22.log       5.547032e-03          <NA> 6531.000000    0.03061849
-## A.npnct19.log       1.271661e-02          <NA> 1631.500000    0.06123699
-## A.articl.log        5.952055e-02  S.articl.log   30.863415    0.03061849
-## A.can.log           3.169296e-02     S.can.log   26.166667    0.04592774
-## A.compani.log       5.268413e-02 S.compani.log   18.147059    0.04592774
-## A.day.log           4.581783e-02     S.day.log   24.592157    0.04592774
-## A.fashion.log       8.724932e-02 S.fashion.log   25.737705    0.04592774
-## A.first.log         5.345938e-02   S.first.log   29.509346    0.04592774
-## A.has.http          1.359260e-02          <NA> 1087.666667    0.03061849
-## A.intern.log        6.864274e-02  S.intern.log   29.801887    0.04592774
-## A.make.log          2.334962e-02    S.make.log   27.378261    0.04592774
-## A.ndgts.log         1.249484e-01   S.ndgts.log   10.501022    0.29087569
-## A.new.log           3.524871e-02     S.new.log   10.086735    0.04592774
-## A.newyork.log       6.219997e-02 S.newyork.log   15.153465    0.06123699
-## A.npnct01.log       3.093101e-02 S.npnct01.log  309.952381    0.06123699
-## A.npnct02.log       1.451467e-02          <NA> 1087.500000    0.04592774
-## A.npnct03.log       1.359260e-02          <NA> 1087.666667    0.03061849
-## A.npnct04.log       6.294642e-02 S.npnct04.log   28.536364    0.07654623
-## A.npnct05.log                 NA          <NA>    0.000000    0.01530925
-## A.npnct06.log       2.389145e-02 S.npnct06.log  115.642857    0.03061849
-## A.npnct08.log       3.258100e-03          <NA>  170.868421    0.04592774
-## A.npnct09.log       4.775988e-03          <NA>  170.842105    0.06123699
-## A.npnct10.log                 NA          <NA>    0.000000    0.01530925
-## A.npnct11.log       5.547032e-03          <NA> 6531.000000    0.03061849
-## A.npnct12.log       9.183870e-02 S.npnct12.log    1.660473    0.13778322
-## A.npnct13.log       3.760012e-02 S.npnct13.log    5.715368    0.12247397
-## A.npnct16.log       6.893301e-02 S.npnct16.log   13.482222    0.04592774
-## A.npnct20.log       1.451467e-02          <NA> 1087.500000    0.04592774
-## A.npnct22.log       1.923169e-02 S.npnct22.log  543.333333    0.03061849
-## A.npnct24.log                 NA          <NA>    0.000000    0.01530925
-## A.npnct25.log       1.537569e-02          <NA> 3264.500000    0.04592774
-## A.npnct26.log       9.890046e-19          <NA>    0.000000    0.01530925
-## A.npnct28.log                 NA          <NA>    0.000000    0.01530925
-## A.npnct29.log                 NA          <NA>    0.000000    0.01530925
-## A.npnct30.log       4.373349e-02 S.npnct30.log  126.862745    0.04592774
-## A.npnct31.log                 NA          <NA>    0.000000    0.01530925
-## A.npnct32.log                 NA          <NA>    0.000000    0.01530925
-## A.nuppr.log         2.720962e-01   S.nuppr.log    1.151308    0.33680343
-## A.presid.log        2.014404e-02  S.presid.log   26.854701    0.06123699
-## A.report.log        5.032801e-02  S.report.log   24.204633    0.06123699
-## A.share.log         5.138139e-02   S.share.log   32.654639    0.04592774
-## A.show.log          4.897915e-02    S.show.log   30.512077    0.06123699
-## A.take.log          2.601772e-02    S.take.log   29.236111    0.04592774
-## A.time.log          5.779371e-02    S.time.log   13.451111    0.04592774
-## A.week.log          8.840293e-02    S.week.log   13.278509    0.04592774
-## A.will.log          6.147068e-02    S.will.log   11.212406    0.06123699
-## A.year.log          5.094457e-02    S.year.log   18.456716    0.06123699
-## H.fashion.log       8.204998e-02    H.week.log   28.542986    0.04592774
-## H.has.http                    NA          <NA>    0.000000    0.01530925
-## H.has.year.colon    7.842875e-02  A.intern.log   32.670103    0.03061849
-## H.npnct03.log       9.533020e-03          <NA> 2176.333333    0.03061849
-## H.npnct06.log       3.190718e-02 H.npnct17.log   68.935484    0.06123699
-## H.npnct08.log       5.375262e-02 H.npnct09.log  111.620690    0.03061849
-## H.npnct10.log                 NA          <NA>    0.000000    0.01530925
-## H.npnct18.log                 NA          <NA>    0.000000    0.01530925
-## H.npnct19.log                 NA          <NA>    0.000000    0.01530925
-## H.npnct20.log                 NA          <NA>    0.000000    0.01530925
-## H.npnct23.log                 NA          <NA>    0.000000    0.01530925
-## H.npnct24.log                 NA          <NA>    0.000000    0.01530925
-## H.npnct25.log                 NA          <NA>    0.000000    0.01530925
-## H.npnct26.log       9.890046e-19          <NA>    0.000000    0.01530925
-## H.npnct27.log                 NA          <NA>    0.000000    0.01530925
-## H.npnct28.log                 NA          <NA>    0.000000    0.01530925
-## H.npnct29.log                 NA          <NA>    0.000000    0.01530925
-## H.npnct31.log                 NA          <NA>    0.000000    0.01530925
-## H.npnct32.log                 NA          <NA>    0.000000    0.01530925
-## H.nwrds.unq.log     2.044964e-01   H.nuppr.log    1.019071    0.21432945
-## H.X2015.log         6.658489e-02 H.npnct15.log   45.326241    0.03061849
-## Popular             1.000000e+00          <NA>    4.976212    0.03061849
-## Popular.fctr                  NA          <NA>          NA            NA
-## PubDate.last1       3.592267e-02          <NA>    1.142857   36.49724434
-## PubDate.last10      5.398093e-02          <NA>    1.666667   79.05695040
-## PubDate.last100     3.989229e-02          <NA>   25.000000   92.52908757
-## PubDate.month.fctr  1.914874e-02          <NA>    1.017514    0.04592774
-## PubDate.POSIX       1.568326e-02          <NA>    1.000000   99.86221678
-## PubDate.year.fctr             NA          <NA>    0.000000    0.01530925
-## PubDate.zoo         1.568326e-02          <NA>    1.000000   99.86221678
-## S.has.http                    NA          <NA>    0.000000    0.01530925
-## S.has.year.colon    1.755336e-02          <NA>  652.200000    0.03061849
-## S.nchrs.log         2.246930e-01   A.nchrs.log    1.328571    3.72014697
-## S.npnct05.log                 NA          <NA>    0.000000    0.01530925
-## S.npnct07.log       1.214357e-02          <NA> 1631.750000    0.04592774
-## S.npnct10.log                 NA          <NA>    0.000000    0.01530925
-## S.npnct11.log       5.547032e-03          <NA> 6531.000000    0.03061849
-## S.npnct14.log       5.332519e-02 A.npnct14.log    4.672000    0.16840171
-## S.npnct17.log       1.587454e-03          <NA>  434.133333    0.04592774
-## S.npnct18.log                 NA          <NA>    0.000000    0.01530925
-## S.npnct19.log                 NA          <NA>    0.000000    0.01530925
-## S.npnct20.log                 NA          <NA>    0.000000    0.01530925
-## S.npnct21.log       5.503894e-02 A.npnct21.log   12.862366    0.07654623
-## S.npnct23.log       2.760321e-02 S.npnct25.log 6531.000000    0.03061849
-## S.npnct24.log                 NA          <NA>    0.000000    0.01530925
-## S.npnct25.log       2.760321e-02          <NA> 6531.000000    0.03061849
-## S.npnct26.log       9.890046e-19          <NA>    0.000000    0.01530925
-## S.npnct27.log                 NA          <NA>    0.000000    0.01530925
-## S.npnct28.log                 NA          <NA>    0.000000    0.01530925
-## S.npnct29.log                 NA          <NA>    0.000000    0.01530925
-## S.npnct31.log                 NA          <NA>    0.000000    0.01530925
-## S.npnct32.log                 NA          <NA>    0.000000    0.01530925
-## S.nwrds.log         2.453541e-01   A.nwrds.log    1.029183    0.45927740
-## S.nwrds.unq.log     2.507969e-01   S.nchrs.log    1.061567    0.44396816
-## S.said.log          3.735051e-04          <NA>   25.212851    0.04592774
-## UniqueID            1.182492e-02          <NA>    1.000000  100.00000000
-## WordCount           2.575265e-01          <NA>    2.315789   24.15799143
-##                     zeroVar   nzv is.cor.y.abs.low rsp_var_raw id_var
-## A.npnct23.log         FALSE  TRUE             TRUE       FALSE     NA
-## WordCount.log         FALSE FALSE            FALSE       FALSE     NA
-## myCategory.fctr       FALSE FALSE             TRUE       FALSE     NA
-## H.npnct21.log         FALSE FALSE            FALSE       FALSE     NA
-## A.npnct21.log         FALSE FALSE            FALSE       FALSE     NA
-## S.nuppr.log           FALSE FALSE            FALSE       FALSE     NA
-## A.npnct14.log         FALSE FALSE            FALSE       FALSE     NA
-## H.today.log           FALSE  TRUE            FALSE       FALSE     NA
-## H.nuppr.log           FALSE FALSE            FALSE       FALSE     NA
-## H.npnct09.log         FALSE  TRUE            FALSE       FALSE     NA
-## PubDate.wkday.fctr    FALSE FALSE            FALSE       FALSE     NA
-## S.ndgts.log           FALSE FALSE            FALSE       FALSE     NA
-## H.nchrs.log           FALSE FALSE            FALSE       FALSE     NA
-## S.report.log          FALSE  TRUE            FALSE       FALSE     NA
-## A.said.log            FALSE  TRUE             TRUE       FALSE     NA
-## S.newyork.log         FALSE FALSE            FALSE       FALSE     NA
-## H.npnct12.log         FALSE FALSE             TRUE       FALSE     NA
-## H.npnct04.log         FALSE  TRUE            FALSE       FALSE     NA
-## PubDate.last10.log    FALSE FALSE            FALSE       FALSE     NA
-## H.ndgts.log           FALSE FALSE            FALSE       FALSE     NA
-## H.nwrds.log           FALSE FALSE            FALSE       FALSE     NA
-## H.npnct17.log         FALSE  TRUE            FALSE       FALSE     NA
-## S.npnct04.log         FALSE  TRUE            FALSE       FALSE     NA
-## PubDate.second.fctr   FALSE FALSE             TRUE       FALSE     NA
-## S.can.log             FALSE  TRUE            FALSE       FALSE     NA
-## S.share.log           FALSE  TRUE            FALSE       FALSE     NA
-## H.new.log             FALSE  TRUE            FALSE       FALSE     NA
-## S.will.log            FALSE FALSE            FALSE       FALSE     NA
-## H.npnct07.log         FALSE FALSE             TRUE       FALSE     NA
-## S.take.log            FALSE  TRUE            FALSE       FALSE     NA
-## PubDate.minute.fctr   FALSE FALSE            FALSE       FALSE     NA
-## PubDate.last1.log     FALSE FALSE            FALSE       FALSE     NA
-## S.npnct01.log         FALSE  TRUE            FALSE       FALSE     NA
-## H.npnct13.log         FALSE FALSE             TRUE       FALSE     NA
-## H.day.log             FALSE  TRUE            FALSE       FALSE     NA
-## H.npnct14.log         FALSE  TRUE            FALSE       FALSE     NA
-## S.npnct12.log         FALSE FALSE            FALSE       FALSE     NA
-## S.compani.log         FALSE FALSE            FALSE       FALSE     NA
-## H.npnct01.log         FALSE  TRUE            FALSE       FALSE     NA
-## A.nwrds.unq.log       FALSE FALSE            FALSE       FALSE     NA
-## S.show.log            FALSE  TRUE            FALSE       FALSE     NA
-## PubDate.hour.fctr     FALSE FALSE            FALSE       FALSE     NA
-## S.presid.log          FALSE  TRUE            FALSE       FALSE     NA
-## S.npnct16.log         FALSE FALSE            FALSE       FALSE     NA
-## S.make.log            FALSE  TRUE            FALSE       FALSE     NA
-## S.state.log           FALSE  TRUE             TRUE       FALSE     NA
-## A.state.log           FALSE  TRUE             TRUE       FALSE     NA
-## A.npnct27.log         FALSE  TRUE             TRUE       FALSE     NA
-## S.year.log            FALSE FALSE            FALSE       FALSE     NA
-## H.npnct16.log         FALSE FALSE            FALSE       FALSE     NA
-## S.intern.log          FALSE  TRUE            FALSE       FALSE     NA
-## H.has.ebola           FALSE  TRUE            FALSE       FALSE     NA
-## PubDate.date.fctr     FALSE FALSE             TRUE       FALSE     NA
-## H.report.log          FALSE  TRUE            FALSE       FALSE     NA
-## H.X2014.log           FALSE  TRUE            FALSE       FALSE     NA
-## S.npnct13.log         FALSE FALSE            FALSE       FALSE     NA
-## H.week.log            FALSE  TRUE            FALSE       FALSE     NA
-## S.time.log            FALSE FALSE            FALSE       FALSE     NA
-## PubDate.wkend         FALSE FALSE            FALSE       FALSE     NA
-## S.week.log            FALSE FALSE            FALSE       FALSE     NA
-## A.nwrds.log           FALSE FALSE            FALSE       FALSE     NA
-## A.nchrs.log           FALSE FALSE            FALSE       FALSE     NA
-## PubDate.last100.log   FALSE FALSE             TRUE       FALSE     NA
-## S.day.log             FALSE  TRUE            FALSE       FALSE     NA
-## A.npnct17.log         FALSE  TRUE             TRUE       FALSE     NA
-## S.first.log           FALSE  TRUE            FALSE       FALSE     NA
-## H.newyork.log         FALSE  TRUE            FALSE       FALSE     NA
-## S.articl.log          FALSE  TRUE            FALSE       FALSE     NA
-## H.daili.log           FALSE  TRUE            FALSE       FALSE     NA
-## H.npnct30.log         FALSE  TRUE            FALSE       FALSE     NA
-## .rnorm                FALSE FALSE            FALSE       FALSE     NA
-## S.new.log             FALSE FALSE            FALSE       FALSE     NA
-## S.npnct06.log         FALSE  TRUE            FALSE       FALSE     NA
-## S.fashion.log         FALSE  TRUE            FALSE       FALSE     NA
-## H.npnct15.log         FALSE  TRUE            FALSE       FALSE     NA
-## S.npnct30.log         FALSE  TRUE            FALSE       FALSE     NA
-## A.has.year.colon      FALSE  TRUE             TRUE       FALSE     NA
-## H.npnct02.log         FALSE  TRUE            FALSE       FALSE     NA
-## S.npnct22.log         FALSE  TRUE            FALSE       FALSE     NA
-## S.npnct03.log         FALSE  TRUE             TRUE       FALSE     NA
-## H.npnct05.log         FALSE  TRUE             TRUE       FALSE     NA
-## A.npnct07.log         FALSE  TRUE             TRUE       FALSE     NA
-## S.npnct02.log         FALSE  TRUE             TRUE       FALSE     NA
-## S.npnct08.log         FALSE  TRUE             TRUE       FALSE     NA
-## S.npnct09.log         FALSE  TRUE             TRUE       FALSE     NA
-## A.one.log             FALSE  TRUE             TRUE       FALSE     NA
-## S.one.log             FALSE  TRUE             TRUE       FALSE     NA
-## H.npnct11.log         FALSE  TRUE             TRUE       FALSE     NA
-## S.npnct15.log         FALSE  TRUE            FALSE       FALSE     NA
-## A.npnct15.log         FALSE  TRUE            FALSE       FALSE     NA
-## A.npnct18.log         FALSE  TRUE             TRUE       FALSE     NA
-## H.npnct22.log         FALSE  TRUE             TRUE       FALSE     NA
-## A.npnct19.log         FALSE  TRUE             TRUE       FALSE     NA
-## A.articl.log          FALSE  TRUE            FALSE       FALSE     NA
-## A.can.log             FALSE  TRUE            FALSE       FALSE     NA
-## A.compani.log         FALSE FALSE            FALSE       FALSE     NA
-## A.day.log             FALSE  TRUE            FALSE       FALSE     NA
-## A.fashion.log         FALSE  TRUE            FALSE       FALSE     NA
-## A.first.log           FALSE  TRUE            FALSE       FALSE     NA
-## A.has.http            FALSE  TRUE             TRUE       FALSE     NA
-## A.intern.log          FALSE  TRUE            FALSE       FALSE     NA
-## A.make.log            FALSE  TRUE            FALSE       FALSE     NA
-## A.ndgts.log           FALSE FALSE            FALSE       FALSE     NA
-## A.new.log             FALSE FALSE            FALSE       FALSE     NA
-## A.newyork.log         FALSE FALSE            FALSE       FALSE     NA
-## A.npnct01.log         FALSE  TRUE            FALSE       FALSE     NA
-## A.npnct02.log         FALSE  TRUE             TRUE       FALSE     NA
-## A.npnct03.log         FALSE  TRUE             TRUE       FALSE     NA
-## A.npnct04.log         FALSE  TRUE            FALSE       FALSE     NA
-## A.npnct05.log          TRUE  TRUE               NA       FALSE     NA
-## A.npnct06.log         FALSE  TRUE            FALSE       FALSE     NA
-## A.npnct08.log         FALSE  TRUE             TRUE       FALSE     NA
-## A.npnct09.log         FALSE  TRUE             TRUE       FALSE     NA
-## A.npnct10.log          TRUE  TRUE               NA       FALSE     NA
-## A.npnct11.log         FALSE  TRUE             TRUE       FALSE     NA
-## A.npnct12.log         FALSE FALSE            FALSE       FALSE     NA
-## A.npnct13.log         FALSE FALSE            FALSE       FALSE     NA
-## A.npnct16.log         FALSE FALSE            FALSE       FALSE     NA
-## A.npnct20.log         FALSE  TRUE             TRUE       FALSE     NA
-## A.npnct22.log         FALSE  TRUE            FALSE       FALSE     NA
-## A.npnct24.log          TRUE  TRUE               NA       FALSE     NA
-## A.npnct25.log         FALSE  TRUE             TRUE       FALSE     NA
-## A.npnct26.log          TRUE  TRUE             TRUE       FALSE     NA
-## A.npnct28.log          TRUE  TRUE               NA       FALSE     NA
-## A.npnct29.log          TRUE  TRUE               NA       FALSE     NA
-## A.npnct30.log         FALSE  TRUE            FALSE       FALSE     NA
-## A.npnct31.log          TRUE  TRUE               NA       FALSE     NA
-## A.npnct32.log          TRUE  TRUE               NA       FALSE     NA
-## A.nuppr.log           FALSE FALSE            FALSE       FALSE     NA
-## A.presid.log          FALSE  TRUE            FALSE       FALSE     NA
-## A.report.log          FALSE  TRUE            FALSE       FALSE     NA
-## A.share.log           FALSE  TRUE            FALSE       FALSE     NA
-## A.show.log            FALSE  TRUE            FALSE       FALSE     NA
-## A.take.log            FALSE  TRUE            FALSE       FALSE     NA
-## A.time.log            FALSE FALSE            FALSE       FALSE     NA
-## A.week.log            FALSE FALSE            FALSE       FALSE     NA
-## A.will.log            FALSE FALSE            FALSE       FALSE     NA
-## A.year.log            FALSE FALSE            FALSE       FALSE     NA
-## H.fashion.log         FALSE  TRUE            FALSE       FALSE     NA
-## H.has.http             TRUE  TRUE               NA       FALSE     NA
-## H.has.year.colon      FALSE  TRUE            FALSE       FALSE     NA
-## H.npnct03.log         FALSE  TRUE             TRUE       FALSE     NA
-## H.npnct06.log         FALSE  TRUE            FALSE       FALSE     NA
-## H.npnct08.log         FALSE  TRUE            FALSE       FALSE     NA
-## H.npnct10.log          TRUE  TRUE               NA       FALSE     NA
-## H.npnct18.log          TRUE  TRUE               NA       FALSE     NA
-## H.npnct19.log          TRUE  TRUE               NA       FALSE     NA
-## H.npnct20.log          TRUE  TRUE               NA       FALSE     NA
-## H.npnct23.log          TRUE  TRUE               NA       FALSE     NA
-## H.npnct24.log          TRUE  TRUE               NA       FALSE     NA
-## H.npnct25.log          TRUE  TRUE               NA       FALSE     NA
-## H.npnct26.log          TRUE  TRUE             TRUE       FALSE     NA
-## H.npnct27.log          TRUE  TRUE               NA       FALSE     NA
-## H.npnct28.log          TRUE  TRUE               NA       FALSE     NA
-## H.npnct29.log          TRUE  TRUE               NA       FALSE     NA
-## H.npnct31.log          TRUE  TRUE               NA       FALSE     NA
-## H.npnct32.log          TRUE  TRUE               NA       FALSE     NA
-## H.nwrds.unq.log       FALSE FALSE            FALSE       FALSE     NA
-## H.X2015.log           FALSE  TRUE            FALSE       FALSE     NA
-## Popular               FALSE FALSE            FALSE        TRUE     NA
-## Popular.fctr             NA    NA               NA          NA     NA
-## PubDate.last1         FALSE FALSE            FALSE       FALSE     NA
-## PubDate.last10        FALSE FALSE            FALSE       FALSE     NA
-## PubDate.last100       FALSE FALSE            FALSE       FALSE     NA
-## PubDate.month.fctr    FALSE FALSE            FALSE       FALSE     NA
-## PubDate.POSIX         FALSE FALSE             TRUE       FALSE     NA
-## PubDate.year.fctr      TRUE  TRUE               NA       FALSE     NA
-## PubDate.zoo           FALSE FALSE             TRUE       FALSE     NA
-## S.has.http             TRUE  TRUE               NA       FALSE     NA
-## S.has.year.colon      FALSE  TRUE             TRUE       FALSE     NA
-## S.nchrs.log           FALSE FALSE            FALSE       FALSE     NA
-## S.npnct05.log          TRUE  TRUE               NA       FALSE     NA
-## S.npnct07.log         FALSE  TRUE             TRUE       FALSE     NA
-## S.npnct10.log          TRUE  TRUE               NA       FALSE     NA
-## S.npnct11.log         FALSE  TRUE             TRUE       FALSE     NA
-## S.npnct14.log         FALSE FALSE            FALSE       FALSE     NA
-## S.npnct17.log         FALSE  TRUE             TRUE       FALSE     NA
-## S.npnct18.log          TRUE  TRUE               NA       FALSE     NA
-## S.npnct19.log          TRUE  TRUE               NA       FALSE     NA
-## S.npnct20.log          TRUE  TRUE               NA       FALSE     NA
-## S.npnct21.log         FALSE FALSE            FALSE       FALSE     NA
-## S.npnct23.log         FALSE  TRUE            FALSE       FALSE     NA
-## S.npnct24.log          TRUE  TRUE               NA       FALSE     NA
-## S.npnct25.log         FALSE  TRUE            FALSE       FALSE     NA
-## S.npnct26.log          TRUE  TRUE             TRUE       FALSE     NA
-## S.npnct27.log          TRUE  TRUE               NA       FALSE     NA
-## S.npnct28.log          TRUE  TRUE               NA       FALSE     NA
-## S.npnct29.log          TRUE  TRUE               NA       FALSE     NA
-## S.npnct31.log          TRUE  TRUE               NA       FALSE     NA
-## S.npnct32.log          TRUE  TRUE               NA       FALSE     NA
-## S.nwrds.log           FALSE FALSE            FALSE       FALSE     NA
-## S.nwrds.unq.log       FALSE FALSE            FALSE       FALSE     NA
-## S.said.log            FALSE  TRUE             TRUE       FALSE     NA
-## UniqueID              FALSE FALSE             TRUE       FALSE   TRUE
-## WordCount             FALSE FALSE            FALSE       FALSE     NA
-##                     rsp_var   importance Low.cor.X.glm.importance
-## A.npnct23.log            NA 1.000000e+02             1.000000e+02
-## WordCount.log            NA 1.288801e-05             1.288801e-05
-## myCategory.fctr          NA 1.002204e-05             1.002204e-05
-## H.npnct21.log            NA 5.018143e-06             5.018143e-06
-## A.npnct21.log            NA 4.625851e-06             4.625851e-06
-## S.nuppr.log              NA 4.569486e-06             4.569486e-06
-## A.npnct14.log            NA 3.906452e-06             3.906452e-06
-## H.today.log              NA 3.716137e-06             3.716137e-06
-## H.nuppr.log              NA 3.182025e-06             3.182025e-06
-## H.npnct09.log            NA 3.059125e-06             3.059125e-06
-## PubDate.wkday.fctr       NA 2.985990e-06             2.985990e-06
-## S.ndgts.log              NA 2.333324e-06             2.333324e-06
-## H.nchrs.log              NA 2.327769e-06             2.327769e-06
-## S.report.log             NA 2.241758e-06             2.241758e-06
-## A.said.log               NA 2.225691e-06             2.225691e-06
-## S.newyork.log            NA 2.215953e-06             2.215953e-06
-## H.npnct12.log            NA 2.149261e-06             2.149261e-06
-## H.npnct04.log            NA 2.100497e-06             2.100497e-06
-## PubDate.last10.log       NA 1.997887e-06             1.997887e-06
-## H.ndgts.log              NA 1.993583e-06             1.993583e-06
-## H.nwrds.log              NA 1.855196e-06             1.855196e-06
-## H.npnct17.log            NA 1.847313e-06             1.847313e-06
-## S.npnct04.log            NA 1.760068e-06             1.760068e-06
-## PubDate.second.fctr      NA 1.752346e-06             1.752346e-06
-## S.can.log                NA 1.698109e-06             1.698109e-06
-## S.share.log              NA 1.577347e-06             1.577347e-06
-## H.new.log                NA 1.501228e-06             1.501228e-06
-## S.will.log               NA 1.438120e-06             1.438120e-06
-## H.npnct07.log            NA 1.251748e-06             1.251748e-06
-## S.take.log               NA 1.242853e-06             1.242853e-06
-## PubDate.minute.fctr      NA 1.202598e-06             1.202598e-06
-## PubDate.last1.log        NA 1.200389e-06             1.200389e-06
-## S.npnct01.log            NA 1.175535e-06             1.175535e-06
-## H.npnct13.log            NA 1.166146e-06             1.166146e-06
-## H.day.log                NA 1.165449e-06             1.165449e-06
-## H.npnct14.log            NA 1.162212e-06             1.162212e-06
-## S.npnct12.log            NA 1.145878e-06             1.145878e-06
-## S.compani.log            NA 1.136156e-06             1.136156e-06
-## H.npnct01.log            NA 1.095863e-06             1.095863e-06
-## A.nwrds.unq.log          NA 1.074022e-06             1.074022e-06
-## S.show.log               NA 1.071063e-06             1.071063e-06
-## PubDate.hour.fctr        NA 1.052433e-06             1.052433e-06
-## S.presid.log             NA 1.031221e-06             1.031221e-06
-## S.npnct16.log            NA 1.022348e-06             1.022348e-06
-## S.make.log               NA 1.008816e-06             1.008816e-06
-## S.state.log              NA 9.110520e-07             9.110520e-07
-## A.state.log              NA 9.110520e-07             9.110520e-07
-## A.npnct27.log            NA 9.110520e-07             9.110520e-07
-## S.year.log               NA 8.851511e-07             8.851511e-07
-## H.npnct16.log            NA 8.710662e-07             8.710662e-07
-## S.intern.log             NA 8.387696e-07             8.387696e-07
-## H.has.ebola              NA 8.241580e-07             8.241580e-07
-## PubDate.date.fctr        NA 8.233073e-07             8.233073e-07
-## H.report.log             NA 8.039331e-07             8.039331e-07
-## H.X2014.log              NA 7.740347e-07             7.740347e-07
-## S.npnct13.log            NA 7.695263e-07             7.695263e-07
-## H.week.log               NA 7.110312e-07             7.110312e-07
-## S.time.log               NA 6.384092e-07             6.384092e-07
-## PubDate.wkend            NA 6.089193e-07             6.089193e-07
-## S.week.log               NA 5.723540e-07             5.723540e-07
-## A.nwrds.log              NA 5.580949e-07             5.580949e-07
-## A.nchrs.log              NA 5.287682e-07             5.287682e-07
-## PubDate.last100.log      NA 5.212444e-07             5.212444e-07
-## S.day.log                NA 3.145965e-07             3.145965e-07
-## A.npnct17.log            NA 3.000151e-07             3.000151e-07
-## S.first.log              NA 2.555518e-07             2.555518e-07
-## H.newyork.log            NA 1.800829e-07             1.800829e-07
-## S.articl.log             NA 1.796068e-07             1.796068e-07
-## H.daili.log              NA 1.287108e-07             1.287108e-07
-## H.npnct30.log            NA 9.686374e-08             9.686374e-08
-## .rnorm                   NA 8.784761e-08             8.784761e-08
-## S.new.log                NA 4.862671e-08             4.862671e-08
-## S.npnct06.log            NA 2.225651e-08             2.225651e-08
-## S.fashion.log            NA 1.098049e-09             1.098049e-09
-## H.npnct15.log            NA 7.395235e-10             7.395235e-10
-## S.npnct30.log            NA 5.609428e-10             5.609428e-10
-## A.has.year.colon         NA 2.912418e-10             2.912418e-10
-## H.npnct02.log            NA 2.666142e-10             2.666142e-10
-## S.npnct22.log            NA 2.461340e-10             2.461340e-10
-## S.npnct03.log            NA 2.304835e-10             2.304835e-10
-## H.npnct05.log            NA 1.846671e-10             1.846671e-10
-## A.npnct07.log            NA 1.653979e-10             1.653979e-10
-## S.npnct02.log            NA 7.575296e-11             7.575296e-11
-## S.npnct08.log            NA 7.353677e-11             7.353677e-11
-## S.npnct09.log            NA 6.715377e-11             6.715377e-11
-## A.one.log                NA 6.660788e-11             6.660788e-11
-## S.one.log                NA 6.580549e-11             6.580549e-11
-## H.npnct11.log            NA 6.416570e-11             6.416570e-11
-## S.npnct15.log            NA 5.392046e-12             5.392046e-12
-## A.npnct15.log            NA 4.905261e-12             4.905261e-12
-## A.npnct18.log            NA 1.783598e-12             1.783598e-12
-## H.npnct22.log            NA 1.467473e-12             1.467473e-12
-## A.npnct19.log            NA 0.000000e+00             0.000000e+00
-## A.articl.log             NA           NA                       NA
-## A.can.log                NA           NA                       NA
-## A.compani.log            NA           NA                       NA
-## A.day.log                NA           NA                       NA
-## A.fashion.log            NA           NA                       NA
-## A.first.log              NA           NA                       NA
-## A.has.http               NA           NA                       NA
-## A.intern.log             NA           NA                       NA
-## A.make.log               NA           NA                       NA
-## A.ndgts.log              NA           NA                       NA
-## A.new.log                NA           NA                       NA
-## A.newyork.log            NA           NA                       NA
-## A.npnct01.log            NA           NA                       NA
-## A.npnct02.log            NA           NA                       NA
-## A.npnct03.log            NA           NA                       NA
-## A.npnct04.log            NA           NA                       NA
-## A.npnct05.log            NA           NA                       NA
-## A.npnct06.log            NA           NA                       NA
-## A.npnct08.log            NA           NA                       NA
-## A.npnct09.log            NA           NA                       NA
-## A.npnct10.log            NA           NA                       NA
-## A.npnct11.log            NA           NA                       NA
-## A.npnct12.log            NA           NA                       NA
-## A.npnct13.log            NA           NA                       NA
-## A.npnct16.log            NA           NA                       NA
-## A.npnct20.log            NA           NA                       NA
-## A.npnct22.log            NA           NA                       NA
-## A.npnct24.log            NA           NA                       NA
-## A.npnct25.log            NA           NA                       NA
-## A.npnct26.log            NA           NA                       NA
-## A.npnct28.log            NA           NA                       NA
-## A.npnct29.log            NA           NA                       NA
-## A.npnct30.log            NA           NA                       NA
-## A.npnct31.log            NA           NA                       NA
-## A.npnct32.log            NA           NA                       NA
-## A.nuppr.log              NA           NA                       NA
-## A.presid.log             NA           NA                       NA
-## A.report.log             NA           NA                       NA
-## A.share.log              NA           NA                       NA
-## A.show.log               NA           NA                       NA
-## A.take.log               NA           NA                       NA
-## A.time.log               NA           NA                       NA
-## A.week.log               NA           NA                       NA
-## A.will.log               NA           NA                       NA
-## A.year.log               NA           NA                       NA
-## H.fashion.log            NA           NA                       NA
-## H.has.http               NA           NA                       NA
-## H.has.year.colon         NA           NA                       NA
-## H.npnct03.log            NA           NA                       NA
-## H.npnct06.log            NA           NA                       NA
-## H.npnct08.log            NA           NA                       NA
-## H.npnct10.log            NA           NA                       NA
-## H.npnct18.log            NA           NA                       NA
-## H.npnct19.log            NA           NA                       NA
-## H.npnct20.log            NA           NA                       NA
-## H.npnct23.log            NA           NA                       NA
-## H.npnct24.log            NA           NA                       NA
-## H.npnct25.log            NA           NA                       NA
-## H.npnct26.log            NA           NA                       NA
-## H.npnct27.log            NA           NA                       NA
-## H.npnct28.log            NA           NA                       NA
-## H.npnct29.log            NA           NA                       NA
-## H.npnct31.log            NA           NA                       NA
-## H.npnct32.log            NA           NA                       NA
-## H.nwrds.unq.log          NA           NA                       NA
-## H.X2015.log              NA           NA                       NA
-## Popular                  NA           NA                       NA
-## Popular.fctr           TRUE           NA                       NA
-## PubDate.last1            NA           NA                       NA
-## PubDate.last10           NA           NA                       NA
-## PubDate.last100          NA           NA                       NA
-## PubDate.month.fctr       NA           NA                       NA
-## PubDate.POSIX            NA           NA                       NA
-## PubDate.year.fctr        NA           NA                       NA
-## PubDate.zoo              NA           NA                       NA
-## S.has.http               NA           NA                       NA
-## S.has.year.colon         NA           NA                       NA
-## S.nchrs.log              NA           NA                       NA
-## S.npnct05.log            NA           NA                       NA
-## S.npnct07.log            NA           NA                       NA
-## S.npnct10.log            NA           NA                       NA
-## S.npnct11.log            NA           NA                       NA
-## S.npnct14.log            NA           NA                       NA
-## S.npnct17.log            NA           NA                       NA
-## S.npnct18.log            NA           NA                       NA
-## S.npnct19.log            NA           NA                       NA
-## S.npnct20.log            NA           NA                       NA
-## S.npnct21.log            NA           NA                       NA
-## S.npnct23.log            NA           NA                       NA
-## S.npnct24.log            NA           NA                       NA
-## S.npnct25.log            NA           NA                       NA
-## S.npnct26.log            NA           NA                       NA
-## S.npnct27.log            NA           NA                       NA
-## S.npnct28.log            NA           NA                       NA
-## S.npnct29.log            NA           NA                       NA
-## S.npnct31.log            NA           NA                       NA
-## S.npnct32.log            NA           NA                       NA
-## S.nwrds.log              NA           NA                       NA
-## S.nwrds.unq.log          NA           NA                       NA
-## S.said.log               NA           NA                       NA
-## UniqueID                 NA           NA                       NA
-## WordCount                NA           NA                       NA
+##                        cor.y.abs       cor.high.X   freqRatio
+## myCategory.fctr     1.234541e-02             <NA>    1.337185
+## WordCount.log       2.656836e-01             <NA>    1.300000
+## H.npnct21.log       1.283641e-01             <NA>   14.995098
+## PubDate.hour.fctr   1.354368e-01             <NA>    1.835040
+## A.make.log          2.334962e-02       S.make.log   27.378261
+## A.fashion.log       8.724932e-02    S.fashion.log   25.737705
+## H.npnct30.log       8.917338e-02             <NA>   24.123077
+## A.report.log        5.032801e-02     S.report.log   24.204633
+## A.articl.log        5.952055e-02     S.articl.log   30.863415
+## A.npnct04.log       6.294642e-02    S.npnct04.log   28.536364
+## H.X2015.log         6.658489e-02    H.npnct15.log   45.326241
+## A.share.log         5.138139e-02      S.share.log   32.654639
+## H.today.log         6.372306e-02             <NA>   36.757225
+## H.new.log           5.313316e-02             <NA>   25.228916
+## H.has.year.colon    7.842875e-02     A.intern.log   32.670103
+## A.said.log          3.735051e-04             <NA>   25.212851
+## H.ndgts.log         1.196633e-01             <NA>   13.616137
+## PubDate.last10.log  4.931702e-02             <NA>    1.666667
+## H.npnct04.log       5.126277e-02             <NA>   38.325301
+## H.npnct08.log       5.375262e-02    H.npnct09.log  111.620690
+## A.newyork.log       6.219997e-02    S.newyork.log   15.153465
+## S.npnct15.log       2.121844e-02             <NA>  203.062500
+## A.npnct15.log       2.407715e-02    A.npnct02.log  196.696970
+## PubDate.wkday.fctr  3.980129e-02             <NA>    1.003268
+## .rnorm              8.244230e-03             <NA>    2.000000
+## A.week.log          8.840293e-02       S.week.log   13.278509
+## H.npnct13.log       1.305305e-02             <NA>   13.126638
+## A.show.log          4.897915e-02       S.show.log   30.512077
+## A.intern.log        6.864274e-02     S.intern.log   29.801887
+## S.time.log          5.759227e-02             <NA>   13.483296
+## H.npnct07.log       1.201741e-02             <NA>    5.437234
+## A.npnct18.log       1.451467e-02    A.npnct20.log 1087.500000
+## H.npnct06.log       3.190718e-02    H.npnct17.log   68.935484
+## S.state.log         7.050791e-03             <NA>   30.655340
+## PubDate.minute.fctr 3.407385e-02             <NA>    1.483365
+## A.npnct19.log       1.271661e-02             <NA> 1631.500000
+## A.can.log           3.169296e-02        S.can.log   26.166667
+## PubDate.date.fctr   1.164756e-02             <NA>    1.021394
+## S.npnct12.log       9.158156e-02             <NA>    1.660473
+## A.npnct12.log       9.183870e-02    S.npnct12.log    1.660473
+## H.nuppr.log         1.278085e-01             <NA>    1.033930
+## H.week.log          7.510522e-02             <NA>   24.818182
+## A.state.log         6.668101e-03             <NA>   30.502415
+## S.npnct13.log       3.638891e-02             <NA>    5.706263
+## A.npnct13.log       3.760012e-02    S.npnct13.log    5.715368
+## A.presid.log        2.014404e-02     S.presid.log   26.854701
+## S.npnct16.log       6.770952e-02             <NA>   13.647191
+## S.npnct08.log       2.413868e-03             <NA>  175.513514
+## S.can.log           3.077833e-02             <NA>   26.058091
+## A.npnct17.log       1.587454e-03             <NA>  434.133333
+## A.will.log          6.147068e-02       S.will.log   11.212406
+## S.ndgts.log         1.242046e-01             <NA>   10.511247
+## S.compani.log       5.261812e-02             <NA>   18.093842
+## H.npnct05.log       9.653967e-03             <NA>  543.333333
+## A.npnct21.log       5.482747e-02             <NA>   12.798715
+## S.nuppr.log         2.718459e-01             <NA>    1.152620
+## H.nchrs.log         1.710624e-01             <NA>    1.023810
+## A.year.log          5.094457e-02       S.year.log   18.456716
+## A.npnct01.log       3.093101e-02    S.npnct01.log  309.952381
+## S.will.log          6.103349e-02             <NA>   11.237288
+## A.ndgts.log         1.249484e-01      S.ndgts.log   10.501022
+## PubDate.last100.log 7.663322e-03             <NA>   25.000000
+## A.npnct22.log       1.923169e-02    S.npnct22.log  543.333333
+## A.nuppr.log         2.720962e-01      S.nuppr.log    1.151308
+## S.day.log           4.555421e-02             <NA>   24.692913
+## S.one.log           4.891059e-03             <NA>   22.777372
+## A.one.log           4.368856e-03             <NA>   22.773723
+## PubDate.second.fctr 1.187946e-02             <NA>    1.018204
+## H.X2014.log         4.620638e-02             <NA>   63.673267
+## H.report.log        6.494810e-02             <NA>   30.403846
+## S.take.log          2.569295e-02             <NA>   29.376744
+## S.nwrds.unq.log     2.507969e-01      S.nchrs.log    1.061567
+## S.npnct09.log       3.986882e-03             <NA>  175.486486
+## A.nwrds.unq.log     2.506012e-01             <NA>    1.061567
+## H.npnct12.log       1.333613e-02             <NA>    4.937442
+## H.fashion.log       8.204998e-02       H.week.log   28.542986
+## S.npnct21.log       5.503894e-02    A.npnct21.log   12.862366
+## S.new.log           3.483189e-02             <NA>   10.124573
+## H.npnct15.log       6.158577e-02             <NA>   52.983471
+## A.new.log           3.524871e-02        S.new.log   10.086735
+## A.nchrs.log         2.245488e-01             <NA>    1.328571
+## S.nchrs.log         2.246930e-01      A.nchrs.log    1.328571
+## S.npnct30.log       4.370037e-02             <NA>  134.791667
+## H.npnct17.log       3.039622e-02             <NA>   96.104478
+## A.npnct06.log       2.389145e-02    S.npnct06.log  115.642857
+## A.npnct30.log       4.373349e-02    S.npnct30.log  126.862745
+## H.nwrds.unq.log     2.044964e-01      H.nuppr.log    1.019071
+## S.nwrds.log         2.453541e-01      A.nwrds.log    1.029183
+## A.npnct07.log       1.214357e-02    S.npnct07.log 1631.750000
+## H.npnct01.log       2.271577e-02             <NA>  282.913043
+## A.nwrds.log         2.450733e-01             <NA>    1.029183
+## H.has.ebola         2.588140e-02             <NA>   73.227273
+## A.npnct14.log       4.999563e-02             <NA>    4.603330
+## S.npnct14.log       5.332519e-02    A.npnct14.log    4.672000
+## PubDate.last1.log   4.635751e-02             <NA>    1.142857
+## A.npnct02.log       1.451467e-02    A.npnct18.log 1087.500000
+## H.day.log           6.272898e-02             <NA>   29.801887
+## A.first.log         5.345938e-02      S.first.log   29.509346
+## S.npnct03.log       1.240734e-02             <NA> 1305.400000
+## H.newyork.log       5.797009e-02             <NA>   26.795745
+## A.has.year.colon    1.755336e-02 S.has.year.colon  652.200000
+## PubDate.wkend       1.067288e-01             <NA>    9.095827
+## H.npnct16.log       8.273237e-02             <NA>    3.914910
+## H.npnct14.log       2.524770e-02             <NA>   22.802326
+## H.nwrds.log         2.006864e-01             <NA>    1.019119
+## H.npnct02.log       2.001851e-02             <NA>  501.461538
+## H.daili.log         6.919298e-02             <NA>   41.973684
+## A.compani.log       5.268413e-02    S.compani.log   18.147059
+## A.day.log           4.581783e-02        S.day.log   24.592157
+## A.has.http          1.359260e-02    A.npnct19.log 1087.666667
+## A.npnct03.log       1.359260e-02    S.npnct03.log 1087.666667
+## A.npnct05.log                 NA             <NA>    0.000000
+## A.npnct08.log       3.258100e-03             <NA>  170.868421
+## A.npnct09.log       4.775988e-03             <NA>  170.842105
+## A.npnct10.log                 NA             <NA>    0.000000
+## A.npnct11.log       5.547032e-03             <NA> 6531.000000
+## A.npnct16.log       6.893301e-02    S.npnct16.log   13.482222
+## A.npnct20.log       1.451467e-02             <NA> 1087.500000
+## A.npnct23.log       1.537569e-02    A.npnct25.log 3264.500000
+## A.npnct24.log                 NA             <NA>    0.000000
+## A.npnct25.log       1.537569e-02             <NA> 3264.500000
+## A.npnct26.log       9.890046e-19             <NA>    0.000000
+## A.npnct27.log       5.547032e-03             <NA> 6531.000000
+## A.npnct28.log                 NA             <NA>    0.000000
+## A.npnct29.log                 NA             <NA>    0.000000
+## A.npnct31.log                 NA             <NA>    0.000000
+## A.npnct32.log                 NA             <NA>    0.000000
+## A.take.log          2.601772e-02       S.take.log   29.236111
+## A.time.log          5.779371e-02       S.time.log   13.451111
+## H.has.http                    NA             <NA>    0.000000
+## H.npnct03.log       9.533020e-03             <NA> 2176.333333
+## H.npnct09.log       5.375262e-02             <NA>  111.620690
+## H.npnct10.log                 NA             <NA>    0.000000
+## H.npnct11.log       5.547032e-03             <NA> 6531.000000
+## H.npnct18.log                 NA             <NA>    0.000000
+## H.npnct19.log                 NA             <NA>    0.000000
+## H.npnct20.log                 NA             <NA>    0.000000
+## H.npnct22.log       5.547032e-03             <NA> 6531.000000
+## H.npnct23.log                 NA             <NA>    0.000000
+## H.npnct24.log                 NA             <NA>    0.000000
+## H.npnct25.log                 NA             <NA>    0.000000
+## H.npnct26.log       9.890046e-19             <NA>    0.000000
+## H.npnct27.log                 NA             <NA>    0.000000
+## H.npnct28.log                 NA             <NA>    0.000000
+## H.npnct29.log                 NA             <NA>    0.000000
+## H.npnct31.log                 NA             <NA>    0.000000
+## H.npnct32.log                 NA             <NA>    0.000000
+## Popular             1.000000e+00             <NA>    4.976212
+## Popular.fctr                  NA             <NA>          NA
+## PubDate.last1       3.592267e-02             <NA>    1.142857
+## PubDate.last10      5.398093e-02             <NA>    1.666667
+## PubDate.last100     3.989229e-02             <NA>   25.000000
+## PubDate.month.fctr  1.914874e-02             <NA>    1.017514
+## PubDate.POSIX       1.568326e-02             <NA>    1.000000
+## PubDate.year.fctr             NA             <NA>    0.000000
+## PubDate.zoo         1.568326e-02             <NA>    1.000000
+## S.articl.log        5.952055e-02             <NA>   30.863415
+## S.fashion.log       8.724932e-02             <NA>   25.737705
+## S.first.log         5.345938e-02             <NA>   29.509346
+## S.has.http                    NA             <NA>    0.000000
+## S.has.year.colon    1.755336e-02             <NA>  652.200000
+## S.intern.log        6.864274e-02             <NA>   29.801887
+## S.make.log          2.334962e-02             <NA>   27.378261
+## S.newyork.log       6.219997e-02             <NA>   15.153465
+## S.npnct01.log       3.093101e-02             <NA>  309.952381
+## S.npnct02.log       5.547032e-03             <NA> 6531.000000
+## S.npnct04.log       6.294642e-02             <NA>   28.536364
+## S.npnct05.log                 NA             <NA>    0.000000
+## S.npnct06.log       2.389145e-02             <NA>  115.642857
+## S.npnct07.log       1.214357e-02             <NA> 1631.750000
+## S.npnct10.log                 NA             <NA>    0.000000
+## S.npnct11.log       5.547032e-03             <NA> 6531.000000
+## S.npnct17.log       1.587454e-03             <NA>  434.133333
+## S.npnct18.log                 NA             <NA>    0.000000
+## S.npnct19.log                 NA             <NA>    0.000000
+## S.npnct20.log                 NA             <NA>    0.000000
+## S.npnct22.log       1.923169e-02             <NA>  543.333333
+## S.npnct23.log       2.760321e-02    A.npnct23.log 6531.000000
+## S.npnct24.log                 NA             <NA>    0.000000
+## S.npnct25.log       2.760321e-02             <NA> 6531.000000
+## S.npnct26.log       9.890046e-19             <NA>    0.000000
+## S.npnct27.log                 NA             <NA>    0.000000
+## S.npnct28.log                 NA             <NA>    0.000000
+## S.npnct29.log                 NA             <NA>    0.000000
+## S.npnct31.log                 NA             <NA>    0.000000
+## S.npnct32.log                 NA             <NA>    0.000000
+## S.presid.log        2.014404e-02             <NA>   26.854701
+## S.report.log        5.032801e-02             <NA>   24.204633
+## S.said.log          3.735051e-04             <NA>   25.212851
+## S.share.log         5.138139e-02             <NA>   32.654639
+## S.show.log          4.897915e-02             <NA>   30.512077
+## S.week.log          8.840293e-02             <NA>   13.278509
+## S.year.log          5.094457e-02             <NA>   18.456716
+## UniqueID            1.182492e-02             <NA>    1.000000
+## WordCount           2.575265e-01             <NA>    2.315789
+##                     percentUnique zeroVar   nzv myNearZV is.cor.y.abs.low
+## myCategory.fctr        0.30618494   FALSE FALSE    FALSE            FALSE
+## WordCount.log         24.14268218   FALSE FALSE    FALSE            FALSE
+## H.npnct21.log          0.06123699   FALSE FALSE    FALSE            FALSE
+## PubDate.hour.fctr      0.04592774   FALSE FALSE    FALSE            FALSE
+## A.make.log             0.04592774   FALSE  TRUE    FALSE            FALSE
+## A.fashion.log          0.04592774   FALSE  TRUE    FALSE            FALSE
+## H.npnct30.log          0.03061849   FALSE  TRUE    FALSE            FALSE
+## A.report.log           0.06123699   FALSE  TRUE    FALSE            FALSE
+## A.articl.log           0.03061849   FALSE  TRUE    FALSE            FALSE
+## A.npnct04.log          0.07654623   FALSE  TRUE    FALSE            FALSE
+## H.X2015.log            0.03061849   FALSE  TRUE    FALSE            FALSE
+## A.share.log            0.04592774   FALSE  TRUE    FALSE            FALSE
+## H.today.log            0.03061849   FALSE  TRUE    FALSE            FALSE
+## H.new.log              0.04592774   FALSE  TRUE    FALSE            FALSE
+## H.has.year.colon       0.03061849   FALSE  TRUE    FALSE            FALSE
+## A.said.log             0.04592774   FALSE  TRUE    FALSE             TRUE
+## H.ndgts.log            0.18371096   FALSE FALSE    FALSE            FALSE
+## PubDate.last10.log    79.05695040   FALSE FALSE    FALSE            FALSE
+## H.npnct04.log          0.04592774   FALSE  TRUE    FALSE            FALSE
+## H.npnct08.log          0.03061849   FALSE  TRUE    FALSE            FALSE
+## A.newyork.log          0.06123699   FALSE FALSE    FALSE            FALSE
+## S.npnct15.log          0.04592774   FALSE  TRUE    FALSE            FALSE
+## A.npnct15.log          0.10716473   FALSE  TRUE    FALSE            FALSE
+## PubDate.wkday.fctr     0.10716473   FALSE FALSE    FALSE            FALSE
+## .rnorm                99.98469075   FALSE FALSE    FALSE            FALSE
+## A.week.log             0.04592774   FALSE FALSE    FALSE            FALSE
+## H.npnct13.log          0.09185548   FALSE FALSE    FALSE            FALSE
+## A.show.log             0.06123699   FALSE  TRUE    FALSE            FALSE
+## A.intern.log           0.04592774   FALSE  TRUE    FALSE            FALSE
+## S.time.log             0.04592774   FALSE FALSE    FALSE            FALSE
+## H.npnct07.log          0.12247397   FALSE FALSE    FALSE            FALSE
+## A.npnct18.log          0.04592774   FALSE  TRUE    FALSE            FALSE
+## H.npnct06.log          0.06123699   FALSE  TRUE    FALSE            FALSE
+## S.state.log            0.04592774   FALSE  TRUE    FALSE             TRUE
+## PubDate.minute.fctr    0.06123699   FALSE FALSE    FALSE            FALSE
+## A.npnct19.log          0.06123699   FALSE  TRUE    FALSE            FALSE
+## A.can.log              0.04592774   FALSE  TRUE    FALSE            FALSE
+## PubDate.date.fctr      0.07654623   FALSE FALSE    FALSE            FALSE
+## S.npnct12.log          0.13778322   FALSE FALSE    FALSE            FALSE
+## A.npnct12.log          0.13778322   FALSE FALSE    FALSE            FALSE
+## H.nuppr.log            0.29087569   FALSE FALSE    FALSE            FALSE
+## H.week.log             0.03061849   FALSE  TRUE    FALSE            FALSE
+## A.state.log            0.04592774   FALSE  TRUE    FALSE             TRUE
+## S.npnct13.log          0.09185548   FALSE FALSE    FALSE            FALSE
+## A.npnct13.log          0.12247397   FALSE FALSE    FALSE            FALSE
+## A.presid.log           0.06123699   FALSE  TRUE    FALSE            FALSE
+## S.npnct16.log          0.04592774   FALSE FALSE    FALSE            FALSE
+## S.npnct08.log          0.04592774   FALSE  TRUE    FALSE             TRUE
+## S.can.log              0.04592774   FALSE  TRUE    FALSE            FALSE
+## A.npnct17.log          0.04592774   FALSE  TRUE    FALSE             TRUE
+## A.will.log             0.06123699   FALSE FALSE    FALSE            FALSE
+## S.ndgts.log            0.26025720   FALSE FALSE    FALSE            FALSE
+## S.compani.log          0.04592774   FALSE FALSE    FALSE            FALSE
+## H.npnct05.log          0.03061849   FALSE  TRUE    FALSE            FALSE
+## A.npnct21.log          0.07654623   FALSE FALSE    FALSE            FALSE
+## S.nuppr.log            0.33680343   FALSE FALSE    FALSE            FALSE
+## H.nchrs.log            1.57685242   FALSE FALSE    FALSE            FALSE
+## A.year.log             0.06123699   FALSE FALSE    FALSE            FALSE
+## A.npnct01.log          0.06123699   FALSE  TRUE    FALSE            FALSE
+## S.will.log             0.06123699   FALSE FALSE    FALSE            FALSE
+## A.ndgts.log            0.29087569   FALSE FALSE    FALSE            FALSE
+## PubDate.last100.log   92.19228414   FALSE FALSE    FALSE             TRUE
+## A.npnct22.log          0.03061849   FALSE  TRUE    FALSE            FALSE
+## A.nuppr.log            0.33680343   FALSE FALSE    FALSE            FALSE
+## S.day.log              0.04592774   FALSE  TRUE    FALSE            FALSE
+## S.one.log              0.04592774   FALSE  TRUE    FALSE             TRUE
+## A.one.log              0.04592774   FALSE  TRUE    FALSE             TRUE
+## PubDate.second.fctr    0.06123699   FALSE FALSE    FALSE            FALSE
+## H.X2014.log            0.03061849   FALSE  TRUE    FALSE            FALSE
+## H.report.log           0.03061849   FALSE  TRUE    FALSE            FALSE
+## S.take.log             0.04592774   FALSE  TRUE    FALSE            FALSE
+## S.nwrds.unq.log        0.44396816   FALSE FALSE    FALSE            FALSE
+## S.npnct09.log          0.06123699   FALSE  TRUE    FALSE             TRUE
+## A.nwrds.unq.log        0.55113288   FALSE FALSE    FALSE            FALSE
+## H.npnct12.log          0.07654623   FALSE FALSE    FALSE            FALSE
+## H.fashion.log          0.04592774   FALSE  TRUE    FALSE            FALSE
+## S.npnct21.log          0.07654623   FALSE FALSE    FALSE            FALSE
+## S.new.log              0.04592774   FALSE FALSE    FALSE            FALSE
+## H.npnct15.log          0.03061849   FALSE  TRUE    FALSE            FALSE
+## A.new.log              0.04592774   FALSE FALSE    FALSE            FALSE
+## A.nchrs.log            4.39375383   FALSE FALSE    FALSE            FALSE
+## S.nchrs.log            3.72014697   FALSE FALSE    FALSE            FALSE
+## S.npnct30.log          0.04592774   FALSE  TRUE    FALSE            FALSE
+## H.npnct17.log          0.06123699   FALSE  TRUE    FALSE            FALSE
+## A.npnct06.log          0.03061849   FALSE  TRUE    FALSE            FALSE
+## A.npnct30.log          0.04592774   FALSE  TRUE    FALSE            FALSE
+## H.nwrds.unq.log        0.21432945   FALSE FALSE    FALSE            FALSE
+## S.nwrds.log            0.45927740   FALSE FALSE    FALSE            FALSE
+## A.npnct07.log          0.04592774   FALSE  TRUE    FALSE            FALSE
+## H.npnct01.log          0.04592774   FALSE  TRUE    FALSE            FALSE
+## A.nwrds.log            0.59706062   FALSE FALSE    FALSE            FALSE
+## H.has.ebola            0.03061849   FALSE  TRUE    FALSE            FALSE
+## A.npnct14.log          0.16840171   FALSE FALSE    FALSE            FALSE
+## S.npnct14.log          0.16840171   FALSE FALSE    FALSE            FALSE
+## PubDate.last1.log     36.49724434   FALSE FALSE    FALSE            FALSE
+## A.npnct02.log          0.04592774   FALSE  TRUE    FALSE            FALSE
+## H.day.log              0.04592774   FALSE  TRUE    FALSE            FALSE
+## A.first.log            0.04592774   FALSE  TRUE    FALSE            FALSE
+## S.npnct03.log          0.03061849   FALSE  TRUE    FALSE            FALSE
+## H.newyork.log          0.03061849   FALSE  TRUE    FALSE            FALSE
+## A.has.year.colon       0.03061849   FALSE  TRUE    FALSE            FALSE
+## PubDate.wkend          0.03061849   FALSE FALSE    FALSE            FALSE
+## H.npnct16.log          0.04592774   FALSE FALSE    FALSE            FALSE
+## H.npnct14.log          0.12247397   FALSE  TRUE    FALSE            FALSE
+## H.nwrds.log            0.21432945   FALSE FALSE    FALSE            FALSE
+## H.npnct02.log          0.03061849   FALSE  TRUE    FALSE            FALSE
+## H.daili.log            0.03061849   FALSE  TRUE    FALSE            FALSE
+## A.compani.log          0.04592774   FALSE FALSE    FALSE            FALSE
+## A.day.log              0.04592774   FALSE  TRUE    FALSE            FALSE
+## A.has.http             0.03061849   FALSE  TRUE    FALSE            FALSE
+## A.npnct03.log          0.03061849   FALSE  TRUE    FALSE            FALSE
+## A.npnct05.log          0.01530925    TRUE  TRUE     TRUE               NA
+## A.npnct08.log          0.04592774   FALSE  TRUE    FALSE             TRUE
+## A.npnct09.log          0.06123699   FALSE  TRUE    FALSE             TRUE
+## A.npnct10.log          0.01530925    TRUE  TRUE     TRUE               NA
+## A.npnct11.log          0.03061849   FALSE  TRUE     TRUE             TRUE
+## A.npnct16.log          0.04592774   FALSE FALSE    FALSE            FALSE
+## A.npnct20.log          0.04592774   FALSE  TRUE    FALSE            FALSE
+## A.npnct23.log          0.04592774   FALSE  TRUE     TRUE            FALSE
+## A.npnct24.log          0.01530925    TRUE  TRUE     TRUE               NA
+## A.npnct25.log          0.04592774   FALSE  TRUE     TRUE            FALSE
+## A.npnct26.log          0.01530925    TRUE  TRUE     TRUE             TRUE
+## A.npnct27.log          0.03061849   FALSE  TRUE     TRUE             TRUE
+## A.npnct28.log          0.01530925    TRUE  TRUE     TRUE               NA
+## A.npnct29.log          0.01530925    TRUE  TRUE     TRUE               NA
+## A.npnct31.log          0.01530925    TRUE  TRUE     TRUE               NA
+## A.npnct32.log          0.01530925    TRUE  TRUE     TRUE               NA
+## A.take.log             0.04592774   FALSE  TRUE    FALSE            FALSE
+## A.time.log             0.04592774   FALSE FALSE    FALSE            FALSE
+## H.has.http             0.01530925    TRUE  TRUE     TRUE               NA
+## H.npnct03.log          0.03061849   FALSE  TRUE     TRUE            FALSE
+## H.npnct09.log          0.03061849   FALSE  TRUE    FALSE            FALSE
+## H.npnct10.log          0.01530925    TRUE  TRUE     TRUE               NA
+## H.npnct11.log          0.03061849   FALSE  TRUE     TRUE             TRUE
+## H.npnct18.log          0.01530925    TRUE  TRUE     TRUE               NA
+## H.npnct19.log          0.01530925    TRUE  TRUE     TRUE               NA
+## H.npnct20.log          0.01530925    TRUE  TRUE     TRUE               NA
+## H.npnct22.log          0.03061849   FALSE  TRUE     TRUE             TRUE
+## H.npnct23.log          0.01530925    TRUE  TRUE     TRUE               NA
+## H.npnct24.log          0.01530925    TRUE  TRUE     TRUE               NA
+## H.npnct25.log          0.01530925    TRUE  TRUE     TRUE               NA
+## H.npnct26.log          0.01530925    TRUE  TRUE     TRUE             TRUE
+## H.npnct27.log          0.01530925    TRUE  TRUE     TRUE               NA
+## H.npnct28.log          0.01530925    TRUE  TRUE     TRUE               NA
+## H.npnct29.log          0.01530925    TRUE  TRUE     TRUE               NA
+## H.npnct31.log          0.01530925    TRUE  TRUE     TRUE               NA
+## H.npnct32.log          0.01530925    TRUE  TRUE     TRUE               NA
+## Popular                0.03061849   FALSE FALSE    FALSE            FALSE
+## Popular.fctr                   NA      NA    NA       NA               NA
+## PubDate.last1         36.49724434   FALSE FALSE    FALSE            FALSE
+## PubDate.last10        79.05695040   FALSE FALSE    FALSE            FALSE
+## PubDate.last100       92.52908757   FALSE FALSE    FALSE            FALSE
+## PubDate.month.fctr     0.04592774   FALSE FALSE    FALSE            FALSE
+## PubDate.POSIX         99.86221678   FALSE FALSE    FALSE            FALSE
+## PubDate.year.fctr      0.01530925    TRUE  TRUE     TRUE               NA
+## PubDate.zoo           99.86221678   FALSE FALSE    FALSE            FALSE
+## S.articl.log           0.03061849   FALSE  TRUE    FALSE            FALSE
+## S.fashion.log          0.04592774   FALSE  TRUE    FALSE            FALSE
+## S.first.log            0.04592774   FALSE  TRUE    FALSE            FALSE
+## S.has.http             0.01530925    TRUE  TRUE     TRUE               NA
+## S.has.year.colon       0.03061849   FALSE  TRUE    FALSE            FALSE
+## S.intern.log           0.04592774   FALSE  TRUE    FALSE            FALSE
+## S.make.log             0.04592774   FALSE  TRUE    FALSE            FALSE
+## S.newyork.log          0.06123699   FALSE FALSE    FALSE            FALSE
+## S.npnct01.log          0.06123699   FALSE  TRUE    FALSE            FALSE
+## S.npnct02.log          0.03061849   FALSE  TRUE     TRUE             TRUE
+## S.npnct04.log          0.07654623   FALSE  TRUE    FALSE            FALSE
+## S.npnct05.log          0.01530925    TRUE  TRUE     TRUE               NA
+## S.npnct06.log          0.03061849   FALSE  TRUE    FALSE            FALSE
+## S.npnct07.log          0.04592774   FALSE  TRUE    FALSE            FALSE
+## S.npnct10.log          0.01530925    TRUE  TRUE     TRUE               NA
+## S.npnct11.log          0.03061849   FALSE  TRUE     TRUE             TRUE
+## S.npnct17.log          0.04592774   FALSE  TRUE    FALSE             TRUE
+## S.npnct18.log          0.01530925    TRUE  TRUE     TRUE               NA
+## S.npnct19.log          0.01530925    TRUE  TRUE     TRUE               NA
+## S.npnct20.log          0.01530925    TRUE  TRUE     TRUE               NA
+## S.npnct22.log          0.03061849   FALSE  TRUE    FALSE            FALSE
+## S.npnct23.log          0.03061849   FALSE  TRUE     TRUE            FALSE
+## S.npnct24.log          0.01530925    TRUE  TRUE     TRUE               NA
+## S.npnct25.log          0.03061849   FALSE  TRUE     TRUE            FALSE
+## S.npnct26.log          0.01530925    TRUE  TRUE     TRUE             TRUE
+## S.npnct27.log          0.01530925    TRUE  TRUE     TRUE               NA
+## S.npnct28.log          0.01530925    TRUE  TRUE     TRUE               NA
+## S.npnct29.log          0.01530925    TRUE  TRUE     TRUE               NA
+## S.npnct31.log          0.01530925    TRUE  TRUE     TRUE               NA
+## S.npnct32.log          0.01530925    TRUE  TRUE     TRUE               NA
+## S.presid.log           0.06123699   FALSE  TRUE    FALSE            FALSE
+## S.report.log           0.06123699   FALSE  TRUE    FALSE            FALSE
+## S.said.log             0.04592774   FALSE  TRUE    FALSE             TRUE
+## S.share.log            0.04592774   FALSE  TRUE    FALSE            FALSE
+## S.show.log             0.06123699   FALSE  TRUE    FALSE            FALSE
+## S.week.log             0.04592774   FALSE FALSE    FALSE            FALSE
+## S.year.log             0.06123699   FALSE FALSE    FALSE            FALSE
+## UniqueID             100.00000000   FALSE FALSE    FALSE            FALSE
+## WordCount             24.15799143   FALSE FALSE    FALSE            FALSE
+##                     rsp_var_raw id_var rsp_var   importance
+## myCategory.fctr           FALSE     NA      NA 100.00000000
+## WordCount.log             FALSE     NA      NA  70.43241920
+## H.npnct21.log             FALSE     NA      NA  32.71499686
+## PubDate.hour.fctr         FALSE     NA      NA  28.49497858
+## A.make.log                FALSE     NA      NA  24.82458430
+## A.fashion.log             FALSE     NA      NA  22.86799201
+## H.npnct30.log             FALSE     NA      NA  18.66889549
+## A.report.log              FALSE     NA      NA  17.94396169
+## A.articl.log              FALSE     NA      NA  17.31584878
+## A.npnct04.log             FALSE     NA      NA  16.42726704
+## H.X2015.log               FALSE     NA      NA  16.18781324
+## A.share.log               FALSE     NA      NA  16.05772852
+## H.today.log               FALSE     NA      NA  15.09058570
+## H.new.log                 FALSE     NA      NA  14.58884852
+## H.has.year.colon          FALSE     NA      NA  14.48643170
+## A.said.log                FALSE     NA      NA  13.53465142
+## H.ndgts.log               FALSE     NA      NA  13.52245535
+## PubDate.last10.log        FALSE     NA      NA  12.97780472
+## H.npnct04.log             FALSE     NA      NA  12.76927377
+## H.npnct08.log             FALSE     NA      NA  12.06593521
+## A.newyork.log             FALSE     NA      NA  11.59720267
+## S.npnct15.log             FALSE     NA      NA  10.97856358
+## A.npnct15.log             FALSE     NA      NA  10.79302566
+## PubDate.wkday.fctr        FALSE     NA      NA  10.68599632
+## .rnorm                    FALSE     NA      NA  10.55274877
+## A.week.log                FALSE     NA      NA   9.81958866
+## H.npnct13.log             FALSE     NA      NA   9.71218057
+## A.show.log                FALSE     NA      NA   9.68407375
+## A.intern.log              FALSE     NA      NA   9.66632050
+## S.time.log                FALSE     NA      NA   9.55323497
+## H.npnct07.log             FALSE     NA      NA   9.53685753
+## A.npnct18.log             FALSE     NA      NA   9.41984800
+## H.npnct06.log             FALSE     NA      NA   9.23627876
+## S.state.log               FALSE     NA      NA   8.92098916
+## PubDate.minute.fctr       FALSE     NA      NA   8.53101958
+## A.npnct19.log             FALSE     NA      NA   8.47715771
+## A.can.log                 FALSE     NA      NA   8.10387656
+## PubDate.date.fctr         FALSE     NA      NA   8.03583604
+## S.npnct12.log             FALSE     NA      NA   8.03465413
+## A.npnct12.log             FALSE     NA      NA   7.98621020
+## H.nuppr.log               FALSE     NA      NA   7.85639322
+## H.week.log                FALSE     NA      NA   7.79627328
+## A.state.log               FALSE     NA      NA   7.26321159
+## S.npnct13.log             FALSE     NA      NA   7.17910453
+## A.npnct13.log             FALSE     NA      NA   7.17784272
+## A.presid.log              FALSE     NA      NA   7.16305732
+## S.npnct16.log             FALSE     NA      NA   7.14944805
+## S.npnct08.log             FALSE     NA      NA   7.07080676
+## S.can.log                 FALSE     NA      NA   7.02341628
+## A.npnct17.log             FALSE     NA      NA   6.89744623
+## A.will.log                FALSE     NA      NA   6.81698075
+## S.ndgts.log               FALSE     NA      NA   6.75768296
+## S.compani.log             FALSE     NA      NA   6.68327086
+## H.npnct05.log             FALSE     NA      NA   6.59752354
+## A.npnct21.log             FALSE     NA      NA   6.53946049
+## S.nuppr.log               FALSE     NA      NA   6.48716764
+## H.nchrs.log               FALSE     NA      NA   6.36565681
+## A.year.log                FALSE     NA      NA   6.30335271
+## A.npnct01.log             FALSE     NA      NA   6.26548239
+## S.will.log                FALSE     NA      NA   6.21988118
+## A.ndgts.log               FALSE     NA      NA   6.12230312
+## PubDate.last100.log       FALSE     NA      NA   6.10602730
+## A.npnct22.log             FALSE     NA      NA   5.81913883
+## A.nuppr.log               FALSE     NA      NA   5.73056332
+## S.day.log                 FALSE     NA      NA   5.55760002
+## S.one.log                 FALSE     NA      NA   5.29435441
+## A.one.log                 FALSE     NA      NA   5.19360228
+## PubDate.second.fctr       FALSE     NA      NA   4.57971207
+## H.X2014.log               FALSE     NA      NA   4.46472089
+## H.report.log              FALSE     NA      NA   4.40029310
+## S.take.log                FALSE     NA      NA   4.26732531
+## S.nwrds.unq.log           FALSE     NA      NA   4.13474268
+## S.npnct09.log             FALSE     NA      NA   4.11245488
+## A.nwrds.unq.log           FALSE     NA      NA   3.95688107
+## H.npnct12.log             FALSE     NA      NA   3.76801998
+## H.fashion.log             FALSE     NA      NA   3.76390763
+## S.npnct21.log             FALSE     NA      NA   3.66026012
+## S.new.log                 FALSE     NA      NA   3.52281315
+## H.npnct15.log             FALSE     NA      NA   3.45385040
+## A.new.log                 FALSE     NA      NA   3.41102464
+## A.nchrs.log               FALSE     NA      NA   3.12081764
+## S.nchrs.log               FALSE     NA      NA   2.97802811
+## S.npnct30.log             FALSE     NA      NA   2.88153488
+## H.npnct17.log             FALSE     NA      NA   2.24624596
+## A.npnct06.log             FALSE     NA      NA   2.18674221
+## A.npnct30.log             FALSE     NA      NA   2.11807078
+## H.nwrds.unq.log           FALSE     NA      NA   2.09016785
+## S.nwrds.log               FALSE     NA      NA   2.07125498
+## A.npnct07.log             FALSE     NA      NA   2.04536000
+## H.npnct01.log             FALSE     NA      NA   2.03495324
+## A.nwrds.log               FALSE     NA      NA   1.93513242
+## H.has.ebola               FALSE     NA      NA   1.75502087
+## A.npnct14.log             FALSE     NA      NA   1.53950062
+## S.npnct14.log             FALSE     NA      NA   1.28524340
+## PubDate.last1.log         FALSE     NA      NA   1.18736302
+## A.npnct02.log             FALSE     NA      NA   1.14672657
+## H.day.log                 FALSE     NA      NA   1.12673197
+## A.first.log               FALSE     NA      NA   1.11773697
+## S.npnct03.log             FALSE     NA      NA   1.07345568
+## H.newyork.log             FALSE     NA      NA   1.03389528
+## A.has.year.colon          FALSE     NA      NA   0.89413765
+## PubDate.wkend             FALSE     NA      NA   0.64555965
+## H.npnct16.log             FALSE     NA      NA   0.59350225
+## H.npnct14.log             FALSE     NA      NA   0.52235605
+## H.nwrds.log               FALSE     NA      NA   0.46021386
+## H.npnct02.log             FALSE     NA      NA   0.04154952
+## H.daili.log               FALSE     NA      NA   0.00000000
+## A.compani.log             FALSE     NA      NA           NA
+## A.day.log                 FALSE     NA      NA           NA
+## A.has.http                FALSE     NA      NA           NA
+## A.npnct03.log             FALSE     NA      NA           NA
+## A.npnct05.log             FALSE     NA      NA           NA
+## A.npnct08.log             FALSE     NA      NA           NA
+## A.npnct09.log             FALSE     NA      NA           NA
+## A.npnct10.log             FALSE     NA      NA           NA
+## A.npnct11.log             FALSE     NA      NA           NA
+## A.npnct16.log             FALSE     NA      NA           NA
+## A.npnct20.log             FALSE     NA      NA           NA
+## A.npnct23.log             FALSE     NA      NA           NA
+## A.npnct24.log             FALSE     NA      NA           NA
+## A.npnct25.log             FALSE     NA      NA           NA
+## A.npnct26.log             FALSE     NA      NA           NA
+## A.npnct27.log             FALSE     NA      NA           NA
+## A.npnct28.log             FALSE     NA      NA           NA
+## A.npnct29.log             FALSE     NA      NA           NA
+## A.npnct31.log             FALSE     NA      NA           NA
+## A.npnct32.log             FALSE     NA      NA           NA
+## A.take.log                FALSE     NA      NA           NA
+## A.time.log                FALSE     NA      NA           NA
+## H.has.http                FALSE     NA      NA           NA
+## H.npnct03.log             FALSE     NA      NA           NA
+## H.npnct09.log             FALSE     NA      NA           NA
+## H.npnct10.log             FALSE     NA      NA           NA
+## H.npnct11.log             FALSE     NA      NA           NA
+## H.npnct18.log             FALSE     NA      NA           NA
+## H.npnct19.log             FALSE     NA      NA           NA
+## H.npnct20.log             FALSE     NA      NA           NA
+## H.npnct22.log             FALSE     NA      NA           NA
+## H.npnct23.log             FALSE     NA      NA           NA
+## H.npnct24.log             FALSE     NA      NA           NA
+## H.npnct25.log             FALSE     NA      NA           NA
+## H.npnct26.log             FALSE     NA      NA           NA
+## H.npnct27.log             FALSE     NA      NA           NA
+## H.npnct28.log             FALSE     NA      NA           NA
+## H.npnct29.log             FALSE     NA      NA           NA
+## H.npnct31.log             FALSE     NA      NA           NA
+## H.npnct32.log             FALSE     NA      NA           NA
+## Popular                    TRUE     NA      NA           NA
+## Popular.fctr                 NA     NA    TRUE           NA
+## PubDate.last1             FALSE     NA      NA           NA
+## PubDate.last10            FALSE     NA      NA           NA
+## PubDate.last100           FALSE     NA      NA           NA
+## PubDate.month.fctr        FALSE     NA      NA           NA
+## PubDate.POSIX             FALSE     NA      NA           NA
+## PubDate.year.fctr         FALSE     NA      NA           NA
+## PubDate.zoo               FALSE     NA      NA           NA
+## S.articl.log              FALSE     NA      NA           NA
+## S.fashion.log             FALSE     NA      NA           NA
+## S.first.log               FALSE     NA      NA           NA
+## S.has.http                FALSE     NA      NA           NA
+## S.has.year.colon          FALSE     NA      NA           NA
+## S.intern.log              FALSE     NA      NA           NA
+## S.make.log                FALSE     NA      NA           NA
+## S.newyork.log             FALSE     NA      NA           NA
+## S.npnct01.log             FALSE     NA      NA           NA
+## S.npnct02.log             FALSE     NA      NA           NA
+## S.npnct04.log             FALSE     NA      NA           NA
+## S.npnct05.log             FALSE     NA      NA           NA
+## S.npnct06.log             FALSE     NA      NA           NA
+## S.npnct07.log             FALSE     NA      NA           NA
+## S.npnct10.log             FALSE     NA      NA           NA
+## S.npnct11.log             FALSE     NA      NA           NA
+## S.npnct17.log             FALSE     NA      NA           NA
+## S.npnct18.log             FALSE     NA      NA           NA
+## S.npnct19.log             FALSE     NA      NA           NA
+## S.npnct20.log             FALSE     NA      NA           NA
+## S.npnct22.log             FALSE     NA      NA           NA
+## S.npnct23.log             FALSE     NA      NA           NA
+## S.npnct24.log             FALSE     NA      NA           NA
+## S.npnct25.log             FALSE     NA      NA           NA
+## S.npnct26.log             FALSE     NA      NA           NA
+## S.npnct27.log             FALSE     NA      NA           NA
+## S.npnct28.log             FALSE     NA      NA           NA
+## S.npnct29.log             FALSE     NA      NA           NA
+## S.npnct31.log             FALSE     NA      NA           NA
+## S.npnct32.log             FALSE     NA      NA           NA
+## S.presid.log              FALSE     NA      NA           NA
+## S.report.log              FALSE     NA      NA           NA
+## S.said.log                FALSE     NA      NA           NA
+## S.share.log               FALSE     NA      NA           NA
+## S.show.log                FALSE     NA      NA           NA
+## S.week.log                FALSE     NA      NA           NA
+## S.year.log                FALSE     NA      NA           NA
+## UniqueID                  FALSE   TRUE      NA           NA
+## WordCount                 FALSE     NA      NA           NA
+##                     All.X.glm.importance
+## myCategory.fctr             100.00000000
+## WordCount.log                70.43241920
+## H.npnct21.log                32.71499686
+## PubDate.hour.fctr            28.49497858
+## A.make.log                   24.82458430
+## A.fashion.log                22.86799201
+## H.npnct30.log                18.66889549
+## A.report.log                 17.94396169
+## A.articl.log                 17.31584878
+## A.npnct04.log                16.42726704
+## H.X2015.log                  16.18781324
+## A.share.log                  16.05772852
+## H.today.log                  15.09058570
+## H.new.log                    14.58884852
+## H.has.year.colon             14.48643170
+## A.said.log                   13.53465142
+## H.ndgts.log                  13.52245535
+## PubDate.last10.log           12.97780472
+## H.npnct04.log                12.76927377
+## H.npnct08.log                12.06593521
+## A.newyork.log                11.59720267
+## S.npnct15.log                10.97856358
+## A.npnct15.log                10.79302566
+## PubDate.wkday.fctr           10.68599632
+## .rnorm                       10.55274877
+## A.week.log                    9.81958866
+## H.npnct13.log                 9.71218057
+## A.show.log                    9.68407375
+## A.intern.log                  9.66632050
+## S.time.log                    9.55323497
+## H.npnct07.log                 9.53685753
+## A.npnct18.log                 9.41984800
+## H.npnct06.log                 9.23627876
+## S.state.log                   8.92098916
+## PubDate.minute.fctr           8.53101958
+## A.npnct19.log                 8.47715771
+## A.can.log                     8.10387656
+## PubDate.date.fctr             8.03583604
+## S.npnct12.log                 8.03465413
+## A.npnct12.log                 7.98621020
+## H.nuppr.log                   7.85639322
+## H.week.log                    7.79627328
+## A.state.log                   7.26321159
+## S.npnct13.log                 7.17910453
+## A.npnct13.log                 7.17784272
+## A.presid.log                  7.16305732
+## S.npnct16.log                 7.14944805
+## S.npnct08.log                 7.07080676
+## S.can.log                     7.02341628
+## A.npnct17.log                 6.89744623
+## A.will.log                    6.81698075
+## S.ndgts.log                   6.75768296
+## S.compani.log                 6.68327086
+## H.npnct05.log                 6.59752354
+## A.npnct21.log                 6.53946049
+## S.nuppr.log                   6.48716764
+## H.nchrs.log                   6.36565681
+## A.year.log                    6.30335271
+## A.npnct01.log                 6.26548239
+## S.will.log                    6.21988118
+## A.ndgts.log                   6.12230312
+## PubDate.last100.log           6.10602730
+## A.npnct22.log                 5.81913883
+## A.nuppr.log                   5.73056332
+## S.day.log                     5.55760002
+## S.one.log                     5.29435441
+## A.one.log                     5.19360228
+## PubDate.second.fctr           4.57971207
+## H.X2014.log                   4.46472089
+## H.report.log                  4.40029310
+## S.take.log                    4.26732531
+## S.nwrds.unq.log               4.13474268
+## S.npnct09.log                 4.11245488
+## A.nwrds.unq.log               3.95688107
+## H.npnct12.log                 3.76801998
+## H.fashion.log                 3.76390763
+## S.npnct21.log                 3.66026012
+## S.new.log                     3.52281315
+## H.npnct15.log                 3.45385040
+## A.new.log                     3.41102464
+## A.nchrs.log                   3.12081764
+## S.nchrs.log                   2.97802811
+## S.npnct30.log                 2.88153488
+## H.npnct17.log                 2.24624596
+## A.npnct06.log                 2.18674221
+## A.npnct30.log                 2.11807078
+## H.nwrds.unq.log               2.09016785
+## S.nwrds.log                   2.07125498
+## A.npnct07.log                 2.04536000
+## H.npnct01.log                 2.03495324
+## A.nwrds.log                   1.93513242
+## H.has.ebola                   1.75502087
+## A.npnct14.log                 1.53950062
+## S.npnct14.log                 1.28524340
+## PubDate.last1.log             1.18736302
+## A.npnct02.log                 1.14672657
+## H.day.log                     1.12673197
+## A.first.log                   1.11773697
+## S.npnct03.log                 1.07345568
+## H.newyork.log                 1.03389528
+## A.has.year.colon              0.89413765
+## PubDate.wkend                 0.64555965
+## H.npnct16.log                 0.59350225
+## H.npnct14.log                 0.52235605
+## H.nwrds.log                   0.46021386
+## H.npnct02.log                 0.04154952
+## H.daili.log                   0.00000000
+## A.compani.log                         NA
+## A.day.log                             NA
+## A.has.http                            NA
+## A.npnct03.log                         NA
+## A.npnct05.log                         NA
+## A.npnct08.log                         NA
+## A.npnct09.log                         NA
+## A.npnct10.log                         NA
+## A.npnct11.log                         NA
+## A.npnct16.log                         NA
+## A.npnct20.log                         NA
+## A.npnct23.log                         NA
+## A.npnct24.log                         NA
+## A.npnct25.log                         NA
+## A.npnct26.log                         NA
+## A.npnct27.log                         NA
+## A.npnct28.log                         NA
+## A.npnct29.log                         NA
+## A.npnct31.log                         NA
+## A.npnct32.log                         NA
+## A.take.log                            NA
+## A.time.log                            NA
+## H.has.http                            NA
+## H.npnct03.log                         NA
+## H.npnct09.log                         NA
+## H.npnct10.log                         NA
+## H.npnct11.log                         NA
+## H.npnct18.log                         NA
+## H.npnct19.log                         NA
+## H.npnct20.log                         NA
+## H.npnct22.log                         NA
+## H.npnct23.log                         NA
+## H.npnct24.log                         NA
+## H.npnct25.log                         NA
+## H.npnct26.log                         NA
+## H.npnct27.log                         NA
+## H.npnct28.log                         NA
+## H.npnct29.log                         NA
+## H.npnct31.log                         NA
+## H.npnct32.log                         NA
+## Popular                               NA
+## Popular.fctr                          NA
+## PubDate.last1                         NA
+## PubDate.last10                        NA
+## PubDate.last100                       NA
+## PubDate.month.fctr                    NA
+## PubDate.POSIX                         NA
+## PubDate.year.fctr                     NA
+## PubDate.zoo                           NA
+## S.articl.log                          NA
+## S.fashion.log                         NA
+## S.first.log                           NA
+## S.has.http                            NA
+## S.has.year.colon                      NA
+## S.intern.log                          NA
+## S.make.log                            NA
+## S.newyork.log                         NA
+## S.npnct01.log                         NA
+## S.npnct02.log                         NA
+## S.npnct04.log                         NA
+## S.npnct05.log                         NA
+## S.npnct06.log                         NA
+## S.npnct07.log                         NA
+## S.npnct10.log                         NA
+## S.npnct11.log                         NA
+## S.npnct17.log                         NA
+## S.npnct18.log                         NA
+## S.npnct19.log                         NA
+## S.npnct20.log                         NA
+## S.npnct22.log                         NA
+## S.npnct23.log                         NA
+## S.npnct24.log                         NA
+## S.npnct25.log                         NA
+## S.npnct26.log                         NA
+## S.npnct27.log                         NA
+## S.npnct28.log                         NA
+## S.npnct29.log                         NA
+## S.npnct31.log                         NA
+## S.npnct32.log                         NA
+## S.presid.log                          NA
+## S.report.log                          NA
+## S.said.log                            NA
+## S.share.log                           NA
+## S.show.log                            NA
+## S.week.log                            NA
+## S.year.log                            NA
+## UniqueID                              NA
+## WordCount                             NA
 ```
 
 ```r
@@ -9729,142 +10012,103 @@ glb_analytics_diag_plots(obs_df=glb_OOBent_df, mdl_id=glb_sel_mdl_id,
 
 ```
 ## Warning in glb_analytics_diag_plots(obs_df = glb_OOBent_df, mdl_id =
-## glb_sel_mdl_id, : Limiting important feature scatter plots to 5 out of 92
+## glb_sel_mdl_id, : Limiting important feature scatter plots to 5 out of 106
 ```
 
 ![](NYTBlogs_txtfeat_files/figure-html/fit.models_2-8.png) ![](NYTBlogs_txtfeat_files/figure-html/fit.models_2-9.png) ![](NYTBlogs_txtfeat_files/figure-html/fit.models_2-10.png) ![](NYTBlogs_txtfeat_files/figure-html/fit.models_2-11.png) ![](NYTBlogs_txtfeat_files/figure-html/fit.models_2-12.png) 
 
 ```
 ## [1] "Min/Max Boundaries: "
-##      UniqueID Popular.fctr Popular.fctr.predict.Low.cor.X.glm.prob
-## 1132     1132            Y                            2.220446e-16
-## 172       172            Y                            2.803341e-03
-## 163       163            Y                            7.997086e-02
-## 37         37            Y                            1.759437e-01
-## 104       104            Y                            2.868026e-01
-## 4           4            Y                            2.948342e-01
-## 31         31            N                            1.801392e-03
-## 6018     6018            N                            3.033259e-04
-## 6370     6370            Y                            4.834288e-01
-## 17         17            N                            8.939842e-01
-##      Popular.fctr.predict.Low.cor.X.glm
-## 1132                                  N
-## 172                                   N
-## 163                                   N
-## 37                                    N
-## 104                                   N
-## 4                                     N
-## 31                                    N
-## 6018                                  N
-## 6370                                  Y
-## 17                                    Y
-##      Popular.fctr.predict.Low.cor.X.glm.accurate
-## 1132                                       FALSE
-## 172                                        FALSE
-## 163                                        FALSE
-## 37                                         FALSE
-## 104                                        FALSE
-## 4                                          FALSE
-## 31                                          TRUE
-## 6018                                        TRUE
-## 6370                                        TRUE
-## 17                                         FALSE
-##      Popular.fctr.predict.Low.cor.X.glm.error .label
-## 1132                              -0.30000000   1132
-## 172                               -0.29719666    172
-## 163                               -0.22002914    163
-## 37                                -0.12405630     37
-## 104                               -0.01319737    104
-## 4                                 -0.00516582      4
-## 31                                 0.00000000     31
-## 6018                               0.00000000   6018
-## 6370                               0.00000000   6370
-## 17                                 0.59398421     17
+##      UniqueID Popular.fctr Popular.fctr.predict.All.X.glm.prob
+## 6370     6370            Y                        2.220446e-16
+## 6018     6018            N                        2.220446e-16
+##      Popular.fctr.predict.All.X.glm
+## 6370                              N
+## 6018                              N
+##      Popular.fctr.predict.All.X.glm.accurate
+## 6370                                   FALSE
+## 6018                                    TRUE
+##      Popular.fctr.predict.All.X.glm.error .label
+## 6370                                 -0.9   6370
+## 6018                                  0.0   6018
 ## [1] "Inaccurate: "
-##      UniqueID Popular.fctr Popular.fctr.predict.Low.cor.X.glm.prob
-## 1132     1132            Y                            2.220446e-16
-## 5486     5486            Y                            2.977582e-12
-## 1403     1403            Y                            5.839170e-12
-## 6387     6387            Y                            1.001307e-09
-## 1273     1273            Y                            1.503972e-03
-## 172       172            Y                            2.803341e-03
-##      Popular.fctr.predict.Low.cor.X.glm
-## 1132                                  N
-## 5486                                  N
-## 1403                                  N
-## 6387                                  N
-## 1273                                  N
-## 172                                   N
-##      Popular.fctr.predict.Low.cor.X.glm.accurate
-## 1132                                       FALSE
-## 5486                                       FALSE
-## 1403                                       FALSE
-## 6387                                       FALSE
-## 1273                                       FALSE
-## 172                                        FALSE
-##      Popular.fctr.predict.Low.cor.X.glm.error
-## 1132                               -0.3000000
-## 5486                               -0.3000000
-## 1403                               -0.3000000
-## 6387                               -0.3000000
-## 1273                               -0.2984960
-## 172                                -0.2971967
-##      UniqueID Popular.fctr Popular.fctr.predict.Low.cor.X.glm.prob
-## 5573     5573            Y                              0.03047345
-## 4632     4632            Y                              0.11827833
-## 3557     3557            N                              0.54259052
-## 2412     2412            N                              0.68022957
-## 664       664            N                              0.69597987
-## 6435     6435            N                              0.86263285
-##      Popular.fctr.predict.Low.cor.X.glm
-## 5573                                  N
-## 4632                                  N
-## 3557                                  Y
-## 2412                                  Y
-## 664                                   Y
-## 6435                                  Y
-##      Popular.fctr.predict.Low.cor.X.glm.accurate
-## 5573                                       FALSE
-## 4632                                       FALSE
-## 3557                                       FALSE
-## 2412                                       FALSE
-## 664                                        FALSE
-## 6435                                       FALSE
-##      Popular.fctr.predict.Low.cor.X.glm.error
-## 5573                               -0.2695265
-## 4632                               -0.1817217
-## 3557                                0.2425905
-## 2412                                0.3802296
-## 664                                 0.3959799
-## 6435                                0.5626329
-##      UniqueID Popular.fctr Popular.fctr.predict.Low.cor.X.glm.prob
-## 1667     1667            N                               0.9396353
-## 3258     3258            N                               0.9504278
-## 4975     4975            N                               0.9510598
-## 4771     4771            N                               0.9516763
-## 770       770            N                               0.9785031
-## 4882     4882            N                               0.9800978
-##      Popular.fctr.predict.Low.cor.X.glm
-## 1667                                  Y
-## 3258                                  Y
-## 4975                                  Y
-## 4771                                  Y
-## 770                                   Y
-## 4882                                  Y
-##      Popular.fctr.predict.Low.cor.X.glm.accurate
-## 1667                                       FALSE
-## 3258                                       FALSE
-## 4975                                       FALSE
-## 4771                                       FALSE
-## 770                                        FALSE
-## 4882                                       FALSE
-##      Popular.fctr.predict.Low.cor.X.glm.error
-## 1667                                0.6396353
-## 3258                                0.6504278
-## 4975                                0.6510598
-## 4771                                0.6516763
-## 770                                 0.6785031
-## 4882                                0.6800978
+##     UniqueID Popular.fctr Popular.fctr.predict.All.X.glm.prob
+## 4          4            Y                        2.220446e-16
+## 104      104            Y                        2.220446e-16
+## 95        95            Y                        2.220446e-16
+## 56        56            Y                        2.220446e-16
+## 37        37            Y                        2.220446e-16
+## 172      172            Y                        2.220446e-16
+##     Popular.fctr.predict.All.X.glm Popular.fctr.predict.All.X.glm.accurate
+## 4                                N                                   FALSE
+## 104                              N                                   FALSE
+## 95                               N                                   FALSE
+## 56                               N                                   FALSE
+## 37                               N                                   FALSE
+## 172                              N                                   FALSE
+##     Popular.fctr.predict.All.X.glm.error
+## 4                                   -0.9
+## 104                                 -0.9
+## 95                                  -0.9
+## 56                                  -0.9
+## 37                                  -0.9
+## 172                                 -0.9
+##      UniqueID Popular.fctr Popular.fctr.predict.All.X.glm.prob
+## 1588     1588            Y                        2.220446e-16
+## 4632     4632            Y                        2.220446e-16
+## 5058     5058            Y                        2.220446e-16
+## 5573     5573            Y                        2.220446e-16
+## 5701     5701            Y                        2.220446e-16
+## 725       725            N                        1.000000e+00
+##      Popular.fctr.predict.All.X.glm
+## 1588                              N
+## 4632                              N
+## 5058                              N
+## 5573                              N
+## 5701                              N
+## 725                               Y
+##      Popular.fctr.predict.All.X.glm.accurate
+## 1588                                   FALSE
+## 4632                                   FALSE
+## 5058                                   FALSE
+## 5573                                   FALSE
+## 5701                                   FALSE
+## 725                                    FALSE
+##      Popular.fctr.predict.All.X.glm.error
+## 1588                                 -0.9
+## 4632                                 -0.9
+## 5058                                 -0.9
+## 5573                                 -0.9
+## 5701                                 -0.9
+## 725                                   0.1
+##      UniqueID Popular.fctr Popular.fctr.predict.All.X.glm.prob
+## 5729     5729            N                                   1
+## 6276     6276            N                                   1
+## 6329     6329            N                                   1
+## 6412     6412            N                                   1
+## 6499     6499            N                                   1
+## 6479     6479            N                                   1
+##      Popular.fctr.predict.All.X.glm
+## 5729                              Y
+## 6276                              Y
+## 6329                              Y
+## 6412                              Y
+## 6499                              Y
+## 6479                              Y
+##      Popular.fctr.predict.All.X.glm.accurate
+## 5729                                   FALSE
+## 6276                                   FALSE
+## 6329                                   FALSE
+## 6412                                   FALSE
+## 6499                                   FALSE
+## 6479                                   FALSE
+##      Popular.fctr.predict.All.X.glm.error
+## 5729                                  0.1
+## 6276                                  0.1
+## 6329                                  0.1
+## 6412                                  0.1
+## 6499                                  0.1
+## 6479                                  0.1
 ```
 
 ![](NYTBlogs_txtfeat_files/figure-html/fit.models_2-13.png) 
@@ -9884,10 +10128,10 @@ print(glb_OOBent_df[glb_OOBent_df$UniqueID %in% FN_OOB_ids,
 ```
 
 ```
-## [1] Popular.fctr                               
-## [2] Popular.fctr.predict.Low.cor.X.glm.prob    
-## [3] Popular.fctr.predict.Low.cor.X.glm         
-## [4] Popular.fctr.predict.Low.cor.X.glm.accurate
+## [1] Popular.fctr                           
+## [2] Popular.fctr.predict.All.X.glm.prob    
+## [3] Popular.fctr.predict.All.X.glm         
+## [4] Popular.fctr.predict.All.X.glm.accurate
 ## <0 rows> (or 0-length row.names)
 ```
 
@@ -9897,8 +10141,8 @@ print(glb_OOBent_df[glb_OOBent_df$UniqueID %in% FN_OOB_ids,
 ```
 
 ```
-## [1] A.npnct23.log   WordCount.log   myCategory.fctr H.npnct21.log  
-## [5] A.npnct21.log  
+## [1] myCategory.fctr   WordCount.log     H.npnct21.log     PubDate.hour.fctr
+## [5] A.make.log       
 ## <0 rows> (or 0-length row.names)
 ```
 
@@ -9937,8 +10181,8 @@ glb_chunks_df <- myadd_chunk(glb_chunks_df, "fit.models", major.inc=FALSE)
 
 ```
 ##         label step_major step_minor     bgn     end elapsed
-## 11 fit.models          6          2 544.291 561.516  17.226
-## 12 fit.models          6          3 561.517      NA      NA
+## 11 fit.models          6          2 432.444 451.331  18.888
+## 12 fit.models          6          3 451.332      NA      NA
 ```
 
 
@@ -9948,7 +10192,22 @@ print(setdiff(names(glb_trnent_df), names(glb_entity_df)))
 ```
 
 ```
-## character(0)
+##  [1] "PubDate.year.fctr" "H.has.http"        "H.npnct03.log"    
+##  [4] "H.npnct10.log"     "H.npnct11.log"     "H.npnct18.log"    
+##  [7] "H.npnct19.log"     "H.npnct20.log"     "H.npnct22.log"    
+## [10] "H.npnct23.log"     "H.npnct24.log"     "H.npnct25.log"    
+## [13] "H.npnct26.log"     "H.npnct27.log"     "H.npnct28.log"    
+## [16] "H.npnct29.log"     "H.npnct31.log"     "H.npnct32.log"    
+## [19] "S.has.http"        "S.npnct02.log"     "S.npnct05.log"    
+## [22] "S.npnct10.log"     "S.npnct11.log"     "S.npnct18.log"    
+## [25] "S.npnct19.log"     "S.npnct20.log"     "S.npnct23.log"    
+## [28] "S.npnct24.log"     "S.npnct25.log"     "S.npnct26.log"    
+## [31] "S.npnct27.log"     "S.npnct28.log"     "S.npnct29.log"    
+## [34] "S.npnct31.log"     "S.npnct32.log"     "A.npnct05.log"    
+## [37] "A.npnct10.log"     "A.npnct11.log"     "A.npnct23.log"    
+## [40] "A.npnct24.log"     "A.npnct25.log"     "A.npnct26.log"    
+## [43] "A.npnct27.log"     "A.npnct28.log"     "A.npnct29.log"    
+## [46] "A.npnct31.log"     "A.npnct32.log"
 ```
 
 ```r
@@ -9956,7 +10215,22 @@ print(setdiff(names(glb_fitent_df), names(glb_entity_df)))
 ```
 
 ```
-## character(0)
+##  [1] "PubDate.year.fctr" "H.has.http"        "H.npnct03.log"    
+##  [4] "H.npnct10.log"     "H.npnct11.log"     "H.npnct18.log"    
+##  [7] "H.npnct19.log"     "H.npnct20.log"     "H.npnct22.log"    
+## [10] "H.npnct23.log"     "H.npnct24.log"     "H.npnct25.log"    
+## [13] "H.npnct26.log"     "H.npnct27.log"     "H.npnct28.log"    
+## [16] "H.npnct29.log"     "H.npnct31.log"     "H.npnct32.log"    
+## [19] "S.has.http"        "S.npnct02.log"     "S.npnct05.log"    
+## [22] "S.npnct10.log"     "S.npnct11.log"     "S.npnct18.log"    
+## [25] "S.npnct19.log"     "S.npnct20.log"     "S.npnct23.log"    
+## [28] "S.npnct24.log"     "S.npnct25.log"     "S.npnct26.log"    
+## [31] "S.npnct27.log"     "S.npnct28.log"     "S.npnct29.log"    
+## [34] "S.npnct31.log"     "S.npnct32.log"     "A.npnct05.log"    
+## [37] "A.npnct10.log"     "A.npnct11.log"     "A.npnct23.log"    
+## [40] "A.npnct24.log"     "A.npnct25.log"     "A.npnct26.log"    
+## [43] "A.npnct27.log"     "A.npnct28.log"     "A.npnct29.log"    
+## [46] "A.npnct31.log"     "A.npnct32.log"
 ```
 
 ```r
@@ -9964,9 +10238,56 @@ print(setdiff(names(glb_OOBent_df), names(glb_entity_df)))
 ```
 
 ```
-## [1] "Popular.fctr.predict.Low.cor.X.glm.prob"    
-## [2] "Popular.fctr.predict.Low.cor.X.glm"         
-## [3] "Popular.fctr.predict.Low.cor.X.glm.accurate"
+##  [1] "PubDate.year.fctr"                      
+##  [2] "H.has.http"                             
+##  [3] "H.npnct03.log"                          
+##  [4] "H.npnct10.log"                          
+##  [5] "H.npnct11.log"                          
+##  [6] "H.npnct18.log"                          
+##  [7] "H.npnct19.log"                          
+##  [8] "H.npnct20.log"                          
+##  [9] "H.npnct22.log"                          
+## [10] "H.npnct23.log"                          
+## [11] "H.npnct24.log"                          
+## [12] "H.npnct25.log"                          
+## [13] "H.npnct26.log"                          
+## [14] "H.npnct27.log"                          
+## [15] "H.npnct28.log"                          
+## [16] "H.npnct29.log"                          
+## [17] "H.npnct31.log"                          
+## [18] "H.npnct32.log"                          
+## [19] "S.has.http"                             
+## [20] "S.npnct02.log"                          
+## [21] "S.npnct05.log"                          
+## [22] "S.npnct10.log"                          
+## [23] "S.npnct11.log"                          
+## [24] "S.npnct18.log"                          
+## [25] "S.npnct19.log"                          
+## [26] "S.npnct20.log"                          
+## [27] "S.npnct23.log"                          
+## [28] "S.npnct24.log"                          
+## [29] "S.npnct25.log"                          
+## [30] "S.npnct26.log"                          
+## [31] "S.npnct27.log"                          
+## [32] "S.npnct28.log"                          
+## [33] "S.npnct29.log"                          
+## [34] "S.npnct31.log"                          
+## [35] "S.npnct32.log"                          
+## [36] "A.npnct05.log"                          
+## [37] "A.npnct10.log"                          
+## [38] "A.npnct11.log"                          
+## [39] "A.npnct23.log"                          
+## [40] "A.npnct24.log"                          
+## [41] "A.npnct25.log"                          
+## [42] "A.npnct26.log"                          
+## [43] "A.npnct27.log"                          
+## [44] "A.npnct28.log"                          
+## [45] "A.npnct29.log"                          
+## [46] "A.npnct31.log"                          
+## [47] "A.npnct32.log"                          
+## [48] "Popular.fctr.predict.All.X.glm.prob"    
+## [49] "Popular.fctr.predict.All.X.glm"         
+## [50] "Popular.fctr.predict.All.X.glm.accurate"
 ```
 
 ```r
@@ -10013,8 +10334,8 @@ glb_chunks_df <- myadd_chunk(glb_chunks_df, "fit.data.training", major.inc=TRUE)
 
 ```
 ##                label step_major step_minor     bgn     end elapsed
-## 12        fit.models          6          3 561.517 569.037    7.52
-## 13 fit.data.training          7          0 569.038      NA      NA
+## 12        fit.models          6          3 451.332 458.164   6.833
+## 13 fit.data.training          7          0 458.165      NA      NA
 ```
 
 ## Step `7.0: fit data training`
@@ -10070,157 +10391,117 @@ if (!is.null(glb_fin_mdl_id) && (glb_fin_mdl_id %in% names(glb_models_lst))) {
 
 ```
 ##                                      id   importance
-## A.npnct23.log             A.npnct23.log 1.000000e+02
-## WordCount.log             WordCount.log 1.288801e-05
-## myCategory.fctr         myCategory.fctr 1.002204e-05
-## H.npnct21.log             H.npnct21.log 5.018143e-06
-## A.npnct21.log             A.npnct21.log 4.625851e-06
-## S.nuppr.log                 S.nuppr.log 4.569486e-06
-## A.npnct14.log             A.npnct14.log 3.906452e-06
-## H.today.log                 H.today.log 3.716137e-06
-## H.nuppr.log                 H.nuppr.log 3.182025e-06
-## H.npnct09.log             H.npnct09.log 3.059125e-06
-## PubDate.wkday.fctr   PubDate.wkday.fctr 2.985990e-06
-## S.ndgts.log                 S.ndgts.log 2.333324e-06
-## H.nchrs.log                 H.nchrs.log 2.327769e-06
-## S.report.log               S.report.log 2.241758e-06
-## A.said.log                   A.said.log 2.225691e-06
-## S.newyork.log             S.newyork.log 2.215953e-06
-## H.npnct12.log             H.npnct12.log 2.149261e-06
-## H.npnct04.log             H.npnct04.log 2.100497e-06
-## PubDate.last10.log   PubDate.last10.log 1.997887e-06
-## H.ndgts.log                 H.ndgts.log 1.993583e-06
-## H.nwrds.log                 H.nwrds.log 1.855196e-06
-## H.npnct17.log             H.npnct17.log 1.847313e-06
-## S.npnct04.log             S.npnct04.log 1.760068e-06
-## PubDate.second.fctr PubDate.second.fctr 1.752346e-06
-## S.can.log                     S.can.log 1.698109e-06
-## S.share.log                 S.share.log 1.577347e-06
-## H.new.log                     H.new.log 1.501228e-06
-## S.will.log                   S.will.log 1.438120e-06
-## H.npnct07.log             H.npnct07.log 1.251748e-06
-## S.take.log                   S.take.log 1.242853e-06
-## PubDate.minute.fctr PubDate.minute.fctr 1.202598e-06
-## PubDate.last1.log     PubDate.last1.log 1.200389e-06
-## S.npnct01.log             S.npnct01.log 1.175535e-06
-## H.npnct13.log             H.npnct13.log 1.166146e-06
-## H.day.log                     H.day.log 1.165449e-06
-## H.npnct14.log             H.npnct14.log 1.162212e-06
-## S.npnct12.log             S.npnct12.log 1.145878e-06
-## S.compani.log             S.compani.log 1.136156e-06
-## H.npnct01.log             H.npnct01.log 1.095863e-06
-## A.nwrds.unq.log         A.nwrds.unq.log 1.074022e-06
-## S.show.log                   S.show.log 1.071063e-06
-## PubDate.hour.fctr     PubDate.hour.fctr 1.052433e-06
-## S.presid.log               S.presid.log 1.031221e-06
-## S.npnct16.log             S.npnct16.log 1.022348e-06
-## S.make.log                   S.make.log 1.008816e-06
-## S.state.log                 S.state.log 9.110520e-07
-## A.state.log                 A.state.log 9.110520e-07
-## A.npnct27.log             A.npnct27.log 9.110520e-07
-## S.year.log                   S.year.log 8.851511e-07
-## H.npnct16.log             H.npnct16.log 8.710662e-07
-## S.intern.log               S.intern.log 8.387696e-07
-## H.has.ebola                 H.has.ebola 8.241580e-07
-## PubDate.date.fctr     PubDate.date.fctr 8.233073e-07
-## H.report.log               H.report.log 8.039331e-07
-## H.X2014.log                 H.X2014.log 7.740347e-07
-## S.npnct13.log             S.npnct13.log 7.695263e-07
-## H.week.log                   H.week.log 7.110312e-07
-## S.time.log                   S.time.log 6.384092e-07
-## PubDate.wkend             PubDate.wkend 6.089193e-07
-## S.week.log                   S.week.log 5.723540e-07
-## A.nwrds.log                 A.nwrds.log 5.580949e-07
-## A.nchrs.log                 A.nchrs.log 5.287682e-07
-## PubDate.last100.log PubDate.last100.log 5.212444e-07
-## S.day.log                     S.day.log 3.145965e-07
-## A.npnct17.log             A.npnct17.log 3.000151e-07
-## S.first.log                 S.first.log 2.555518e-07
-## H.newyork.log             H.newyork.log 1.800829e-07
-## S.articl.log               S.articl.log 1.796068e-07
-## H.daili.log                 H.daili.log 1.287108e-07
-## H.npnct30.log             H.npnct30.log 9.686374e-08
-## .rnorm                           .rnorm 8.784761e-08
-## S.new.log                     S.new.log 4.862671e-08
-## S.npnct06.log             S.npnct06.log 2.225651e-08
-## S.fashion.log             S.fashion.log 1.098049e-09
-## H.npnct15.log             H.npnct15.log 7.395235e-10
-## S.npnct30.log             S.npnct30.log 5.609428e-10
-## A.has.year.colon       A.has.year.colon 2.912418e-10
-## H.npnct02.log             H.npnct02.log 2.666142e-10
-## S.npnct22.log             S.npnct22.log 2.461340e-10
-## S.npnct03.log             S.npnct03.log 2.304835e-10
-## H.npnct05.log             H.npnct05.log 1.846671e-10
-## A.npnct07.log             A.npnct07.log 1.653979e-10
-## S.npnct02.log             S.npnct02.log 7.575296e-11
-## S.npnct08.log             S.npnct08.log 7.353677e-11
-## S.npnct09.log             S.npnct09.log 6.715377e-11
-## A.one.log                     A.one.log 6.660788e-11
-## S.one.log                     S.one.log 6.580549e-11
-## H.npnct11.log             H.npnct11.log 6.416570e-11
-## S.npnct15.log             S.npnct15.log 5.392046e-12
-## A.npnct15.log             A.npnct15.log 4.905261e-12
-## A.npnct18.log             A.npnct18.log 1.783598e-12
-## H.npnct22.log             H.npnct22.log 1.467473e-12
-## A.npnct19.log             A.npnct19.log 0.000000e+00
+## myCategory.fctr         myCategory.fctr 100.00000000
+## WordCount.log             WordCount.log  70.43241920
+## H.npnct21.log             H.npnct21.log  32.71499686
+## PubDate.hour.fctr     PubDate.hour.fctr  28.49497858
+## A.make.log                   A.make.log  24.82458430
+## A.fashion.log             A.fashion.log  22.86799201
+## H.npnct30.log             H.npnct30.log  18.66889549
+## A.report.log               A.report.log  17.94396169
+## A.articl.log               A.articl.log  17.31584878
+## A.npnct04.log             A.npnct04.log  16.42726704
+## H.X2015.log                 H.X2015.log  16.18781324
+## A.share.log                 A.share.log  16.05772852
+## H.today.log                 H.today.log  15.09058570
+## H.new.log                     H.new.log  14.58884852
+## H.has.year.colon       H.has.year.colon  14.48643170
+## A.said.log                   A.said.log  13.53465142
+## H.ndgts.log                 H.ndgts.log  13.52245535
+## PubDate.last10.log   PubDate.last10.log  12.97780472
+## H.npnct04.log             H.npnct04.log  12.76927377
+## H.npnct08.log             H.npnct08.log  12.06593521
+## A.newyork.log             A.newyork.log  11.59720267
+## S.npnct15.log             S.npnct15.log  10.97856358
+## A.npnct15.log             A.npnct15.log  10.79302566
+## PubDate.wkday.fctr   PubDate.wkday.fctr  10.68599632
+## .rnorm                           .rnorm  10.55274877
+## A.week.log                   A.week.log   9.81958866
+## H.npnct13.log             H.npnct13.log   9.71218057
+## A.show.log                   A.show.log   9.68407375
+## A.intern.log               A.intern.log   9.66632050
+## S.time.log                   S.time.log   9.55323497
+## H.npnct07.log             H.npnct07.log   9.53685753
+## A.npnct18.log             A.npnct18.log   9.41984800
+## H.npnct06.log             H.npnct06.log   9.23627876
+## S.state.log                 S.state.log   8.92098916
+## PubDate.minute.fctr PubDate.minute.fctr   8.53101958
+## A.npnct19.log             A.npnct19.log   8.47715771
+## A.can.log                     A.can.log   8.10387656
+## PubDate.date.fctr     PubDate.date.fctr   8.03583604
+## S.npnct12.log             S.npnct12.log   8.03465413
+## A.npnct12.log             A.npnct12.log   7.98621020
+## H.nuppr.log                 H.nuppr.log   7.85639322
+## H.week.log                   H.week.log   7.79627328
+## A.state.log                 A.state.log   7.26321159
+## S.npnct13.log             S.npnct13.log   7.17910453
+## A.npnct13.log             A.npnct13.log   7.17784272
+## A.presid.log               A.presid.log   7.16305732
+## S.npnct16.log             S.npnct16.log   7.14944805
+## S.npnct08.log             S.npnct08.log   7.07080676
+## S.can.log                     S.can.log   7.02341628
+## A.npnct17.log             A.npnct17.log   6.89744623
+## A.will.log                   A.will.log   6.81698075
+## S.ndgts.log                 S.ndgts.log   6.75768296
+## S.compani.log             S.compani.log   6.68327086
+## H.npnct05.log             H.npnct05.log   6.59752354
+## A.npnct21.log             A.npnct21.log   6.53946049
+## S.nuppr.log                 S.nuppr.log   6.48716764
+## H.nchrs.log                 H.nchrs.log   6.36565681
+## A.year.log                   A.year.log   6.30335271
+## A.npnct01.log             A.npnct01.log   6.26548239
+## S.will.log                   S.will.log   6.21988118
+## A.ndgts.log                 A.ndgts.log   6.12230312
+## PubDate.last100.log PubDate.last100.log   6.10602730
+## A.npnct22.log             A.npnct22.log   5.81913883
+## A.nuppr.log                 A.nuppr.log   5.73056332
+## S.day.log                     S.day.log   5.55760002
+## S.one.log                     S.one.log   5.29435441
+## A.one.log                     A.one.log   5.19360228
+## PubDate.second.fctr PubDate.second.fctr   4.57971207
+## H.X2014.log                 H.X2014.log   4.46472089
+## H.report.log               H.report.log   4.40029310
+## S.take.log                   S.take.log   4.26732531
+## S.nwrds.unq.log         S.nwrds.unq.log   4.13474268
+## S.npnct09.log             S.npnct09.log   4.11245488
+## A.nwrds.unq.log         A.nwrds.unq.log   3.95688107
+## H.npnct12.log             H.npnct12.log   3.76801998
+## H.fashion.log             H.fashion.log   3.76390763
+## S.npnct21.log             S.npnct21.log   3.66026012
+## S.new.log                     S.new.log   3.52281315
+## H.npnct15.log             H.npnct15.log   3.45385040
+## A.new.log                     A.new.log   3.41102464
+## A.nchrs.log                 A.nchrs.log   3.12081764
+## S.nchrs.log                 S.nchrs.log   2.97802811
+## S.npnct30.log             S.npnct30.log   2.88153488
+## H.npnct17.log             H.npnct17.log   2.24624596
+## A.npnct06.log             A.npnct06.log   2.18674221
+## A.npnct30.log             A.npnct30.log   2.11807078
+## H.nwrds.unq.log         H.nwrds.unq.log   2.09016785
+## S.nwrds.log                 S.nwrds.log   2.07125498
+## A.npnct07.log             A.npnct07.log   2.04536000
+## H.npnct01.log             H.npnct01.log   2.03495324
+## A.nwrds.log                 A.nwrds.log   1.93513242
+## H.has.ebola                 H.has.ebola   1.75502087
+## A.npnct14.log             A.npnct14.log   1.53950062
+## S.npnct14.log             S.npnct14.log   1.28524340
+## PubDate.last1.log     PubDate.last1.log   1.18736302
+## A.npnct02.log             A.npnct02.log   1.14672657
+## H.day.log                     H.day.log   1.12673197
+## A.first.log                 A.first.log   1.11773697
+## S.npnct03.log             S.npnct03.log   1.07345568
+## H.newyork.log             H.newyork.log   1.03389528
+## A.has.year.colon       A.has.year.colon   0.89413765
+## PubDate.wkend             PubDate.wkend   0.64555965
+## H.npnct16.log             H.npnct16.log   0.59350225
+## H.npnct14.log             H.npnct14.log   0.52235605
+## H.nwrds.log                 H.nwrds.log   0.46021386
+## H.npnct02.log             H.npnct02.log   0.04154952
+## H.daili.log                 H.daili.log   0.00000000
 ## [1] "fitting model: Final.glm"
-## [1] "    indep_vars: A.npnct23.log, WordCount.log, myCategory.fctr, H.npnct21.log, A.npnct21.log, S.nuppr.log, A.npnct14.log, H.today.log, H.nuppr.log, H.npnct09.log, PubDate.wkday.fctr, S.ndgts.log, H.nchrs.log, S.report.log, A.said.log, S.newyork.log, H.npnct12.log, H.npnct04.log, PubDate.last10.log, H.ndgts.log, H.nwrds.log, H.npnct17.log, S.npnct04.log, PubDate.second.fctr, S.can.log, S.share.log, H.new.log, S.will.log, H.npnct07.log, S.take.log, PubDate.minute.fctr, PubDate.last1.log, S.npnct01.log, H.npnct13.log, H.day.log, H.npnct14.log, S.npnct12.log, S.compani.log, H.npnct01.log, A.nwrds.unq.log, S.show.log, PubDate.hour.fctr, S.presid.log, S.npnct16.log, S.make.log, S.state.log, A.state.log, A.npnct27.log, S.year.log, H.npnct16.log, S.intern.log, H.has.ebola, PubDate.date.fctr, H.report.log, H.X2014.log, S.npnct13.log, H.week.log, S.time.log, PubDate.wkend, S.week.log, A.nwrds.log, A.nchrs.log, PubDate.last100.log, S.day.log, A.npnct17.log, S.first.log, H.newyork.log, S.articl.log, H.daili.log, H.npnct30.log, .rnorm, S.new.log, S.npnct06.log, S.fashion.log, H.npnct15.log, S.npnct30.log, A.has.year.colon, H.npnct02.log, S.npnct22.log, S.npnct03.log, H.npnct05.log, A.npnct07.log, S.npnct02.log, S.npnct08.log, S.npnct09.log, A.one.log, S.one.log, H.npnct11.log, S.npnct15.log, A.npnct15.log, A.npnct18.log, H.npnct22.log, A.npnct19.log"
-## + Fold1: parameter=none
-```
-
-```
-## Warning: glm.fit: algorithm did not converge
-```
-
-```
-## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
-```
-
-```
-## Warning in predict.lm(object, newdata, se.fit, scale = 1, type =
-## ifelse(type == : prediction from a rank-deficient fit may be misleading
-```
-
-```
-## - Fold1: parameter=none 
-## + Fold2: parameter=none
-```
-
-```
-## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
-```
-
-```
-## Warning in predict.lm(object, newdata, se.fit, scale = 1, type =
-## ifelse(type == : prediction from a rank-deficient fit may be misleading
-```
-
-```
-## - Fold2: parameter=none 
-## + Fold3: parameter=none
-```
-
-```
-## Warning: glm.fit: algorithm did not converge
-```
-
-```
-## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred
-```
-
-```
-## Warning in predict.lm(object, newdata, se.fit, scale = 1, type =
-## ifelse(type == : prediction from a rank-deficient fit may be misleading
-```
-
-```
-## - Fold3: parameter=none 
+## [1] "    indep_vars: myCategory.fctr, WordCount.log, H.npnct21.log, PubDate.hour.fctr, A.make.log, A.fashion.log, H.npnct30.log, A.report.log, A.articl.log, A.npnct04.log, H.X2015.log, A.share.log, H.today.log, H.new.log, H.has.year.colon, A.said.log, H.ndgts.log, PubDate.last10.log, H.npnct04.log, H.npnct08.log, A.newyork.log, S.npnct15.log, A.npnct15.log, PubDate.wkday.fctr, .rnorm, A.week.log, H.npnct13.log, A.show.log, A.intern.log, S.time.log, H.npnct07.log, A.npnct18.log, H.npnct06.log, S.state.log, PubDate.minute.fctr, A.npnct19.log, A.can.log, PubDate.date.fctr, S.npnct12.log, A.npnct12.log, H.nuppr.log, H.week.log, A.state.log, S.npnct13.log, A.npnct13.log, A.presid.log, S.npnct16.log, S.npnct08.log, S.can.log, A.npnct17.log, A.will.log, S.ndgts.log, S.compani.log, H.npnct05.log, A.npnct21.log, S.nuppr.log, H.nchrs.log, A.year.log, A.npnct01.log, S.will.log, A.ndgts.log, PubDate.last100.log, A.npnct22.log, A.nuppr.log, S.day.log, S.one.log, A.one.log, PubDate.second.fctr, H.X2014.log, H.report.log, S.take.log, S.nwrds.unq.log, S.npnct09.log, A.nwrds.unq.log, H.npnct12.log, H.fashion.log, S.npnct21.log, S.new.log, H.npnct15.log, A.new.log, A.nchrs.log, S.nchrs.log, S.npnct30.log, H.npnct17.log, A.npnct06.log, A.npnct30.log, H.nwrds.unq.log, S.nwrds.log, A.npnct07.log, H.npnct01.log, A.nwrds.log, H.has.ebola, A.npnct14.log, S.npnct14.log, PubDate.last1.log, A.npnct02.log, H.day.log, A.first.log, S.npnct03.log, H.newyork.log, A.has.year.colon, PubDate.wkend, H.npnct16.log, H.npnct14.log, H.nwrds.log, H.npnct02.log, H.daili.log"
 ## Aggregating results
 ## Fitting final model on full training set
-```
-
-```
-## Warning: glm.fit: algorithm did not converge
 ```
 
 ```
@@ -10229,14 +10510,14 @@ if (!is.null(glb_fin_mdl_id) && (glb_fin_mdl_id %in% names(glb_models_lst))) {
 
 ```
 ## Warning: not plotting observations with leverage one:
-##   1651, 2876, 3675, 3676, 5318
+##   1651, 3675, 5299, 5552
 ```
 
 ![](NYTBlogs_txtfeat_files/figure-html/fit.data.training_0-1.png) ![](NYTBlogs_txtfeat_files/figure-html/fit.data.training_0-2.png) 
 
 ```
 ## Warning: not plotting observations with leverage one:
-##   1651, 2876, 3675, 3676, 5318
+##   1651, 3675, 5299, 5552
 ```
 
 ![](NYTBlogs_txtfeat_files/figure-html/fit.data.training_0-3.png) 
@@ -10258,523 +10539,439 @@ if (!is.null(glb_fin_mdl_id) && (glb_fin_mdl_id %in% names(glb_models_lst))) {
 ## 
 ## Deviance Residuals: 
 ##     Min       1Q   Median       3Q      Max  
-## -8.4904  -0.3514  -0.1591   0.0000   3.4579  
+## -2.7951  -0.3225  -0.1419   0.0000   3.4577  
 ## 
 ## Coefficients:
 ##                                                         Estimate
-## (Intercept)                                           -4.468e+00
-## A.npnct23.log                                          3.734e+00
-## WordCount.log                                          1.114e+00
-## `myCategory.fctrForeign#World#Asia Pacific`           -4.609e+00
-## `myCategory.fctr#Multimedia#`                         -4.741e+00
-## `myCategory.fctrCulture#Arts#`                        -2.642e+00
-## `myCategory.fctrBusiness#Business Day#Dealbook`       -2.414e+00
-## myCategory.fctrmyOther                                -4.504e+15
-## `myCategory.fctrBusiness#Technology#`                 -1.870e+00
-## `myCategory.fctrBusiness#Crosswords/Games#`            7.274e-01
-## `myCategory.fctrTStyle##`                             -4.266e+00
-## `myCategory.fctrForeign#World#`                       -1.912e+01
-## `myCategory.fctrOpEd#Opinion#`                         8.622e-01
-## `myCategory.fctrStyles##Fashion`                      -5.306e+00
-## `myCategory.fctr#Opinion#Room For Debate`             -5.385e+00
-## `myCategory.fctr#U.S.#Education`                      -2.209e+01
-## `myCategory.fctr##`                                   -2.658e+00
-## `myCategory.fctrMetro#N.Y. / Region#`                 -1.622e+00
-## `myCategory.fctrBusiness#Business Day#Small Business` -4.220e+00
-## `myCategory.fctrStyles#U.S.#`                         -4.461e-01
-## `myCategory.fctrTravel#Travel#`                       -4.282e+00
-## `myCategory.fctr#Opinion#The Public Editor`            3.529e-01
-## H.npnct21.log                                          1.446e+00
-## A.npnct21.log                                          1.492e+00
-## S.nuppr.log                                           -6.385e-01
-## A.npnct14.log                                          9.382e-01
-## H.today.log                                           -4.142e+00
-## H.nuppr.log                                            9.798e-01
-## H.npnct09.log                                          1.818e+00
-## PubDate.wkday.fctr1                                   -4.263e-01
-## PubDate.wkday.fctr2                                   -9.208e-01
-## PubDate.wkday.fctr3                                   -6.235e-01
-## PubDate.wkday.fctr4                                   -7.144e-01
-## PubDate.wkday.fctr5                                   -7.790e-01
-## PubDate.wkday.fctr6                                   -9.850e-01
-## S.ndgts.log                                           -2.848e-01
-## H.nchrs.log                                           -1.005e+00
-## S.report.log                                          -5.950e-01
-## A.said.log                                             1.072e+00
-## S.newyork.log                                          5.970e-01
-## H.npnct12.log                                          3.582e-01
-## H.npnct04.log                                         -1.061e+00
-## PubDate.last10.log                                     2.005e-01
-## H.ndgts.log                                            2.901e-01
-## H.nwrds.log                                           -3.694e-01
-## H.npnct17.log                                          5.765e-01
-## S.npnct04.log                                         -8.895e-01
-## `PubDate.second.fctr(14.8,29.5]`                      -6.578e-02
-## `PubDate.second.fctr(29.5,44.2]`                      -2.980e-02
-## `PubDate.second.fctr(44.2,59.1]`                      -2.157e-01
-## S.can.log                                             -1.059e+00
-## S.share.log                                           -8.164e-01
-## H.new.log                                             -7.415e-01
-## S.will.log                                            -4.106e-01
-## H.npnct07.log                                          5.531e-02
-## S.take.log                                            -2.510e-01
-## `PubDate.minute.fctr(14.8,29.5]`                      -1.862e-02
-## `PubDate.minute.fctr(29.5,44.2]`                      -2.274e-01
-## `PubDate.minute.fctr(44.2,59.1]`                       1.922e-02
-## PubDate.last1.log                                     -2.917e-02
-## S.npnct01.log                                          2.084e+00
-## H.npnct13.log                                          1.525e-01
-## H.day.log                                             -6.290e-01
-## H.npnct14.log                                         -1.090e-01
-## S.npnct12.log                                         -7.152e-02
-## S.compani.log                                         -4.443e-01
-## H.npnct01.log                                         -1.289e+00
-## A.nwrds.unq.log                                        9.348e-03
-## S.show.log                                            -4.274e-01
-## `PubDate.hour.fctr(7.67,15.3]`                         1.093e-02
-## `PubDate.hour.fctr(15.3,23]`                           9.082e-02
-## S.presid.log                                           7.588e-02
-## S.npnct16.log                                         -1.129e-01
-## S.make.log                                            -2.717e-01
-## S.state.log                                           -5.893e+13
-## A.state.log                                            5.893e+13
-## A.npnct27.log                                         -5.893e+13
-## S.year.log                                            -6.081e-01
-## H.npnct16.log                                          1.335e-02
-## S.intern.log                                           5.583e-01
-## H.has.ebola                                           -5.383e-01
-## `PubDate.date.fctr(7,13]`                              9.452e-02
-## `PubDate.date.fctr(13,19]`                            -1.172e-01
-## `PubDate.date.fctr(19,25]`                             6.087e-03
-## `PubDate.date.fctr(25,31]`                             1.119e-02
-## H.report.log                                          -1.545e-01
-## H.X2014.log                                           -1.087e+00
-## S.npnct13.log                                         -1.395e-01
-## H.week.log                                            -7.127e-01
-## S.time.log                                            -4.839e-01
-## PubDate.wkend                                         -1.033e-01
-## S.week.log                                            -2.814e-01
-## A.nwrds.log                                           -9.253e-01
-## A.nchrs.log                                            4.484e-01
-## PubDate.last100.log                                   -3.426e-03
-## S.day.log                                              1.413e-01
-## A.npnct17.log                                          3.089e-01
-## S.first.log                                           -1.792e-01
-## H.newyork.log                                         -5.033e-02
-## S.articl.log                                           6.588e-01
-## H.daili.log                                            7.742e+03
-## H.npnct30.log                                         -1.549e-01
-## .rnorm                                                -7.433e-03
-## S.new.log                                             -1.483e-01
-## S.npnct06.log                                          9.743e-01
-## S.fashion.log                                         -1.704e+00
-## H.npnct15.log                                         -2.986e+01
-## S.npnct30.log                                         -2.037e+01
-## A.has.year.colon                                      -2.008e+01
-## H.npnct02.log                                         -2.312e+01
-## S.npnct22.log                                         -3.362e+01
-## S.npnct03.log                                         -3.815e+01
-## H.npnct05.log                                          3.176e-01
-## A.npnct07.log                                         -3.511e+01
-## S.npnct02.log                                         -2.448e+01
-## S.npnct08.log                                          1.737e+01
-## S.npnct09.log                                         -1.687e+01
-## A.one.log                                             -3.117e+01
-## S.one.log                                              3.114e+01
-## H.npnct11.log                                         -3.097e+01
-## S.npnct15.log                                          2.715e+01
-## A.npnct15.log                                         -2.656e+01
-## A.npnct18.log                                          1.332e+01
-## H.npnct22.log                                         -3.065e+01
-## A.npnct19.log                                          1.983e+01
-##                                                       Std. Error
-## (Intercept)                                            1.668e+00
-## A.npnct23.log                                          2.938e+00
-## WordCount.log                                          7.292e-02
-## `myCategory.fctrForeign#World#Asia Pacific`            6.315e-01
-## `myCategory.fctr#Multimedia#`                          7.702e-01
-## `myCategory.fctrCulture#Arts#`                         2.914e-01
-## `myCategory.fctrBusiness#Business Day#Dealbook`        2.478e-01
-## myCategory.fctrmyOther                                 1.089e+07
-## `myCategory.fctrBusiness#Technology#`                  2.634e-01
-## `myCategory.fctrBusiness#Crosswords/Games#`            3.733e-01
-## `myCategory.fctrTStyle##`                              4.113e-01
-## `myCategory.fctrForeign#World#`                        8.880e+02
-## `myCategory.fctrOpEd#Opinion#`                         2.415e-01
-## `myCategory.fctrStyles##Fashion`                       1.095e+00
-## `myCategory.fctr#Opinion#Room For Debate`              5.181e-01
-## `myCategory.fctr#U.S.#Education`                       1.045e+03
-## `myCategory.fctr##`                                    2.309e-01
-## `myCategory.fctrMetro#N.Y. / Region#`                  3.996e-01
-## `myCategory.fctrBusiness#Business Day#Small Business`  5.310e-01
-## `myCategory.fctrStyles#U.S.#`                          2.726e-01
-## `myCategory.fctrTravel#Travel#`                        1.028e+00
-## `myCategory.fctr#Opinion#The Public Editor`            6.591e-01
-## H.npnct21.log                                          2.565e-01
-## A.npnct21.log                                          2.674e-01
-## S.nuppr.log                                            1.314e-01
-## A.npnct14.log                                          2.159e-01
-## H.today.log                                            9.298e-01
-## H.nuppr.log                                            3.389e-01
-## H.npnct09.log                                          6.164e-01
-## PubDate.wkday.fctr1                                    4.190e-01
-## PubDate.wkday.fctr2                                    4.564e-01
-## PubDate.wkday.fctr3                                    4.515e-01
-## PubDate.wkday.fctr4                                    4.450e-01
-## PubDate.wkday.fctr5                                    4.515e-01
-## PubDate.wkday.fctr6                                    3.714e-01
-## S.ndgts.log                                            1.230e-01
-## H.nchrs.log                                            3.437e-01
-## S.report.log                                           4.593e-01
-## A.said.log                                             3.229e-01
-## S.newyork.log                                          4.505e-01
-## H.npnct12.log                                          1.700e-01
-## H.npnct04.log                                          6.855e-01
-## PubDate.last10.log                                     9.672e-02
-## H.ndgts.log                                            2.059e-01
-## H.nwrds.log                                            3.575e-01
-## H.npnct17.log                                          4.579e-01
-## S.npnct04.log                                          5.155e-01
-## `PubDate.second.fctr(14.8,29.5]`                       1.415e-01
-## `PubDate.second.fctr(29.5,44.2]`                       1.396e-01
-## `PubDate.second.fctr(44.2,59.1]`                       1.421e-01
-## S.can.log                                              3.598e-01
-## S.share.log                                            5.338e-01
-## H.new.log                                              4.826e-01
-## S.will.log                                             2.857e-01
-## H.npnct07.log                                          1.533e-01
-## S.take.log                                             4.399e-01
-## `PubDate.minute.fctr(14.8,29.5]`                       1.458e-01
-## `PubDate.minute.fctr(29.5,44.2]`                       1.418e-01
-## `PubDate.minute.fctr(44.2,59.1]`                       1.486e-01
-## PubDate.last1.log                                      3.549e-02
-## S.npnct01.log                                          1.095e+00
-## H.npnct13.log                                          2.480e-01
-## H.day.log                                              7.464e-01
-## H.npnct14.log                                          1.614e-01
-## S.npnct12.log                                          1.161e-01
-## S.compani.log                                          3.278e-01
-## H.npnct01.log                                          9.403e-01
-## A.nwrds.unq.log                                        1.244e+00
-## S.show.log                                             4.838e-01
-## `PubDate.hour.fctr(7.67,15.3]`                         1.957e-01
-## `PubDate.hour.fctr(15.3,23]`                           1.984e-01
-## S.presid.log                                           4.181e-01
-## S.npnct16.log                                          3.957e-01
-## S.make.log                                             3.412e-01
-## S.state.log                                            1.463e+14
-## A.state.log                                            1.463e+14
-## A.npnct27.log                                          1.463e+14
-## S.year.log                                             3.760e-01
-## H.npnct16.log                                          2.260e-01
-## S.intern.log                                           7.281e-01
-## H.has.ebola                                            3.766e-01
-## `PubDate.date.fctr(7,13]`                              1.575e-01
-## `PubDate.date.fctr(13,19]`                             1.570e-01
-## `PubDate.date.fctr(19,25]`                             1.534e-01
-## `PubDate.date.fctr(25,31]`                             1.665e-01
-## H.report.log                                           7.273e-01
-## H.X2014.log                                            1.227e+00
-## S.npnct13.log                                          1.604e-01
-## H.week.log                                             7.806e-01
-## S.time.log                                             3.633e-01
-## PubDate.wkend                                          3.539e-01
-## S.week.log                                             3.983e-01
-## A.nwrds.log                                            1.307e+00
-## A.nchrs.log                                            4.131e-01
-## PubDate.last100.log                                    3.624e-02
-## S.day.log                                              4.829e-01
-## A.npnct17.log                                          9.730e-01
-## S.first.log                                            5.326e-01
-## H.newyork.log                                          6.501e-01
-## S.articl.log                                           8.675e-01
-## H.daili.log                                            7.853e+06
-## H.npnct30.log                                          1.591e+00
-## .rnorm                                                 5.054e-02
-## S.new.log                                              2.596e-01
-## S.npnct06.log                                          8.377e-01
-## S.fashion.log                                          1.606e+00
-## H.npnct15.log                                          3.770e+04
-## S.npnct30.log                                          1.359e+04
-## A.has.year.colon                                       9.858e+04
-## H.npnct02.log                                          7.029e+04
-## S.npnct22.log                                          1.365e+05
-## S.npnct03.log                                          1.888e+05
-## H.npnct05.log                                          1.607e+00
-## A.npnct07.log                                          1.915e+05
-## S.npnct02.log                                          3.058e+05
-## S.npnct08.log                                          2.683e+05
-## S.npnct09.log                                          2.683e+05
-## A.one.log                                              3.731e+05
-## S.one.log                                              3.731e+05
-## H.npnct11.log                                          5.477e+05
-## S.npnct15.log                                          5.207e+05
-## A.npnct15.log                                          5.207e+05
-## A.npnct18.log                                          3.301e+05
-## H.npnct22.log                                          5.111e+05
-## A.npnct19.log                                          8.129e+05
-##                                                          z value Pr(>|z|)
-## (Intercept)                                           -2.679e+00 0.007374
-## A.npnct23.log                                          1.271e+00 0.203821
-## WordCount.log                                          1.528e+01  < 2e-16
-## `myCategory.fctrForeign#World#Asia Pacific`           -7.299e+00 2.91e-13
-## `myCategory.fctr#Multimedia#`                         -6.156e+00 7.48e-10
-## `myCategory.fctrCulture#Arts#`                        -9.068e+00  < 2e-16
-## `myCategory.fctrBusiness#Business Day#Dealbook`       -9.743e+00  < 2e-16
-## myCategory.fctrmyOther                                -4.137e+08  < 2e-16
-## `myCategory.fctrBusiness#Technology#`                 -7.098e+00 1.26e-12
-## `myCategory.fctrBusiness#Crosswords/Games#`            1.949e+00 0.051330
-## `myCategory.fctrTStyle##`                             -1.037e+01  < 2e-16
-## `myCategory.fctrForeign#World#`                       -2.200e-02 0.982821
-## `myCategory.fctrOpEd#Opinion#`                         3.570e+00 0.000356
-## `myCategory.fctrStyles##Fashion`                      -4.847e+00 1.25e-06
-## `myCategory.fctr#Opinion#Room For Debate`             -1.039e+01  < 2e-16
-## `myCategory.fctr#U.S.#Education`                      -2.100e-02 0.983129
-## `myCategory.fctr##`                                   -1.151e+01  < 2e-16
-## `myCategory.fctrMetro#N.Y. / Region#`                 -4.059e+00 4.93e-05
-## `myCategory.fctrBusiness#Business Day#Small Business` -7.948e+00 1.89e-15
-## `myCategory.fctrStyles#U.S.#`                         -1.636e+00 0.101756
-## `myCategory.fctrTravel#Travel#`                       -4.166e+00 3.10e-05
-## `myCategory.fctr#Opinion#The Public Editor`            5.350e-01 0.592342
-## H.npnct21.log                                          5.636e+00 1.74e-08
-## A.npnct21.log                                          5.580e+00 2.41e-08
-## S.nuppr.log                                           -4.859e+00 1.18e-06
-## A.npnct14.log                                          4.346e+00 1.38e-05
-## H.today.log                                           -4.455e+00 8.40e-06
-## H.nuppr.log                                            2.891e+00 0.003844
-## H.npnct09.log                                          2.950e+00 0.003181
-## PubDate.wkday.fctr1                                   -1.017e+00 0.308996
-## PubDate.wkday.fctr2                                   -2.018e+00 0.043616
-## PubDate.wkday.fctr3                                   -1.381e+00 0.167297
-## PubDate.wkday.fctr4                                   -1.605e+00 0.108405
-## PubDate.wkday.fctr5                                   -1.725e+00 0.084454
-## PubDate.wkday.fctr6                                   -2.652e+00 0.008003
-## S.ndgts.log                                           -2.316e+00 0.020553
-## H.nchrs.log                                           -2.923e+00 0.003462
-## S.report.log                                          -1.295e+00 0.195242
-## A.said.log                                             3.319e+00 0.000902
-## S.newyork.log                                          1.325e+00 0.185161
-## H.npnct12.log                                          2.107e+00 0.035149
-## H.npnct04.log                                         -1.548e+00 0.121562
-## PubDate.last10.log                                     2.073e+00 0.038142
-## H.ndgts.log                                            1.409e+00 0.158716
-## H.nwrds.log                                           -1.033e+00 0.301435
-## H.npnct17.log                                          1.259e+00 0.208019
-## S.npnct04.log                                         -1.726e+00 0.084423
-## `PubDate.second.fctr(14.8,29.5]`                      -4.650e-01 0.642118
-## `PubDate.second.fctr(29.5,44.2]`                      -2.130e-01 0.830954
-## `PubDate.second.fctr(44.2,59.1]`                      -1.518e+00 0.129105
-## S.can.log                                             -2.942e+00 0.003262
-## S.share.log                                           -1.529e+00 0.126169
-## H.new.log                                             -1.537e+00 0.124415
-## S.will.log                                            -1.437e+00 0.150643
-## H.npnct07.log                                          3.610e-01 0.718266
-## S.take.log                                            -5.700e-01 0.568344
-## `PubDate.minute.fctr(14.8,29.5]`                      -1.280e-01 0.898374
-## `PubDate.minute.fctr(29.5,44.2]`                      -1.604e+00 0.108706
-## `PubDate.minute.fctr(44.2,59.1]`                       1.290e-01 0.897142
-## PubDate.last1.log                                     -8.220e-01 0.411016
-## S.npnct01.log                                          1.904e+00 0.056911
-## H.npnct13.log                                          6.150e-01 0.538580
-## H.day.log                                             -8.430e-01 0.399405
-## H.npnct14.log                                         -6.760e-01 0.499345
-## S.npnct12.log                                         -6.160e-01 0.537764
-## S.compani.log                                         -1.356e+00 0.175243
-## H.npnct01.log                                         -1.371e+00 0.170527
-## A.nwrds.unq.log                                        8.000e-03 0.994005
-## S.show.log                                            -8.830e-01 0.377038
-## `PubDate.hour.fctr(7.67,15.3]`                         5.600e-02 0.955479
-## `PubDate.hour.fctr(15.3,23]`                           4.580e-01 0.647163
-## S.presid.log                                           1.810e-01 0.855990
-## S.npnct16.log                                         -2.850e-01 0.775410
-## S.make.log                                            -7.960e-01 0.425854
-## S.state.log                                           -4.030e-01 0.687183
-## A.state.log                                            4.030e-01 0.687183
-## A.npnct27.log                                         -4.030e-01 0.687183
-## S.year.log                                            -1.617e+00 0.105870
-## H.npnct16.log                                          5.900e-02 0.952880
-## S.intern.log                                           7.670e-01 0.443189
-## H.has.ebola                                           -1.429e+00 0.152934
-## `PubDate.date.fctr(7,13]`                              6.000e-01 0.548304
-## `PubDate.date.fctr(13,19]`                            -7.470e-01 0.455265
-## `PubDate.date.fctr(19,25]`                             4.000e-02 0.968344
-## `PubDate.date.fctr(25,31]`                             6.700e-02 0.946419
-## H.report.log                                          -2.120e-01 0.831780
-## H.X2014.log                                           -8.860e-01 0.375872
-## S.npnct13.log                                         -8.700e-01 0.384386
-## H.week.log                                            -9.130e-01 0.361273
-## S.time.log                                            -1.332e+00 0.182944
-## PubDate.wkend                                         -2.920e-01 0.770474
-## S.week.log                                            -7.060e-01 0.479879
-## A.nwrds.log                                           -7.080e-01 0.478860
-## A.nchrs.log                                            1.085e+00 0.277722
-## PubDate.last100.log                                   -9.500e-02 0.924695
-## S.day.log                                              2.930e-01 0.769858
-## A.npnct17.log                                          3.170e-01 0.750899
-## S.first.log                                           -3.360e-01 0.736546
-## H.newyork.log                                         -7.700e-02 0.938289
-## S.articl.log                                           7.590e-01 0.447600
-## H.daili.log                                            1.000e-03 0.999213
-## H.npnct30.log                                         -9.700e-02 0.922445
-## .rnorm                                                -1.470e-01 0.883063
-## S.new.log                                             -5.710e-01 0.567862
-## S.npnct06.log                                          1.163e+00 0.244766
-## S.fashion.log                                         -1.061e+00 0.288582
-## H.npnct15.log                                         -1.000e-03 0.999368
-## S.npnct30.log                                         -1.000e-03 0.998804
-## A.has.year.colon                                       0.000e+00 0.999837
-## H.npnct02.log                                          0.000e+00 0.999738
-## S.npnct22.log                                          0.000e+00 0.999804
-## S.npnct03.log                                          0.000e+00 0.999839
-## H.npnct05.log                                          1.980e-01 0.843365
-## A.npnct07.log                                          0.000e+00 0.999854
-## S.npnct02.log                                          0.000e+00 0.999936
-## S.npnct08.log                                          0.000e+00 0.999948
-## S.npnct09.log                                          0.000e+00 0.999950
-## A.one.log                                              0.000e+00 0.999933
-## S.one.log                                              0.000e+00 0.999933
-## H.npnct11.log                                          0.000e+00 0.999955
-## S.npnct15.log                                          0.000e+00 0.999958
-## A.npnct15.log                                          0.000e+00 0.999959
-## A.npnct18.log                                          0.000e+00 0.999968
-## H.npnct22.log                                          0.000e+00 0.999952
-## A.npnct19.log                                          0.000e+00 0.999981
-##                                                          
-## (Intercept)                                           ** 
-## A.npnct23.log                                            
-## WordCount.log                                         ***
-## `myCategory.fctrForeign#World#Asia Pacific`           ***
-## `myCategory.fctr#Multimedia#`                         ***
-## `myCategory.fctrCulture#Arts#`                        ***
-## `myCategory.fctrBusiness#Business Day#Dealbook`       ***
-## myCategory.fctrmyOther                                ***
-## `myCategory.fctrBusiness#Technology#`                 ***
-## `myCategory.fctrBusiness#Crosswords/Games#`           .  
-## `myCategory.fctrTStyle##`                             ***
-## `myCategory.fctrForeign#World#`                          
-## `myCategory.fctrOpEd#Opinion#`                        ***
-## `myCategory.fctrStyles##Fashion`                      ***
-## `myCategory.fctr#Opinion#Room For Debate`             ***
-## `myCategory.fctr#U.S.#Education`                         
-## `myCategory.fctr##`                                   ***
-## `myCategory.fctrMetro#N.Y. / Region#`                 ***
-## `myCategory.fctrBusiness#Business Day#Small Business` ***
-## `myCategory.fctrStyles#U.S.#`                            
-## `myCategory.fctrTravel#Travel#`                       ***
-## `myCategory.fctr#Opinion#The Public Editor`              
-## H.npnct21.log                                         ***
-## A.npnct21.log                                         ***
-## S.nuppr.log                                           ***
-## A.npnct14.log                                         ***
-## H.today.log                                           ***
-## H.nuppr.log                                           ** 
-## H.npnct09.log                                         ** 
-## PubDate.wkday.fctr1                                      
-## PubDate.wkday.fctr2                                   *  
-## PubDate.wkday.fctr3                                      
-## PubDate.wkday.fctr4                                      
-## PubDate.wkday.fctr5                                   .  
-## PubDate.wkday.fctr6                                   ** 
-## S.ndgts.log                                           *  
-## H.nchrs.log                                           ** 
-## S.report.log                                             
-## A.said.log                                            ***
-## S.newyork.log                                            
-## H.npnct12.log                                         *  
-## H.npnct04.log                                            
-## PubDate.last10.log                                    *  
-## H.ndgts.log                                              
-## H.nwrds.log                                              
-## H.npnct17.log                                            
-## S.npnct04.log                                         .  
-## `PubDate.second.fctr(14.8,29.5]`                         
-## `PubDate.second.fctr(29.5,44.2]`                         
-## `PubDate.second.fctr(44.2,59.1]`                         
-## S.can.log                                             ** 
-## S.share.log                                              
-## H.new.log                                                
-## S.will.log                                               
-## H.npnct07.log                                            
-## S.take.log                                               
-## `PubDate.minute.fctr(14.8,29.5]`                         
-## `PubDate.minute.fctr(29.5,44.2]`                         
-## `PubDate.minute.fctr(44.2,59.1]`                         
-## PubDate.last1.log                                        
-## S.npnct01.log                                         .  
-## H.npnct13.log                                            
-## H.day.log                                                
-## H.npnct14.log                                            
-## S.npnct12.log                                            
-## S.compani.log                                            
-## H.npnct01.log                                            
-## A.nwrds.unq.log                                          
-## S.show.log                                               
-## `PubDate.hour.fctr(7.67,15.3]`                           
-## `PubDate.hour.fctr(15.3,23]`                             
-## S.presid.log                                             
-## S.npnct16.log                                            
-## S.make.log                                               
-## S.state.log                                              
-## A.state.log                                              
-## A.npnct27.log                                            
-## S.year.log                                               
-## H.npnct16.log                                            
-## S.intern.log                                             
-## H.has.ebola                                              
-## `PubDate.date.fctr(7,13]`                                
-## `PubDate.date.fctr(13,19]`                               
-## `PubDate.date.fctr(19,25]`                               
-## `PubDate.date.fctr(25,31]`                               
-## H.report.log                                             
-## H.X2014.log                                              
-## S.npnct13.log                                            
-## H.week.log                                               
-## S.time.log                                               
-## PubDate.wkend                                            
-## S.week.log                                               
-## A.nwrds.log                                              
-## A.nchrs.log                                              
-## PubDate.last100.log                                      
-## S.day.log                                                
-## A.npnct17.log                                            
-## S.first.log                                              
-## H.newyork.log                                            
-## S.articl.log                                             
-## H.daili.log                                              
-## H.npnct30.log                                            
-## .rnorm                                                   
-## S.new.log                                                
-## S.npnct06.log                                            
-## S.fashion.log                                            
-## H.npnct15.log                                            
-## S.npnct30.log                                            
-## A.has.year.colon                                         
-## H.npnct02.log                                            
-## S.npnct22.log                                            
-## S.npnct03.log                                            
-## H.npnct05.log                                            
-## A.npnct07.log                                            
-## S.npnct02.log                                            
-## S.npnct08.log                                            
-## S.npnct09.log                                            
-## A.one.log                                                
-## S.one.log                                                
-## H.npnct11.log                                            
-## S.npnct15.log                                            
-## A.npnct15.log                                            
-## A.npnct18.log                                            
-## H.npnct22.log                                            
-## A.npnct19.log                                            
+## (Intercept)                                           -4.703e+00
+## `myCategory.fctrForeign#World#Asia Pacific`           -4.586e+00
+## `myCategory.fctr#Multimedia#`                         -4.800e+00
+## `myCategory.fctrCulture#Arts#`                        -2.581e+00
+## `myCategory.fctrBusiness#Business Day#Dealbook`       -2.449e+00
+## myCategory.fctrmyOther                                -2.007e+01
+## `myCategory.fctrBusiness#Technology#`                 -1.907e+00
+## `myCategory.fctrBusiness#Crosswords/Games#`            7.029e-01
+## `myCategory.fctrTStyle##`                             -4.321e+00
+## `myCategory.fctrForeign#World#`                       -1.726e+01
+## `myCategory.fctrOpEd#Opinion#`                         8.941e-01
+## `myCategory.fctrStyles##Fashion`                      -5.554e+00
+## `myCategory.fctr#Opinion#Room For Debate`             -5.375e+00
+## `myCategory.fctr#U.S.#Education`                      -2.057e+01
+## `myCategory.fctr##`                                   -2.679e+00
+## `myCategory.fctrMetro#N.Y. / Region#`                 -1.590e+00
+## `myCategory.fctrBusiness#Business Day#Small Business` -4.242e+00
+## `myCategory.fctrStyles#U.S.#`                         -4.162e-01
+## `myCategory.fctrTravel#Travel#`                       -4.237e+00
+## `myCategory.fctr#Opinion#The Public Editor`            3.172e-01
+## WordCount.log                                          1.149e+00
+## H.npnct21.log                                          1.440e+00
+## `PubDate.hour.fctr(7.67,15.3]`                        -3.019e-03
+## `PubDate.hour.fctr(15.3,23]`                           8.004e-02
+## A.make.log                                            -2.977e-01
+## A.fashion.log                                         -1.838e+00
+## H.npnct30.log                                         -3.352e-01
+## A.report.log                                          -5.740e-01
+## A.articl.log                                           6.064e-01
+## A.npnct04.log                                         -9.268e-01
+## H.X2015.log                                           -1.967e+01
+## A.share.log                                           -8.346e-01
+## H.today.log                                           -4.180e+00
+## H.new.log                                             -7.403e-01
+## H.has.year.colon                                      -1.443e+01
+## A.said.log                                             1.052e+00
+## H.ndgts.log                                            3.582e-01
+## PubDate.last10.log                                     2.094e-01
+## H.npnct04.log                                         -1.131e+00
+## H.npnct08.log                                          1.891e+00
+## A.newyork.log                                          6.115e-01
+## S.npnct15.log                                          1.003e+02
+## A.npnct15.log                                         -9.961e+01
+## PubDate.wkday.fctr1                                   -3.939e-01
+## PubDate.wkday.fctr2                                   -8.760e-01
+## PubDate.wkday.fctr3                                   -6.039e-01
+## PubDate.wkday.fctr4                                   -7.006e-01
+## PubDate.wkday.fctr5                                   -7.768e-01
+## PubDate.wkday.fctr6                                   -9.077e-01
+## .rnorm                                                -7.739e-02
+## A.week.log                                            -2.767e-01
+## H.npnct13.log                                          1.868e-01
+## A.show.log                                            -4.664e-01
+## A.intern.log                                           5.861e-01
+## S.time.log                                            -4.407e-01
+## H.npnct07.log                                          2.998e-02
+## A.npnct18.log                                          6.192e+01
+## H.npnct06.log                                          1.272e+00
+## S.state.log                                           -3.173e+01
+## `PubDate.minute.fctr(14.8,29.5]`                      -3.771e-02
+## `PubDate.minute.fctr(29.5,44.2]`                      -2.182e-01
+## `PubDate.minute.fctr(44.2,59.1]`                       1.489e-02
+## A.npnct19.log                                          1.820e+02
+## A.can.log                                              6.911e+01
+## `PubDate.date.fctr(7,13]`                              1.065e-01
+## `PubDate.date.fctr(13,19]`                            -1.008e-01
+## `PubDate.date.fctr(19,25]`                             1.680e-02
+## `PubDate.date.fctr(25,31]`                             2.584e-02
+## S.npnct12.log                                          7.793e+01
+## A.npnct12.log                                         -7.802e+01
+## H.nuppr.log                                            9.664e-01
+## H.week.log                                            -6.770e-01
+## A.state.log                                            3.257e+01
+## S.npnct13.log                                          1.102e+01
+## A.npnct13.log                                         -1.116e+01
+## A.presid.log                                           1.158e-01
+## S.npnct16.log                                         -1.439e-01
+## S.npnct08.log                                          1.232e+01
+## S.can.log                                             -7.016e+01
+## A.npnct17.log                                          3.489e-01
+## A.will.log                                            -4.967e+00
+## S.ndgts.log                                            3.571e+01
+## S.compani.log                                         -4.420e-01
+## H.npnct05.log                                          1.872e-01
+## A.npnct21.log                                          9.161e+00
+## S.nuppr.log                                            9.535e+00
+## H.nchrs.log                                           -1.115e+00
+## A.year.log                                            -6.910e-01
+## A.npnct01.log                                          2.057e+00
+## S.will.log                                             4.508e+00
+## A.ndgts.log                                           -3.598e+01
+## PubDate.last100.log                                   -1.260e-03
+## A.npnct22.log                                         -2.343e+01
+## A.nuppr.log                                           -1.015e+01
+## S.day.log                                              2.442e-01
+## S.one.log                                             -5.102e+01
+## A.one.log                                              5.107e+01
+## `PubDate.second.fctr(14.8,29.5]`                      -4.725e-02
+## `PubDate.second.fctr(29.5,44.2]`                      -1.795e-02
+## `PubDate.second.fctr(44.2,59.1]`                      -1.969e-01
+## H.X2014.log                                           -4.651e-01
+## H.report.log                                          -1.603e-01
+## S.take.log                                            -3.684e-01
+## S.nwrds.unq.log                                       -1.206e+02
+## S.npnct09.log                                         -1.178e+01
+## A.nwrds.unq.log                                        1.206e+02
+## H.npnct12.log                                          3.538e-01
+## H.fashion.log                                          5.895e-01
+## S.npnct21.log                                         -7.673e+00
+## S.new.log                                              7.216e+00
+## H.npnct15.log                                         -1.888e+01
+## A.new.log                                             -7.365e+00
+## A.nchrs.log                                            2.128e+01
+## S.nchrs.log                                           -2.084e+01
+## S.npnct30.log                                         -2.817e+01
+## H.npnct17.log                                         -6.238e-01
+## A.npnct06.log                                          2.675e-01
+## A.npnct30.log                                          1.347e+01
+## H.nwrds.unq.log                                       -1.799e+00
+## S.nwrds.log                                            1.426e+02
+## A.npnct07.log                                         -2.529e+01
+## H.npnct01.log                                         -1.421e+00
+## A.nwrds.log                                           -1.435e+02
+## H.has.ebola                                           -5.791e-01
+## A.npnct14.log                                          1.125e+00
+## S.npnct14.log                                         -1.404e-01
+## PubDate.last1.log                                     -3.608e-02
+## A.npnct02.log                                         -1.893e+01
+## H.day.log                                             -7.032e-01
+## A.first.log                                           -1.731e-01
+## S.npnct03.log                                         -2.809e+01
+## H.newyork.log                                         -1.026e-01
+## A.has.year.colon                                       1.433e+00
+## PubDate.wkend                                         -1.118e-01
+## H.npnct16.log                                          2.932e-02
+## H.npnct14.log                                         -1.322e-01
+## H.nwrds.log                                            1.573e+00
+## H.npnct02.log                                         -1.680e+01
+## H.daili.log                                           -2.317e+01
+##                                                       Std. Error z value
+## (Intercept)                                            1.684e+00  -2.792
+## `myCategory.fctrForeign#World#Asia Pacific`            6.322e-01  -7.254
+## `myCategory.fctr#Multimedia#`                          7.710e-01  -6.226
+## `myCategory.fctrCulture#Arts#`                         2.924e-01  -8.827
+## `myCategory.fctrBusiness#Business Day#Dealbook`        2.473e-01  -9.903
+## myCategory.fctrmyOther                                 1.509e+03  -0.013
+## `myCategory.fctrBusiness#Technology#`                  2.632e-01  -7.245
+## `myCategory.fctrBusiness#Crosswords/Games#`            3.756e-01   1.872
+## `myCategory.fctrTStyle##`                              4.181e-01 -10.334
+## `myCategory.fctrForeign#World#`                        6.641e+02  -0.026
+## `myCategory.fctrOpEd#Opinion#`                         2.438e-01   3.667
+## `myCategory.fctrStyles##Fashion`                       1.314e+00  -4.227
+## `myCategory.fctr#Opinion#Room For Debate`              5.194e-01 -10.349
+## `myCategory.fctr#U.S.#Education`                       5.051e+02  -0.041
+## `myCategory.fctr##`                                    2.310e-01 -11.599
+## `myCategory.fctrMetro#N.Y. / Region#`                  3.997e-01  -3.978
+## `myCategory.fctrBusiness#Business Day#Small Business`  5.328e-01  -7.962
+## `myCategory.fctrStyles#U.S.#`                          2.731e-01  -1.524
+## `myCategory.fctrTravel#Travel#`                        1.030e+00  -4.112
+## `myCategory.fctr#Opinion#The Public Editor`            6.612e-01   0.480
+## WordCount.log                                          7.444e-02  15.434
+## H.npnct21.log                                          2.589e-01   5.562
+## `PubDate.hour.fctr(7.67,15.3]`                         1.964e-01  -0.015
+## `PubDate.hour.fctr(15.3,23]`                           1.990e-01   0.402
+## A.make.log                                             3.435e-01  -0.867
+## A.fashion.log                                          1.607e+00  -1.144
+## H.npnct30.log                                          1.601e+00  -0.209
+## A.report.log                                           4.597e-01  -1.249
+## A.articl.log                                           8.658e-01   0.700
+## A.npnct04.log                                          5.155e-01  -1.798
+## H.X2015.log                                            9.465e+02  -0.021
+## A.share.log                                            5.332e-01  -1.565
+## H.today.log                                            9.307e-01  -4.491
+## H.new.log                                              4.833e-01  -1.532
+## H.has.year.colon                                       6.434e+02  -0.022
+## A.said.log                                             3.247e-01   3.239
+## H.ndgts.log                                            2.139e-01   1.675
+## PubDate.last10.log                                     9.792e-02   2.138
+## H.npnct04.log                                          6.965e-01  -1.624
+## H.npnct08.log                                          6.189e-01   3.055
+## A.newyork.log                                          4.543e-01   1.346
+## S.npnct15.log                                          2.347e+04   0.004
+## A.npnct15.log                                          2.347e+04  -0.004
+## PubDate.wkday.fctr1                                    4.216e-01  -0.934
+## PubDate.wkday.fctr2                                    4.594e-01  -1.907
+## PubDate.wkday.fctr3                                    4.545e-01  -1.329
+## PubDate.wkday.fctr4                                    4.481e-01  -1.563
+## PubDate.wkday.fctr5                                    4.541e-01  -1.711
+## PubDate.wkday.fctr6                                    3.743e-01  -2.425
+## .rnorm                                                 5.061e-02  -1.529
+## A.week.log                                             4.013e-01  -0.689
+## H.npnct13.log                                          2.499e-01   0.748
+## A.show.log                                             4.850e-01  -0.962
+## A.intern.log                                           7.392e-01   0.793
+## S.time.log                                             3.685e-01  -1.196
+## H.npnct07.log                                          1.540e-01   0.195
+## A.npnct18.log                                          2.256e+04   0.003
+## H.npnct06.log                                          7.949e-01   1.601
+## S.state.log                                            1.901e+04  -0.002
+## `PubDate.minute.fctr(14.8,29.5]`                       1.462e-01  -0.258
+## `PubDate.minute.fctr(29.5,44.2]`                       1.427e-01  -1.529
+## `PubDate.minute.fctr(44.2,59.1]`                       1.495e-01   0.100
+## A.npnct19.log                                          3.052e+04   0.006
+## A.can.log                                              2.652e+04   0.003
+## `PubDate.date.fctr(7,13]`                              1.587e-01   0.671
+## `PubDate.date.fctr(13,19]`                             1.579e-01  -0.638
+## `PubDate.date.fctr(19,25]`                             1.544e-01   0.109
+## `PubDate.date.fctr(25,31]`                             1.679e-01   0.154
+## S.npnct12.log                                          9.819e+03   0.008
+## A.npnct12.log                                          9.819e+03  -0.008
+## H.nuppr.log                                            3.414e-01   2.831
+## H.week.log                                             7.845e-01  -0.863
+## A.state.log                                            1.901e+04   0.002
+## S.npnct13.log                                          3.317e+03   0.003
+## A.npnct13.log                                          3.317e+03  -0.003
+## A.presid.log                                           4.249e-01   0.273
+## S.npnct16.log                                          3.982e-01  -0.361
+## S.npnct08.log                                          7.757e+03   0.002
+## S.can.log                                              2.652e+04  -0.003
+## A.npnct17.log                                          1.006e+00   0.347
+## A.will.log                                             1.554e+04   0.000
+## S.ndgts.log                                            3.118e+03   0.011
+## S.compani.log                                          3.290e-01  -1.343
+## H.npnct05.log                                          1.610e+00   0.116
+## A.npnct21.log                                          5.403e+00   1.696
+## S.nuppr.log                                            2.509e+01   0.380
+## H.nchrs.log                                            3.462e-01  -3.222
+## A.year.log                                             3.813e-01  -1.812
+## A.npnct01.log                                          1.095e+00   1.879
+## S.will.log                                             1.554e+04   0.000
+## A.ndgts.log                                            3.118e+03  -0.012
+## PubDate.last100.log                                    3.599e-02  -0.035
+## A.npnct22.log                                          4.047e+03  -0.006
+## A.nuppr.log                                            2.509e+01  -0.405
+## S.day.log                                              4.805e-01   0.508
+## S.one.log                                              1.913e+04  -0.003
+## A.one.log                                              1.913e+04   0.003
+## `PubDate.second.fctr(14.8,29.5]`                       1.424e-01  -0.332
+## `PubDate.second.fctr(29.5,44.2]`                       1.406e-01  -0.128
+## `PubDate.second.fctr(44.2,59.1]`                       1.429e-01  -1.378
+## H.X2014.log                                            1.450e+00  -0.321
+## H.report.log                                           7.278e-01  -0.220
+## S.take.log                                             4.545e-01  -0.811
+## S.nwrds.unq.log                                        1.079e+02  -1.117
+## S.npnct09.log                                          7.757e+03  -0.002
+## A.nwrds.unq.log                                        1.079e+02   1.117
+## H.npnct12.log                                          1.712e-01   2.067
+## H.fashion.log                                          1.895e+00   0.311
+## S.npnct21.log                                          5.401e+00  -1.421
+## S.new.log                                              6.984e+03   0.001
+## H.npnct15.log                                          9.999e+02  -0.019
+## A.new.log                                              6.984e+03  -0.001
+## A.nchrs.log                                            4.605e+01   0.462
+## S.nchrs.log                                            4.605e+01  -0.453
+## S.npnct30.log                                          1.689e+04  -0.002
+## H.npnct17.log                                          8.741e-01  -0.714
+## A.npnct06.log                                          1.002e+00   0.267
+## A.npnct30.log                                          1.661e+04   0.001
+## H.nwrds.unq.log                                        1.652e+00  -1.089
+## S.nwrds.log                                            1.163e+02   1.226
+## A.npnct07.log                                          5.545e+03  -0.005
+## H.npnct01.log                                          9.521e-01  -1.492
+## A.nwrds.log                                            1.163e+02  -1.234
+## H.has.ebola                                            3.775e-01  -1.534
+## A.npnct14.log                                          2.412e+00   0.467
+## S.npnct14.log                                          2.397e+00  -0.059
+## PubDate.last1.log                                      3.568e-02  -1.011
+## A.npnct02.log                                          1.144e+04  -0.002
+## H.day.log                                              7.466e-01  -0.942
+## A.first.log                                            5.389e-01  -0.321
+## S.npnct03.log                                          5.276e+03  -0.005
+## H.newyork.log                                          6.534e-01  -0.157
+## A.has.year.colon                                       2.902e+03   0.000
+## PubDate.wkend                                          3.559e-01  -0.314
+## H.npnct16.log                                          2.291e-01   0.128
+## H.npnct14.log                                          1.633e-01  -0.810
+## H.nwrds.log                                            1.691e+00   0.930
+## H.npnct02.log                                          2.115e+03  -0.008
+## H.daili.log                                            1.183e+03  -0.020
+##                                                       Pr(>|z|)    
+## (Intercept)                                           0.005238 ** 
+## `myCategory.fctrForeign#World#Asia Pacific`           4.04e-13 ***
+## `myCategory.fctr#Multimedia#`                         4.79e-10 ***
+## `myCategory.fctrCulture#Arts#`                         < 2e-16 ***
+## `myCategory.fctrBusiness#Business Day#Dealbook`        < 2e-16 ***
+## myCategory.fctrmyOther                                0.989390    
+## `myCategory.fctrBusiness#Technology#`                 4.33e-13 ***
+## `myCategory.fctrBusiness#Crosswords/Games#`           0.061258 .  
+## `myCategory.fctrTStyle##`                              < 2e-16 ***
+## `myCategory.fctrForeign#World#`                       0.979269    
+## `myCategory.fctrOpEd#Opinion#`                        0.000246 ***
+## `myCategory.fctrStyles##Fashion`                      2.37e-05 ***
+## `myCategory.fctr#Opinion#Room For Debate`              < 2e-16 ***
+## `myCategory.fctr#U.S.#Education`                      0.967513    
+## `myCategory.fctr##`                                    < 2e-16 ***
+## `myCategory.fctrMetro#N.Y. / Region#`                 6.96e-05 ***
+## `myCategory.fctrBusiness#Business Day#Small Business` 1.70e-15 ***
+## `myCategory.fctrStyles#U.S.#`                         0.127494    
+## `myCategory.fctrTravel#Travel#`                       3.92e-05 ***
+## `myCategory.fctr#Opinion#The Public Editor`           0.631423    
+## WordCount.log                                          < 2e-16 ***
+## H.npnct21.log                                         2.67e-08 ***
+## `PubDate.hour.fctr(7.67,15.3]`                        0.987735    
+## `PubDate.hour.fctr(15.3,23]`                          0.687506    
+## A.make.log                                            0.386076    
+## A.fashion.log                                         0.252622    
+## H.npnct30.log                                         0.834192    
+## A.report.log                                          0.211815    
+## A.articl.log                                          0.483682    
+## A.npnct04.log                                         0.072233 .  
+## H.X2015.log                                           0.983420    
+## A.share.log                                           0.117535    
+## H.today.log                                           7.08e-06 ***
+## H.new.log                                             0.125614    
+## H.has.year.colon                                      0.982112    
+## A.said.log                                            0.001201 ** 
+## H.ndgts.log                                           0.093970 .  
+## PubDate.last10.log                                    0.032500 *  
+## H.npnct04.log                                         0.104475    
+## H.npnct08.log                                         0.002252 ** 
+## A.newyork.log                                         0.178243    
+## S.npnct15.log                                         0.996591    
+## A.npnct15.log                                         0.996614    
+## PubDate.wkday.fctr1                                   0.350157    
+## PubDate.wkday.fctr2                                   0.056542 .  
+## PubDate.wkday.fctr3                                   0.183992    
+## PubDate.wkday.fctr4                                   0.117942    
+## PubDate.wkday.fctr5                                   0.087132 .  
+## PubDate.wkday.fctr6                                   0.015304 *  
+## .rnorm                                                0.126256    
+## A.week.log                                            0.490578    
+## H.npnct13.log                                         0.454737    
+## A.show.log                                            0.336240    
+## A.intern.log                                          0.427827    
+## S.time.log                                            0.231664    
+## H.npnct07.log                                         0.845600    
+## A.npnct18.log                                         0.997810    
+## H.npnct06.log                                         0.109454    
+## S.state.log                                           0.998668    
+## `PubDate.minute.fctr(14.8,29.5]`                      0.796534    
+## `PubDate.minute.fctr(29.5,44.2]`                      0.126146    
+## `PubDate.minute.fctr(44.2,59.1]`                      0.920639    
+## A.npnct19.log                                         0.995242    
+## A.can.log                                             0.997921    
+## `PubDate.date.fctr(7,13]`                             0.502114    
+## `PubDate.date.fctr(13,19]`                            0.523288    
+## `PubDate.date.fctr(19,25]`                            0.913347    
+## `PubDate.date.fctr(25,31]`                            0.877650    
+## S.npnct12.log                                         0.993668    
+## A.npnct12.log                                         0.993660    
+## H.nuppr.log                                           0.004646 ** 
+## H.week.log                                            0.388134    
+## A.state.log                                           0.998633    
+## S.npnct13.log                                         0.997350    
+## A.npnct13.log                                         0.997316    
+## A.presid.log                                          0.785194    
+## S.npnct16.log                                         0.717764    
+## S.npnct08.log                                         0.998733    
+## S.can.log                                             0.997889    
+## A.npnct17.log                                         0.728605    
+## A.will.log                                            0.999745    
+## S.ndgts.log                                           0.990863    
+## S.compani.log                                         0.179128    
+## H.npnct05.log                                         0.907448    
+## A.npnct21.log                                         0.089977 .  
+## S.nuppr.log                                           0.703948    
+## H.nchrs.log                                           0.001272 ** 
+## A.year.log                                            0.069954 .  
+## A.npnct01.log                                         0.060251 .  
+## S.will.log                                            0.999769    
+## A.ndgts.log                                           0.990792    
+## PubDate.last100.log                                   0.972073    
+## A.npnct22.log                                         0.995380    
+## A.nuppr.log                                           0.685809    
+## S.day.log                                             0.611375    
+## S.one.log                                             0.997872    
+## A.one.log                                             0.997870    
+## `PubDate.second.fctr(14.8,29.5]`                      0.740007    
+## `PubDate.second.fctr(29.5,44.2]`                      0.898388    
+## `PubDate.second.fctr(44.2,59.1]`                      0.168256    
+## H.X2014.log                                           0.748419    
+## H.report.log                                          0.825737    
+## S.take.log                                            0.417575    
+## S.nwrds.unq.log                                       0.264019    
+## S.npnct09.log                                         0.998788    
+## A.nwrds.unq.log                                       0.263817    
+## H.npnct12.log                                         0.038756 *  
+## H.fashion.log                                         0.755699    
+## S.npnct21.log                                         0.155430    
+## S.new.log                                             0.999176    
+## H.npnct15.log                                         0.984939    
+## A.new.log                                             0.999159    
+## A.nchrs.log                                           0.644109    
+## S.nchrs.log                                           0.650888    
+## S.npnct30.log                                         0.998669    
+## H.npnct17.log                                         0.475467    
+## A.npnct06.log                                         0.789539    
+## A.npnct30.log                                         0.999353    
+## H.nwrds.unq.log                                       0.276153    
+## S.nwrds.log                                           0.220013    
+## A.npnct07.log                                         0.996362    
+## H.npnct01.log                                         0.135659    
+## A.nwrds.log                                           0.217097    
+## H.has.ebola                                           0.125082    
+## A.npnct14.log                                         0.640829    
+## S.npnct14.log                                         0.953299    
+## PubDate.last1.log                                     0.311935    
+## A.npnct02.log                                         0.998679    
+## H.day.log                                             0.346247    
+## A.first.log                                           0.748119    
+## S.npnct03.log                                         0.995753    
+## H.newyork.log                                         0.875286    
+## A.has.year.colon                                      0.999606    
+## PubDate.wkend                                         0.753421    
+## H.npnct16.log                                         0.898176    
+## H.npnct14.log                                         0.418203    
+## H.nwrds.log                                           0.352283    
+## H.npnct02.log                                         0.993661    
+## H.daili.log                                           0.984380    
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## 
 ## (Dispersion parameter for binomial family taken to be 1)
 ## 
-##     Null deviance:  5900.1  on 6531  degrees of freedom
-## Residual deviance: 13724.4  on 6407  degrees of freedom
-## AIC: 13974
+##     Null deviance: 5900.1  on 6531  degrees of freedom
+## Residual deviance: 2737.4  on 6393  degrees of freedom
+## AIC: 3015.4
 ## 
-## Number of Fisher Scoring iterations: 25
+## Number of Fisher Scoring iterations: 18
 ## 
 ## [1] "    calling mypredict_mdl for fit:"
 ```
@@ -10784,34 +10981,34 @@ if (!is.null(glb_fin_mdl_id) && (glb_fin_mdl_id %in% names(glb_models_lst))) {
 ```
 ##    threshold   f.score
 ## 1        0.0 0.2866885
-## 2        0.1 0.6225084
-## 3        0.2 0.6900369
-## 4        0.3 0.7005240
-## 5        0.4 0.6879036
-## 6        0.5 0.6773897
-## 7        0.6 0.6518160
-## 8        0.7 0.5969839
-## 9        0.8 0.4994273
-## 10       0.9 0.3085106
+## 2        0.1 0.6546275
+## 3        0.2 0.7282651
+## 4        0.3 0.7443255
+## 5        0.4 0.7414903
+## 6        0.5 0.7327121
+## 7        0.6 0.7077244
+## 8        0.7 0.6603032
+## 9        0.8 0.5538847
+## 10       0.9 0.3553598
 ## 11       1.0 0.0000000
 ```
 
 ```
 ## [1] "Classifier Probability Threshold: 0.3000 to maximize f.score.fit"
 ##   Popular.fctr Popular.fctr.predict.Final.glm.N
-## 1            N                             4920
+## 1            N                             5066
 ## 2            Y                              224
 ##   Popular.fctr.predict.Final.glm.Y
-## 1                              519
+## 1                              373
 ## 2                              869
 ##          Prediction
 ## Reference    N    Y
-##         N 4920  519
+##         N 5066  373
 ##         Y  224  869
 ##       Accuracy          Kappa  AccuracyLower  AccuracyUpper   AccuracyNull 
-##   8.862523e-01   6.315383e-01   8.783030e-01   8.938549e-01   8.326699e-01 
+##   9.086038e-01   6.889575e-01   9.013552e-01   9.154852e-01   8.326699e-01 
 ## AccuracyPValue  McnemarPValue 
-##   2.451977e-34   4.016717e-27
+##   2.440618e-70   1.384797e-09
 ```
 
 ```
@@ -10825,16 +11022,16 @@ if (!is.null(glb_fin_mdl_id) && (glb_fin_mdl_id %in% names(glb_models_lst))) {
 ```
 ##    model_id model_method
 ## 1 Final.glm          glm
-##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           feats
-## 1 A.npnct23.log, WordCount.log, myCategory.fctr, H.npnct21.log, A.npnct21.log, S.nuppr.log, A.npnct14.log, H.today.log, H.nuppr.log, H.npnct09.log, PubDate.wkday.fctr, S.ndgts.log, H.nchrs.log, S.report.log, A.said.log, S.newyork.log, H.npnct12.log, H.npnct04.log, PubDate.last10.log, H.ndgts.log, H.nwrds.log, H.npnct17.log, S.npnct04.log, PubDate.second.fctr, S.can.log, S.share.log, H.new.log, S.will.log, H.npnct07.log, S.take.log, PubDate.minute.fctr, PubDate.last1.log, S.npnct01.log, H.npnct13.log, H.day.log, H.npnct14.log, S.npnct12.log, S.compani.log, H.npnct01.log, A.nwrds.unq.log, S.show.log, PubDate.hour.fctr, S.presid.log, S.npnct16.log, S.make.log, S.state.log, A.state.log, A.npnct27.log, S.year.log, H.npnct16.log, S.intern.log, H.has.ebola, PubDate.date.fctr, H.report.log, H.X2014.log, S.npnct13.log, H.week.log, S.time.log, PubDate.wkend, S.week.log, A.nwrds.log, A.nchrs.log, PubDate.last100.log, S.day.log, A.npnct17.log, S.first.log, H.newyork.log, S.articl.log, H.daili.log, H.npnct30.log, .rnorm, S.new.log, S.npnct06.log, S.fashion.log, H.npnct15.log, S.npnct30.log, A.has.year.colon, H.npnct02.log, S.npnct22.log, S.npnct03.log, H.npnct05.log, A.npnct07.log, S.npnct02.log, S.npnct08.log, S.npnct09.log, A.one.log, S.one.log, H.npnct11.log, S.npnct15.log, A.npnct15.log, A.npnct18.log, H.npnct22.log, A.npnct19.log
+##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               feats
+## 1 myCategory.fctr, WordCount.log, H.npnct21.log, PubDate.hour.fctr, A.make.log, A.fashion.log, H.npnct30.log, A.report.log, A.articl.log, A.npnct04.log, H.X2015.log, A.share.log, H.today.log, H.new.log, H.has.year.colon, A.said.log, H.ndgts.log, PubDate.last10.log, H.npnct04.log, H.npnct08.log, A.newyork.log, S.npnct15.log, A.npnct15.log, PubDate.wkday.fctr, .rnorm, A.week.log, H.npnct13.log, A.show.log, A.intern.log, S.time.log, H.npnct07.log, A.npnct18.log, H.npnct06.log, S.state.log, PubDate.minute.fctr, A.npnct19.log, A.can.log, PubDate.date.fctr, S.npnct12.log, A.npnct12.log, H.nuppr.log, H.week.log, A.state.log, S.npnct13.log, A.npnct13.log, A.presid.log, S.npnct16.log, S.npnct08.log, S.can.log, A.npnct17.log, A.will.log, S.ndgts.log, S.compani.log, H.npnct05.log, A.npnct21.log, S.nuppr.log, H.nchrs.log, A.year.log, A.npnct01.log, S.will.log, A.ndgts.log, PubDate.last100.log, A.npnct22.log, A.nuppr.log, S.day.log, S.one.log, A.one.log, PubDate.second.fctr, H.X2014.log, H.report.log, S.take.log, S.nwrds.unq.log, S.npnct09.log, A.nwrds.unq.log, H.npnct12.log, H.fashion.log, S.npnct21.log, S.new.log, H.npnct15.log, A.new.log, A.nchrs.log, S.nchrs.log, S.npnct30.log, H.npnct17.log, A.npnct06.log, A.npnct30.log, H.nwrds.unq.log, S.nwrds.log, A.npnct07.log, H.npnct01.log, A.nwrds.log, H.has.ebola, A.npnct14.log, S.npnct14.log, PubDate.last1.log, A.npnct02.log, H.day.log, A.first.log, S.npnct03.log, H.newyork.log, A.has.year.colon, PubDate.wkend, H.npnct16.log, H.npnct14.log, H.nwrds.log, H.npnct02.log, H.daili.log
 ##   max.nTuningRuns min.elapsedtime.everything min.elapsedtime.final
-## 1               1                     17.706                 5.825
+## 1               1                     11.678                 5.617
 ##   max.auc.fit opt.prob.threshold.fit max.f.score.fit max.Accuracy.fit
-## 1   0.9171177                    0.3        0.700524        0.9043152
+## 1   0.9463101                    0.3       0.7443255        0.9067654
 ##   max.AccuracyLower.fit max.AccuracyUpper.fit max.Kappa.fit min.aic.fit
-## 1              0.878303             0.8938549     0.6492598    13974.45
+## 1             0.9013552             0.9154852     0.6451275    3015.365
 ##   max.AccuracySD.fit max.KappaSD.fit
-## 1         0.01360071      0.04432099
+## 1         0.01061015      0.04606138
 ```
 
 ```r
@@ -10843,8 +11040,8 @@ glb_chunks_df <- myadd_chunk(glb_chunks_df, "fit.data.training", major.inc=FALSE
 
 ```
 ##                label step_major step_minor     bgn     end elapsed
-## 13 fit.data.training          7          0 569.038 594.083  25.045
-## 14 fit.data.training          7          1 594.083      NA      NA
+## 13 fit.data.training          7          0 458.165 476.847  18.682
+## 14 fit.data.training          7          1 476.848      NA      NA
 ```
 
 
@@ -10857,7 +11054,7 @@ glb_trnent_df <- glb_get_predictions(df=glb_trnent_df, mdl_id=glb_fin_mdl_id,
 
 ```
 ## Warning in glb_get_predictions(df = glb_trnent_df, mdl_id =
-## glb_fin_mdl_id, : Using default probability threshold: 0.3
+## glb_fin_mdl_id, : Using default probability threshold: 0.9
 ```
 
 ```r
@@ -10869,154 +11066,144 @@ print(glb_feats_df)
 
 ```
 ##                                      id   importance         cor.y
-## A.npnct23.log             A.npnct23.log 1.000000e+02  1.537569e-02
-## WordCount.log             WordCount.log 1.288801e-05  2.649604e-01
-## myCategory.fctr         myCategory.fctr 1.002204e-05  1.234541e-02
-## H.npnct21.log             H.npnct21.log 5.018143e-06  1.283641e-01
-## A.npnct21.log             A.npnct21.log 4.625851e-06  5.482747e-02
-## S.nuppr.log                 S.nuppr.log 4.569486e-06 -2.718459e-01
-## A.npnct14.log             A.npnct14.log 3.906452e-06 -4.999563e-02
-## H.today.log                 H.today.log 3.716137e-06 -6.372306e-02
-## H.nuppr.log                 H.nuppr.log 3.182025e-06 -1.278085e-01
-## H.npnct09.log             H.npnct09.log 3.059125e-06  5.375262e-02
-## PubDate.wkday.fctr   PubDate.wkday.fctr 2.985990e-06 -3.980129e-02
-## S.ndgts.log                 S.ndgts.log 2.333324e-06 -1.242046e-01
-## H.nchrs.log                 H.nchrs.log 2.327769e-06 -1.710624e-01
-## S.report.log               S.report.log 2.241758e-06 -5.032801e-02
-## A.said.log                   A.said.log 2.225691e-06  3.735051e-04
-## S.newyork.log             S.newyork.log 2.215953e-06 -6.219997e-02
-## H.npnct12.log             H.npnct12.log 2.149261e-06  1.333613e-02
-## H.npnct04.log             H.npnct04.log 2.100497e-06 -5.126277e-02
-## PubDate.last10.log   PubDate.last10.log 1.997887e-06  4.931702e-02
-## H.ndgts.log                 H.ndgts.log 1.993583e-06 -1.196633e-01
-## H.nwrds.log                 H.nwrds.log 1.855196e-06 -2.006864e-01
-## H.npnct17.log             H.npnct17.log 1.847313e-06  3.039622e-02
-## S.npnct04.log             S.npnct04.log 1.760068e-06 -6.294642e-02
-## PubDate.second.fctr PubDate.second.fctr 1.752346e-06 -1.187946e-02
-## S.can.log                     S.can.log 1.698109e-06  3.077833e-02
-## S.share.log                 S.share.log 1.577347e-06 -5.138139e-02
-## H.new.log                     H.new.log 1.501228e-06 -5.313316e-02
-## S.will.log                   S.will.log 1.438120e-06 -6.103349e-02
-## H.npnct07.log             H.npnct07.log 1.251748e-06 -1.201741e-02
-## S.take.log                   S.take.log 1.242853e-06 -2.569295e-02
-## PubDate.minute.fctr PubDate.minute.fctr 1.202598e-06 -3.407385e-02
-## PubDate.last1.log     PubDate.last1.log 1.200389e-06  4.635751e-02
-## S.npnct01.log             S.npnct01.log 1.175535e-06  3.093101e-02
-## H.npnct13.log             H.npnct13.log 1.166146e-06 -1.305305e-02
-## H.day.log                     H.day.log 1.165449e-06 -6.272898e-02
-## H.npnct14.log             H.npnct14.log 1.162212e-06 -2.524770e-02
-## S.npnct12.log             S.npnct12.log 1.145878e-06 -9.158156e-02
-## S.compani.log             S.compani.log 1.136156e-06 -5.261812e-02
-## H.npnct01.log             H.npnct01.log 1.095863e-06  2.271577e-02
-## A.nwrds.unq.log         A.nwrds.unq.log 1.074022e-06 -2.506012e-01
-## S.show.log                   S.show.log 1.071063e-06 -4.897915e-02
-## PubDate.hour.fctr     PubDate.hour.fctr 1.052433e-06  1.354368e-01
-## S.presid.log               S.presid.log 1.031221e-06 -2.014404e-02
-## S.npnct16.log             S.npnct16.log 1.022348e-06 -6.770952e-02
-## S.make.log                   S.make.log 1.008816e-06  2.334962e-02
-## S.state.log                 S.state.log 9.110520e-07  7.050791e-03
-## A.state.log                 A.state.log 9.110520e-07  6.668101e-03
-## A.npnct27.log             A.npnct27.log 9.110520e-07 -5.547032e-03
-## S.year.log                   S.year.log 8.851511e-07 -5.094457e-02
-## H.npnct16.log             H.npnct16.log 8.710662e-07 -8.273237e-02
-## S.intern.log               S.intern.log 8.387696e-07 -6.864274e-02
-## H.has.ebola                 H.has.ebola 8.241580e-07  2.588140e-02
-## PubDate.date.fctr     PubDate.date.fctr 8.233073e-07 -1.164756e-02
-## H.report.log               H.report.log 8.039331e-07 -6.494810e-02
-## H.X2014.log                 H.X2014.log 7.740347e-07 -4.620638e-02
-## S.npnct13.log             S.npnct13.log 7.695263e-07 -3.638891e-02
-## H.week.log                   H.week.log 7.110312e-07 -7.510522e-02
-## S.time.log                   S.time.log 6.384092e-07 -5.759227e-02
-## PubDate.wkend             PubDate.wkend 6.089193e-07  1.067288e-01
-## S.week.log                   S.week.log 5.723540e-07 -8.840293e-02
-## A.nwrds.log                 A.nwrds.log 5.580949e-07 -2.450733e-01
-## A.nchrs.log                 A.nchrs.log 5.287682e-07 -2.245488e-01
-## PubDate.last100.log PubDate.last100.log 5.212444e-07 -7.663322e-03
-## S.day.log                     S.day.log 3.145965e-07 -4.555421e-02
-## A.npnct17.log             A.npnct17.log 3.000151e-07 -1.587454e-03
-## S.first.log                 S.first.log 2.555518e-07 -5.345938e-02
-## H.newyork.log             H.newyork.log 1.800829e-07 -5.797009e-02
-## S.articl.log               S.articl.log 1.796068e-07 -5.952055e-02
-## H.daili.log                 H.daili.log 1.287108e-07 -6.919298e-02
-## H.npnct30.log             H.npnct30.log 9.686374e-08 -8.917338e-02
-## .rnorm                           .rnorm 8.784761e-08  1.756172e-02
-## S.new.log                     S.new.log 4.862671e-08 -3.483189e-02
-## S.npnct06.log             S.npnct06.log 2.225651e-08 -2.389145e-02
-## S.fashion.log             S.fashion.log 1.098049e-09 -8.724932e-02
-## H.npnct15.log             H.npnct15.log 7.395235e-10 -6.158577e-02
-## S.npnct30.log             S.npnct30.log 5.609428e-10 -4.370037e-02
-## A.has.year.colon       A.has.year.colon 2.912418e-10 -1.755336e-02
-## H.npnct02.log             H.npnct02.log 2.666142e-10 -2.001851e-02
-## S.npnct22.log             S.npnct22.log 2.461340e-10 -1.923169e-02
-## S.npnct03.log             S.npnct03.log 2.304835e-10 -1.240734e-02
-## H.npnct05.log             H.npnct05.log 1.846671e-10 -9.653967e-03
-## A.npnct07.log             A.npnct07.log 1.653979e-10 -1.214357e-02
-## S.npnct02.log             S.npnct02.log 7.575296e-11 -5.547032e-03
-## S.npnct08.log             S.npnct08.log 7.353677e-11 -2.413868e-03
-## S.npnct09.log             S.npnct09.log 6.715377e-11 -3.986882e-03
-## A.one.log                     A.one.log 6.660788e-11  4.368856e-03
-## S.one.log                     S.one.log 6.580549e-11  4.891059e-03
-## H.npnct11.log             H.npnct11.log 6.416570e-11 -5.547032e-03
-## S.npnct15.log             S.npnct15.log 5.392046e-12 -2.121844e-02
-## A.npnct15.log             A.npnct15.log 4.905261e-12 -2.407715e-02
-## A.npnct18.log             A.npnct18.log 1.783598e-12 -1.451467e-02
-## H.npnct22.log             H.npnct22.log 1.467473e-12 -5.547032e-03
-## A.npnct19.log             A.npnct19.log 0.000000e+00 -1.271661e-02
-## A.articl.log               A.articl.log           NA -5.952055e-02
-## A.can.log                     A.can.log           NA  3.169296e-02
+## myCategory.fctr         myCategory.fctr 100.00000000  1.234541e-02
+## WordCount.log             WordCount.log  70.43241920  2.656836e-01
+## H.npnct21.log             H.npnct21.log  32.71499686  1.283641e-01
+## PubDate.hour.fctr     PubDate.hour.fctr  28.49497858  1.354368e-01
+## A.make.log                   A.make.log  24.82458430  2.334962e-02
+## A.fashion.log             A.fashion.log  22.86799201 -8.724932e-02
+## H.npnct30.log             H.npnct30.log  18.66889549 -8.917338e-02
+## A.report.log               A.report.log  17.94396169 -5.032801e-02
+## A.articl.log               A.articl.log  17.31584878 -5.952055e-02
+## A.npnct04.log             A.npnct04.log  16.42726704 -6.294642e-02
+## H.X2015.log                 H.X2015.log  16.18781324 -6.658489e-02
+## A.share.log                 A.share.log  16.05772852 -5.138139e-02
+## H.today.log                 H.today.log  15.09058570 -6.372306e-02
+## H.new.log                     H.new.log  14.58884852 -5.313316e-02
+## H.has.year.colon       H.has.year.colon  14.48643170 -7.842875e-02
+## A.said.log                   A.said.log  13.53465142  3.735051e-04
+## H.ndgts.log                 H.ndgts.log  13.52245535 -1.196633e-01
+## PubDate.last10.log   PubDate.last10.log  12.97780472  4.931702e-02
+## H.npnct04.log             H.npnct04.log  12.76927377 -5.126277e-02
+## H.npnct08.log             H.npnct08.log  12.06593521  5.375262e-02
+## A.newyork.log             A.newyork.log  11.59720267 -6.219997e-02
+## S.npnct15.log             S.npnct15.log  10.97856358 -2.121844e-02
+## A.npnct15.log             A.npnct15.log  10.79302566 -2.407715e-02
+## PubDate.wkday.fctr   PubDate.wkday.fctr  10.68599632 -3.980129e-02
+## .rnorm                           .rnorm  10.55274877 -8.244230e-03
+## A.week.log                   A.week.log   9.81958866 -8.840293e-02
+## H.npnct13.log             H.npnct13.log   9.71218057 -1.305305e-02
+## A.show.log                   A.show.log   9.68407375 -4.897915e-02
+## A.intern.log               A.intern.log   9.66632050 -6.864274e-02
+## S.time.log                   S.time.log   9.55323497 -5.759227e-02
+## H.npnct07.log             H.npnct07.log   9.53685753 -1.201741e-02
+## A.npnct18.log             A.npnct18.log   9.41984800 -1.451467e-02
+## H.npnct06.log             H.npnct06.log   9.23627876  3.190718e-02
+## S.state.log                 S.state.log   8.92098916  7.050791e-03
+## PubDate.minute.fctr PubDate.minute.fctr   8.53101958 -3.407385e-02
+## A.npnct19.log             A.npnct19.log   8.47715771 -1.271661e-02
+## A.can.log                     A.can.log   8.10387656  3.169296e-02
+## PubDate.date.fctr     PubDate.date.fctr   8.03583604 -1.164756e-02
+## S.npnct12.log             S.npnct12.log   8.03465413 -9.158156e-02
+## A.npnct12.log             A.npnct12.log   7.98621020 -9.183870e-02
+## H.nuppr.log                 H.nuppr.log   7.85639322 -1.278085e-01
+## H.week.log                   H.week.log   7.79627328 -7.510522e-02
+## A.state.log                 A.state.log   7.26321159  6.668101e-03
+## S.npnct13.log             S.npnct13.log   7.17910453 -3.638891e-02
+## A.npnct13.log             A.npnct13.log   7.17784272 -3.760012e-02
+## A.presid.log               A.presid.log   7.16305732 -2.014404e-02
+## S.npnct16.log             S.npnct16.log   7.14944805 -6.770952e-02
+## S.npnct08.log             S.npnct08.log   7.07080676 -2.413868e-03
+## S.can.log                     S.can.log   7.02341628  3.077833e-02
+## A.npnct17.log             A.npnct17.log   6.89744623 -1.587454e-03
+## A.will.log                   A.will.log   6.81698075 -6.147068e-02
+## S.ndgts.log                 S.ndgts.log   6.75768296 -1.242046e-01
+## S.compani.log             S.compani.log   6.68327086 -5.261812e-02
+## H.npnct05.log             H.npnct05.log   6.59752354 -9.653967e-03
+## A.npnct21.log             A.npnct21.log   6.53946049  5.482747e-02
+## S.nuppr.log                 S.nuppr.log   6.48716764 -2.718459e-01
+## H.nchrs.log                 H.nchrs.log   6.36565681 -1.710624e-01
+## A.year.log                   A.year.log   6.30335271 -5.094457e-02
+## A.npnct01.log             A.npnct01.log   6.26548239  3.093101e-02
+## S.will.log                   S.will.log   6.21988118 -6.103349e-02
+## A.ndgts.log                 A.ndgts.log   6.12230312 -1.249484e-01
+## PubDate.last100.log PubDate.last100.log   6.10602730 -7.663322e-03
+## A.npnct22.log             A.npnct22.log   5.81913883 -1.923169e-02
+## A.nuppr.log                 A.nuppr.log   5.73056332 -2.720962e-01
+## S.day.log                     S.day.log   5.55760002 -4.555421e-02
+## S.one.log                     S.one.log   5.29435441  4.891059e-03
+## A.one.log                     A.one.log   5.19360228  4.368856e-03
+## PubDate.second.fctr PubDate.second.fctr   4.57971207 -1.187946e-02
+## H.X2014.log                 H.X2014.log   4.46472089 -4.620638e-02
+## H.report.log               H.report.log   4.40029310 -6.494810e-02
+## S.take.log                   S.take.log   4.26732531 -2.569295e-02
+## S.nwrds.unq.log         S.nwrds.unq.log   4.13474268 -2.507969e-01
+## S.npnct09.log             S.npnct09.log   4.11245488 -3.986882e-03
+## A.nwrds.unq.log         A.nwrds.unq.log   3.95688107 -2.506012e-01
+## H.npnct12.log             H.npnct12.log   3.76801998  1.333613e-02
+## H.fashion.log             H.fashion.log   3.76390763 -8.204998e-02
+## S.npnct21.log             S.npnct21.log   3.66026012  5.503894e-02
+## S.new.log                     S.new.log   3.52281315 -3.483189e-02
+## H.npnct15.log             H.npnct15.log   3.45385040 -6.158577e-02
+## A.new.log                     A.new.log   3.41102464 -3.524871e-02
+## A.nchrs.log                 A.nchrs.log   3.12081764 -2.245488e-01
+## S.nchrs.log                 S.nchrs.log   2.97802811 -2.246930e-01
+## S.npnct30.log             S.npnct30.log   2.88153488 -4.370037e-02
+## H.npnct17.log             H.npnct17.log   2.24624596  3.039622e-02
+## A.npnct06.log             A.npnct06.log   2.18674221 -2.389145e-02
+## A.npnct30.log             A.npnct30.log   2.11807078 -4.373349e-02
+## H.nwrds.unq.log         H.nwrds.unq.log   2.09016785 -2.044964e-01
+## S.nwrds.log                 S.nwrds.log   2.07125498 -2.453541e-01
+## A.npnct07.log             A.npnct07.log   2.04536000 -1.214357e-02
+## H.npnct01.log             H.npnct01.log   2.03495324  2.271577e-02
+## A.nwrds.log                 A.nwrds.log   1.93513242 -2.450733e-01
+## H.has.ebola                 H.has.ebola   1.75502087  2.588140e-02
+## A.npnct14.log             A.npnct14.log   1.53950062 -4.999563e-02
+## S.npnct14.log             S.npnct14.log   1.28524340 -5.332519e-02
+## PubDate.last1.log     PubDate.last1.log   1.18736302  4.635751e-02
+## A.npnct02.log             A.npnct02.log   1.14672657 -1.451467e-02
+## H.day.log                     H.day.log   1.12673197 -6.272898e-02
+## A.first.log                 A.first.log   1.11773697 -5.345938e-02
+## S.npnct03.log             S.npnct03.log   1.07345568 -1.240734e-02
+## H.newyork.log             H.newyork.log   1.03389528 -5.797009e-02
+## A.has.year.colon       A.has.year.colon   0.89413765 -1.755336e-02
+## PubDate.wkend             PubDate.wkend   0.64555965  1.067288e-01
+## H.npnct16.log             H.npnct16.log   0.59350225 -8.273237e-02
+## H.npnct14.log             H.npnct14.log   0.52235605 -2.524770e-02
+## H.nwrds.log                 H.nwrds.log   0.46021386 -2.006864e-01
+## H.npnct02.log             H.npnct02.log   0.04154952 -2.001851e-02
+## H.daili.log                 H.daili.log   0.00000000 -6.919298e-02
 ## A.compani.log             A.compani.log           NA -5.268413e-02
 ## A.day.log                     A.day.log           NA -4.581783e-02
-## A.fashion.log             A.fashion.log           NA -8.724932e-02
-## A.first.log                 A.first.log           NA -5.345938e-02
 ## A.has.http                   A.has.http           NA -1.359260e-02
-## A.intern.log               A.intern.log           NA -6.864274e-02
-## A.make.log                   A.make.log           NA  2.334962e-02
-## A.ndgts.log                 A.ndgts.log           NA -1.249484e-01
-## A.new.log                     A.new.log           NA -3.524871e-02
-## A.newyork.log             A.newyork.log           NA -6.219997e-02
-## A.npnct01.log             A.npnct01.log           NA  3.093101e-02
-## A.npnct02.log             A.npnct02.log           NA -1.451467e-02
 ## A.npnct03.log             A.npnct03.log           NA -1.359260e-02
-## A.npnct04.log             A.npnct04.log           NA -6.294642e-02
 ## A.npnct05.log             A.npnct05.log           NA            NA
-## A.npnct06.log             A.npnct06.log           NA -2.389145e-02
 ## A.npnct08.log             A.npnct08.log           NA -3.258100e-03
 ## A.npnct09.log             A.npnct09.log           NA -4.775988e-03
 ## A.npnct10.log             A.npnct10.log           NA            NA
 ## A.npnct11.log             A.npnct11.log           NA -5.547032e-03
-## A.npnct12.log             A.npnct12.log           NA -9.183870e-02
-## A.npnct13.log             A.npnct13.log           NA -3.760012e-02
 ## A.npnct16.log             A.npnct16.log           NA -6.893301e-02
 ## A.npnct20.log             A.npnct20.log           NA -1.451467e-02
-## A.npnct22.log             A.npnct22.log           NA -1.923169e-02
+## A.npnct23.log             A.npnct23.log           NA  1.537569e-02
 ## A.npnct24.log             A.npnct24.log           NA            NA
 ## A.npnct25.log             A.npnct25.log           NA  1.537569e-02
 ## A.npnct26.log             A.npnct26.log           NA -9.890046e-19
+## A.npnct27.log             A.npnct27.log           NA -5.547032e-03
 ## A.npnct28.log             A.npnct28.log           NA            NA
 ## A.npnct29.log             A.npnct29.log           NA            NA
-## A.npnct30.log             A.npnct30.log           NA -4.373349e-02
 ## A.npnct31.log             A.npnct31.log           NA            NA
 ## A.npnct32.log             A.npnct32.log           NA            NA
-## A.nuppr.log                 A.nuppr.log           NA -2.720962e-01
-## A.presid.log               A.presid.log           NA -2.014404e-02
-## A.report.log               A.report.log           NA -5.032801e-02
-## A.share.log                 A.share.log           NA -5.138139e-02
-## A.show.log                   A.show.log           NA -4.897915e-02
 ## A.take.log                   A.take.log           NA -2.601772e-02
 ## A.time.log                   A.time.log           NA -5.779371e-02
-## A.week.log                   A.week.log           NA -8.840293e-02
-## A.will.log                   A.will.log           NA -6.147068e-02
-## A.year.log                   A.year.log           NA -5.094457e-02
-## H.fashion.log             H.fashion.log           NA -8.204998e-02
 ## H.has.http                   H.has.http           NA            NA
-## H.has.year.colon       H.has.year.colon           NA -7.842875e-02
 ## H.npnct03.log             H.npnct03.log           NA  9.533020e-03
-## H.npnct06.log             H.npnct06.log           NA  3.190718e-02
-## H.npnct08.log             H.npnct08.log           NA  5.375262e-02
+## H.npnct09.log             H.npnct09.log           NA  5.375262e-02
 ## H.npnct10.log             H.npnct10.log           NA            NA
+## H.npnct11.log             H.npnct11.log           NA -5.547032e-03
 ## H.npnct18.log             H.npnct18.log           NA            NA
 ## H.npnct19.log             H.npnct19.log           NA            NA
 ## H.npnct20.log             H.npnct20.log           NA            NA
+## H.npnct22.log             H.npnct22.log           NA -5.547032e-03
 ## H.npnct23.log             H.npnct23.log           NA            NA
 ## H.npnct24.log             H.npnct24.log           NA            NA
 ## H.npnct25.log             H.npnct25.log           NA            NA
@@ -11026,8 +11213,6 @@ print(glb_feats_df)
 ## H.npnct29.log             H.npnct29.log           NA            NA
 ## H.npnct31.log             H.npnct31.log           NA            NA
 ## H.npnct32.log             H.npnct32.log           NA            NA
-## H.nwrds.unq.log         H.nwrds.unq.log           NA -2.044964e-01
-## H.X2015.log                 H.X2015.log           NA -6.658489e-02
 ## Popular                         Popular           NA  1.000000e+00
 ## Popular.fctr               Popular.fctr           NA            NA
 ## PubDate.last1             PubDate.last1           NA  3.592267e-02
@@ -11037,19 +11222,27 @@ print(glb_feats_df)
 ## PubDate.POSIX             PubDate.POSIX           NA  1.568326e-02
 ## PubDate.year.fctr     PubDate.year.fctr           NA            NA
 ## PubDate.zoo                 PubDate.zoo           NA  1.568326e-02
+## S.articl.log               S.articl.log           NA -5.952055e-02
+## S.fashion.log             S.fashion.log           NA -8.724932e-02
+## S.first.log                 S.first.log           NA -5.345938e-02
 ## S.has.http                   S.has.http           NA            NA
 ## S.has.year.colon       S.has.year.colon           NA -1.755336e-02
-## S.nchrs.log                 S.nchrs.log           NA -2.246930e-01
+## S.intern.log               S.intern.log           NA -6.864274e-02
+## S.make.log                   S.make.log           NA  2.334962e-02
+## S.newyork.log             S.newyork.log           NA -6.219997e-02
+## S.npnct01.log             S.npnct01.log           NA  3.093101e-02
+## S.npnct02.log             S.npnct02.log           NA -5.547032e-03
+## S.npnct04.log             S.npnct04.log           NA -6.294642e-02
 ## S.npnct05.log             S.npnct05.log           NA            NA
+## S.npnct06.log             S.npnct06.log           NA -2.389145e-02
 ## S.npnct07.log             S.npnct07.log           NA -1.214357e-02
 ## S.npnct10.log             S.npnct10.log           NA            NA
 ## S.npnct11.log             S.npnct11.log           NA -5.547032e-03
-## S.npnct14.log             S.npnct14.log           NA -5.332519e-02
 ## S.npnct17.log             S.npnct17.log           NA -1.587454e-03
 ## S.npnct18.log             S.npnct18.log           NA            NA
 ## S.npnct19.log             S.npnct19.log           NA            NA
 ## S.npnct20.log             S.npnct20.log           NA            NA
-## S.npnct21.log             S.npnct21.log           NA  5.503894e-02
+## S.npnct22.log             S.npnct22.log           NA -1.923169e-02
 ## S.npnct23.log             S.npnct23.log           NA  2.760321e-02
 ## S.npnct24.log             S.npnct24.log           NA            NA
 ## S.npnct25.log             S.npnct25.log           NA  2.760321e-02
@@ -11059,795 +11252,799 @@ print(glb_feats_df)
 ## S.npnct29.log             S.npnct29.log           NA            NA
 ## S.npnct31.log             S.npnct31.log           NA            NA
 ## S.npnct32.log             S.npnct32.log           NA            NA
-## S.nwrds.log                 S.nwrds.log           NA -2.453541e-01
-## S.nwrds.unq.log         S.nwrds.unq.log           NA -2.507969e-01
+## S.presid.log               S.presid.log           NA -2.014404e-02
+## S.report.log               S.report.log           NA -5.032801e-02
 ## S.said.log                   S.said.log           NA  3.735051e-04
+## S.share.log                 S.share.log           NA -5.138139e-02
+## S.show.log                   S.show.log           NA -4.897915e-02
+## S.week.log                   S.week.log           NA -8.840293e-02
+## S.year.log                   S.year.log           NA -5.094457e-02
 ## UniqueID                       UniqueID           NA  1.182492e-02
 ## WordCount                     WordCount           NA  2.575265e-01
-##                     exclude.as.feat    cor.y.abs    cor.high.X   freqRatio
-## A.npnct23.log                 FALSE 1.537569e-02          <NA> 3264.500000
-## WordCount.log                 FALSE 2.649604e-01          <NA>    1.266667
-## myCategory.fctr               FALSE 1.234541e-02          <NA>    1.337185
-## H.npnct21.log                 FALSE 1.283641e-01          <NA>   14.995098
-## A.npnct21.log                 FALSE 5.482747e-02          <NA>   12.798715
-## S.nuppr.log                   FALSE 2.718459e-01          <NA>    1.152620
-## A.npnct14.log                 FALSE 4.999563e-02          <NA>    4.603330
-## H.today.log                   FALSE 6.372306e-02          <NA>   36.757225
-## H.nuppr.log                   FALSE 1.278085e-01          <NA>    1.033930
-## H.npnct09.log                 FALSE 5.375262e-02          <NA>  111.620690
-## PubDate.wkday.fctr            FALSE 3.980129e-02          <NA>    1.003268
-## S.ndgts.log                   FALSE 1.242046e-01          <NA>   10.511247
-## H.nchrs.log                   FALSE 1.710624e-01          <NA>    1.023810
-## S.report.log                  FALSE 5.032801e-02          <NA>   24.204633
-## A.said.log                    FALSE 3.735051e-04          <NA>   25.212851
-## S.newyork.log                 FALSE 6.219997e-02          <NA>   15.153465
-## H.npnct12.log                 FALSE 1.333613e-02          <NA>    4.937442
-## H.npnct04.log                 FALSE 5.126277e-02          <NA>   38.325301
-## PubDate.last10.log            FALSE 4.931702e-02          <NA>    1.666667
-## H.ndgts.log                   FALSE 1.196633e-01          <NA>   13.616137
-## H.nwrds.log                   FALSE 2.006864e-01          <NA>    1.019119
-## H.npnct17.log                 FALSE 3.039622e-02          <NA>   96.104478
-## S.npnct04.log                 FALSE 6.294642e-02          <NA>   28.536364
-## PubDate.second.fctr           FALSE 1.187946e-02          <NA>    1.018204
-## S.can.log                     FALSE 3.077833e-02          <NA>   26.058091
-## S.share.log                   FALSE 5.138139e-02          <NA>   32.654639
-## H.new.log                     FALSE 5.313316e-02          <NA>   25.228916
-## S.will.log                    FALSE 6.103349e-02          <NA>   11.237288
-## H.npnct07.log                 FALSE 1.201741e-02          <NA>    5.437234
-## S.take.log                    FALSE 2.569295e-02          <NA>   29.376744
-## PubDate.minute.fctr           FALSE 3.407385e-02          <NA>    1.483365
-## PubDate.last1.log             FALSE 4.635751e-02          <NA>    1.142857
-## S.npnct01.log                 FALSE 3.093101e-02          <NA>  309.952381
-## H.npnct13.log                 FALSE 1.305305e-02          <NA>   13.126638
-## H.day.log                     FALSE 6.272898e-02          <NA>   29.801887
-## H.npnct14.log                 FALSE 2.524770e-02          <NA>   22.802326
-## S.npnct12.log                 FALSE 9.158156e-02          <NA>    1.660473
-## S.compani.log                 FALSE 5.261812e-02          <NA>   18.093842
-## H.npnct01.log                 FALSE 2.271577e-02          <NA>  282.913043
-## A.nwrds.unq.log               FALSE 2.506012e-01          <NA>    1.061567
-## S.show.log                    FALSE 4.897915e-02          <NA>   30.512077
-## PubDate.hour.fctr             FALSE 1.354368e-01          <NA>    1.835040
-## S.presid.log                  FALSE 2.014404e-02          <NA>   26.854701
-## S.npnct16.log                 FALSE 6.770952e-02          <NA>   13.647191
-## S.make.log                    FALSE 2.334962e-02          <NA>   27.378261
-## S.state.log                   FALSE 7.050791e-03          <NA>   30.655340
-## A.state.log                   FALSE 6.668101e-03          <NA>   30.502415
-## A.npnct27.log                 FALSE 5.547032e-03          <NA> 6531.000000
-## S.year.log                    FALSE 5.094457e-02          <NA>   18.456716
-## H.npnct16.log                 FALSE 8.273237e-02          <NA>    3.914910
-## S.intern.log                  FALSE 6.864274e-02          <NA>   29.801887
-## H.has.ebola                   FALSE 2.588140e-02          <NA>   73.227273
-## PubDate.date.fctr             FALSE 1.164756e-02          <NA>    1.021394
-## H.report.log                  FALSE 6.494810e-02          <NA>   30.403846
-## H.X2014.log                   FALSE 4.620638e-02          <NA>   63.673267
-## S.npnct13.log                 FALSE 3.638891e-02          <NA>    5.706263
-## H.week.log                    FALSE 7.510522e-02          <NA>   24.818182
-## S.time.log                    FALSE 5.759227e-02          <NA>   13.483296
-## PubDate.wkend                 FALSE 1.067288e-01          <NA>    9.095827
-## S.week.log                    FALSE 8.840293e-02          <NA>   13.278509
-## A.nwrds.log                   FALSE 2.450733e-01          <NA>    1.029183
-## A.nchrs.log                   FALSE 2.245488e-01          <NA>    1.328571
-## PubDate.last100.log           FALSE 7.663322e-03          <NA>   25.000000
-## S.day.log                     FALSE 4.555421e-02          <NA>   24.692913
-## A.npnct17.log                 FALSE 1.587454e-03          <NA>  434.133333
-## S.first.log                   FALSE 5.345938e-02          <NA>   29.509346
-## H.newyork.log                 FALSE 5.797009e-02          <NA>   26.795745
-## S.articl.log                  FALSE 5.952055e-02          <NA>   30.863415
-## H.daili.log                   FALSE 6.919298e-02          <NA>   41.973684
-## H.npnct30.log                 FALSE 8.917338e-02          <NA>   24.123077
-## .rnorm                        FALSE 1.756172e-02          <NA>    1.000000
-## S.new.log                     FALSE 3.483189e-02          <NA>   10.124573
-## S.npnct06.log                 FALSE 2.389145e-02          <NA>  115.642857
-## S.fashion.log                 FALSE 8.724932e-02          <NA>   25.737705
-## H.npnct15.log                 FALSE 6.158577e-02          <NA>   52.983471
-## S.npnct30.log                 FALSE 4.370037e-02          <NA>  134.791667
-## A.has.year.colon              FALSE 1.755336e-02          <NA>  652.200000
-## H.npnct02.log                 FALSE 2.001851e-02          <NA>  501.461538
-## S.npnct22.log                 FALSE 1.923169e-02          <NA>  543.333333
-## S.npnct03.log                 FALSE 1.240734e-02          <NA> 1305.400000
-## H.npnct05.log                 FALSE 9.653967e-03          <NA>  543.333333
-## A.npnct07.log                 FALSE 1.214357e-02          <NA> 1631.750000
-## S.npnct02.log                 FALSE 5.547032e-03          <NA> 6531.000000
-## S.npnct08.log                 FALSE 2.413868e-03          <NA>  175.513514
-## S.npnct09.log                 FALSE 3.986882e-03          <NA>  175.486486
-## A.one.log                     FALSE 4.368856e-03          <NA>   22.773723
-## S.one.log                     FALSE 4.891059e-03          <NA>   22.777372
-## H.npnct11.log                 FALSE 5.547032e-03          <NA> 6531.000000
-## S.npnct15.log                 FALSE 2.121844e-02          <NA>  203.062500
-## A.npnct15.log                 FALSE 2.407715e-02          <NA>  196.696970
-## A.npnct18.log                 FALSE 1.451467e-02          <NA> 1087.500000
-## H.npnct22.log                 FALSE 5.547032e-03          <NA> 6531.000000
-## A.npnct19.log                 FALSE 1.271661e-02          <NA> 1631.500000
-## A.articl.log                  FALSE 5.952055e-02  S.articl.log   30.863415
-## A.can.log                     FALSE 3.169296e-02     S.can.log   26.166667
-## A.compani.log                 FALSE 5.268413e-02 S.compani.log   18.147059
-## A.day.log                     FALSE 4.581783e-02     S.day.log   24.592157
-## A.fashion.log                 FALSE 8.724932e-02 S.fashion.log   25.737705
-## A.first.log                   FALSE 5.345938e-02   S.first.log   29.509346
-## A.has.http                    FALSE 1.359260e-02          <NA> 1087.666667
-## A.intern.log                  FALSE 6.864274e-02  S.intern.log   29.801887
-## A.make.log                    FALSE 2.334962e-02    S.make.log   27.378261
-## A.ndgts.log                   FALSE 1.249484e-01   S.ndgts.log   10.501022
-## A.new.log                     FALSE 3.524871e-02     S.new.log   10.086735
-## A.newyork.log                 FALSE 6.219997e-02 S.newyork.log   15.153465
-## A.npnct01.log                 FALSE 3.093101e-02 S.npnct01.log  309.952381
-## A.npnct02.log                 FALSE 1.451467e-02          <NA> 1087.500000
-## A.npnct03.log                 FALSE 1.359260e-02          <NA> 1087.666667
-## A.npnct04.log                 FALSE 6.294642e-02 S.npnct04.log   28.536364
-## A.npnct05.log                 FALSE           NA          <NA>    0.000000
-## A.npnct06.log                 FALSE 2.389145e-02 S.npnct06.log  115.642857
-## A.npnct08.log                 FALSE 3.258100e-03          <NA>  170.868421
-## A.npnct09.log                 FALSE 4.775988e-03          <NA>  170.842105
-## A.npnct10.log                 FALSE           NA          <NA>    0.000000
-## A.npnct11.log                 FALSE 5.547032e-03          <NA> 6531.000000
-## A.npnct12.log                 FALSE 9.183870e-02 S.npnct12.log    1.660473
-## A.npnct13.log                 FALSE 3.760012e-02 S.npnct13.log    5.715368
-## A.npnct16.log                 FALSE 6.893301e-02 S.npnct16.log   13.482222
-## A.npnct20.log                 FALSE 1.451467e-02          <NA> 1087.500000
-## A.npnct22.log                 FALSE 1.923169e-02 S.npnct22.log  543.333333
-## A.npnct24.log                 FALSE           NA          <NA>    0.000000
-## A.npnct25.log                 FALSE 1.537569e-02          <NA> 3264.500000
-## A.npnct26.log                 FALSE 9.890046e-19          <NA>    0.000000
-## A.npnct28.log                 FALSE           NA          <NA>    0.000000
-## A.npnct29.log                 FALSE           NA          <NA>    0.000000
-## A.npnct30.log                 FALSE 4.373349e-02 S.npnct30.log  126.862745
-## A.npnct31.log                 FALSE           NA          <NA>    0.000000
-## A.npnct32.log                 FALSE           NA          <NA>    0.000000
-## A.nuppr.log                   FALSE 2.720962e-01   S.nuppr.log    1.151308
-## A.presid.log                  FALSE 2.014404e-02  S.presid.log   26.854701
-## A.report.log                  FALSE 5.032801e-02  S.report.log   24.204633
-## A.share.log                   FALSE 5.138139e-02   S.share.log   32.654639
-## A.show.log                    FALSE 4.897915e-02    S.show.log   30.512077
-## A.take.log                    FALSE 2.601772e-02    S.take.log   29.236111
-## A.time.log                    FALSE 5.779371e-02    S.time.log   13.451111
-## A.week.log                    FALSE 8.840293e-02    S.week.log   13.278509
-## A.will.log                    FALSE 6.147068e-02    S.will.log   11.212406
-## A.year.log                    FALSE 5.094457e-02    S.year.log   18.456716
-## H.fashion.log                 FALSE 8.204998e-02    H.week.log   28.542986
-## H.has.http                    FALSE           NA          <NA>    0.000000
-## H.has.year.colon              FALSE 7.842875e-02  A.intern.log   32.670103
-## H.npnct03.log                 FALSE 9.533020e-03          <NA> 2176.333333
-## H.npnct06.log                 FALSE 3.190718e-02 H.npnct17.log   68.935484
-## H.npnct08.log                 FALSE 5.375262e-02 H.npnct09.log  111.620690
-## H.npnct10.log                 FALSE           NA          <NA>    0.000000
-## H.npnct18.log                 FALSE           NA          <NA>    0.000000
-## H.npnct19.log                 FALSE           NA          <NA>    0.000000
-## H.npnct20.log                 FALSE           NA          <NA>    0.000000
-## H.npnct23.log                 FALSE           NA          <NA>    0.000000
-## H.npnct24.log                 FALSE           NA          <NA>    0.000000
-## H.npnct25.log                 FALSE           NA          <NA>    0.000000
-## H.npnct26.log                 FALSE 9.890046e-19          <NA>    0.000000
-## H.npnct27.log                 FALSE           NA          <NA>    0.000000
-## H.npnct28.log                 FALSE           NA          <NA>    0.000000
-## H.npnct29.log                 FALSE           NA          <NA>    0.000000
-## H.npnct31.log                 FALSE           NA          <NA>    0.000000
-## H.npnct32.log                 FALSE           NA          <NA>    0.000000
-## H.nwrds.unq.log               FALSE 2.044964e-01   H.nuppr.log    1.019071
-## H.X2015.log                   FALSE 6.658489e-02 H.npnct15.log   45.326241
-## Popular                        TRUE 1.000000e+00          <NA>    4.976212
-## Popular.fctr                   TRUE           NA          <NA>          NA
-## PubDate.last1                  TRUE 3.592267e-02          <NA>    1.142857
-## PubDate.last10                 TRUE 5.398093e-02          <NA>    1.666667
-## PubDate.last100                TRUE 3.989229e-02          <NA>   25.000000
-## PubDate.month.fctr             TRUE 1.914874e-02          <NA>    1.017514
-## PubDate.POSIX                  TRUE 1.568326e-02          <NA>    1.000000
-## PubDate.year.fctr             FALSE           NA          <NA>    0.000000
-## PubDate.zoo                    TRUE 1.568326e-02          <NA>    1.000000
-## S.has.http                    FALSE           NA          <NA>    0.000000
-## S.has.year.colon              FALSE 1.755336e-02          <NA>  652.200000
-## S.nchrs.log                   FALSE 2.246930e-01   A.nchrs.log    1.328571
-## S.npnct05.log                 FALSE           NA          <NA>    0.000000
-## S.npnct07.log                 FALSE 1.214357e-02          <NA> 1631.750000
-## S.npnct10.log                 FALSE           NA          <NA>    0.000000
-## S.npnct11.log                 FALSE 5.547032e-03          <NA> 6531.000000
-## S.npnct14.log                 FALSE 5.332519e-02 A.npnct14.log    4.672000
-## S.npnct17.log                 FALSE 1.587454e-03          <NA>  434.133333
-## S.npnct18.log                 FALSE           NA          <NA>    0.000000
-## S.npnct19.log                 FALSE           NA          <NA>    0.000000
-## S.npnct20.log                 FALSE           NA          <NA>    0.000000
-## S.npnct21.log                 FALSE 5.503894e-02 A.npnct21.log   12.862366
-## S.npnct23.log                 FALSE 2.760321e-02 S.npnct25.log 6531.000000
-## S.npnct24.log                 FALSE           NA          <NA>    0.000000
-## S.npnct25.log                 FALSE 2.760321e-02          <NA> 6531.000000
-## S.npnct26.log                 FALSE 9.890046e-19          <NA>    0.000000
-## S.npnct27.log                 FALSE           NA          <NA>    0.000000
-## S.npnct28.log                 FALSE           NA          <NA>    0.000000
-## S.npnct29.log                 FALSE           NA          <NA>    0.000000
-## S.npnct31.log                 FALSE           NA          <NA>    0.000000
-## S.npnct32.log                 FALSE           NA          <NA>    0.000000
-## S.nwrds.log                   FALSE 2.453541e-01   A.nwrds.log    1.029183
-## S.nwrds.unq.log               FALSE 2.507969e-01   S.nchrs.log    1.061567
-## S.said.log                    FALSE 3.735051e-04          <NA>   25.212851
-## UniqueID                       TRUE 1.182492e-02          <NA>    1.000000
-## WordCount                      TRUE 2.575265e-01          <NA>    2.315789
-##                     percentUnique zeroVar   nzv is.cor.y.abs.low
-## A.npnct23.log          0.04592774   FALSE  TRUE             TRUE
-## WordCount.log         24.15799143   FALSE FALSE            FALSE
-## myCategory.fctr        0.30618494   FALSE FALSE             TRUE
-## H.npnct21.log          0.06123699   FALSE FALSE            FALSE
-## A.npnct21.log          0.07654623   FALSE FALSE            FALSE
-## S.nuppr.log            0.33680343   FALSE FALSE            FALSE
-## A.npnct14.log          0.16840171   FALSE FALSE            FALSE
-## H.today.log            0.03061849   FALSE  TRUE            FALSE
-## H.nuppr.log            0.29087569   FALSE FALSE            FALSE
-## H.npnct09.log          0.03061849   FALSE  TRUE            FALSE
-## PubDate.wkday.fctr     0.10716473   FALSE FALSE            FALSE
-## S.ndgts.log            0.26025720   FALSE FALSE            FALSE
-## H.nchrs.log            1.57685242   FALSE FALSE            FALSE
-## S.report.log           0.06123699   FALSE  TRUE            FALSE
-## A.said.log             0.04592774   FALSE  TRUE             TRUE
-## S.newyork.log          0.06123699   FALSE FALSE            FALSE
-## H.npnct12.log          0.07654623   FALSE FALSE             TRUE
-## H.npnct04.log          0.04592774   FALSE  TRUE            FALSE
-## PubDate.last10.log    79.05695040   FALSE FALSE            FALSE
-## H.ndgts.log            0.18371096   FALSE FALSE            FALSE
-## H.nwrds.log            0.21432945   FALSE FALSE            FALSE
-## H.npnct17.log          0.06123699   FALSE  TRUE            FALSE
-## S.npnct04.log          0.07654623   FALSE  TRUE            FALSE
-## PubDate.second.fctr    0.06123699   FALSE FALSE             TRUE
-## S.can.log              0.04592774   FALSE  TRUE            FALSE
-## S.share.log            0.04592774   FALSE  TRUE            FALSE
-## H.new.log              0.04592774   FALSE  TRUE            FALSE
-## S.will.log             0.06123699   FALSE FALSE            FALSE
-## H.npnct07.log          0.12247397   FALSE FALSE             TRUE
-## S.take.log             0.04592774   FALSE  TRUE            FALSE
-## PubDate.minute.fctr    0.06123699   FALSE FALSE            FALSE
-## PubDate.last1.log     36.49724434   FALSE FALSE            FALSE
-## S.npnct01.log          0.06123699   FALSE  TRUE            FALSE
-## H.npnct13.log          0.09185548   FALSE FALSE             TRUE
-## H.day.log              0.04592774   FALSE  TRUE            FALSE
-## H.npnct14.log          0.12247397   FALSE  TRUE            FALSE
-## S.npnct12.log          0.13778322   FALSE FALSE            FALSE
-## S.compani.log          0.04592774   FALSE FALSE            FALSE
-## H.npnct01.log          0.04592774   FALSE  TRUE            FALSE
-## A.nwrds.unq.log        0.55113288   FALSE FALSE            FALSE
-## S.show.log             0.06123699   FALSE  TRUE            FALSE
-## PubDate.hour.fctr      0.04592774   FALSE FALSE            FALSE
-## S.presid.log           0.06123699   FALSE  TRUE            FALSE
-## S.npnct16.log          0.04592774   FALSE FALSE            FALSE
-## S.make.log             0.04592774   FALSE  TRUE            FALSE
-## S.state.log            0.04592774   FALSE  TRUE             TRUE
-## A.state.log            0.04592774   FALSE  TRUE             TRUE
-## A.npnct27.log          0.03061849   FALSE  TRUE             TRUE
-## S.year.log             0.06123699   FALSE FALSE            FALSE
-## H.npnct16.log          0.04592774   FALSE FALSE            FALSE
-## S.intern.log           0.04592774   FALSE  TRUE            FALSE
-## H.has.ebola            0.03061849   FALSE  TRUE            FALSE
-## PubDate.date.fctr      0.07654623   FALSE FALSE             TRUE
-## H.report.log           0.03061849   FALSE  TRUE            FALSE
-## H.X2014.log            0.03061849   FALSE  TRUE            FALSE
-## S.npnct13.log          0.09185548   FALSE FALSE            FALSE
-## H.week.log             0.03061849   FALSE  TRUE            FALSE
-## S.time.log             0.04592774   FALSE FALSE            FALSE
-## PubDate.wkend          0.03061849   FALSE FALSE            FALSE
-## S.week.log             0.04592774   FALSE FALSE            FALSE
-## A.nwrds.log            0.59706062   FALSE FALSE            FALSE
-## A.nchrs.log            4.39375383   FALSE FALSE            FALSE
-## PubDate.last100.log   92.19228414   FALSE FALSE             TRUE
-## S.day.log              0.04592774   FALSE  TRUE            FALSE
-## A.npnct17.log          0.04592774   FALSE  TRUE             TRUE
-## S.first.log            0.04592774   FALSE  TRUE            FALSE
-## H.newyork.log          0.03061849   FALSE  TRUE            FALSE
-## S.articl.log           0.03061849   FALSE  TRUE            FALSE
-## H.daili.log            0.03061849   FALSE  TRUE            FALSE
-## H.npnct30.log          0.03061849   FALSE  TRUE            FALSE
-## .rnorm               100.00000000   FALSE FALSE            FALSE
-## S.new.log              0.04592774   FALSE FALSE            FALSE
-## S.npnct06.log          0.03061849   FALSE  TRUE            FALSE
-## S.fashion.log          0.04592774   FALSE  TRUE            FALSE
-## H.npnct15.log          0.03061849   FALSE  TRUE            FALSE
-## S.npnct30.log          0.04592774   FALSE  TRUE            FALSE
-## A.has.year.colon       0.03061849   FALSE  TRUE             TRUE
-## H.npnct02.log          0.03061849   FALSE  TRUE            FALSE
-## S.npnct22.log          0.03061849   FALSE  TRUE            FALSE
-## S.npnct03.log          0.03061849   FALSE  TRUE             TRUE
-## H.npnct05.log          0.03061849   FALSE  TRUE             TRUE
-## A.npnct07.log          0.04592774   FALSE  TRUE             TRUE
-## S.npnct02.log          0.03061849   FALSE  TRUE             TRUE
-## S.npnct08.log          0.04592774   FALSE  TRUE             TRUE
-## S.npnct09.log          0.06123699   FALSE  TRUE             TRUE
-## A.one.log              0.04592774   FALSE  TRUE             TRUE
-## S.one.log              0.04592774   FALSE  TRUE             TRUE
-## H.npnct11.log          0.03061849   FALSE  TRUE             TRUE
-## S.npnct15.log          0.04592774   FALSE  TRUE            FALSE
-## A.npnct15.log          0.10716473   FALSE  TRUE            FALSE
-## A.npnct18.log          0.04592774   FALSE  TRUE             TRUE
-## H.npnct22.log          0.03061849   FALSE  TRUE             TRUE
-## A.npnct19.log          0.06123699   FALSE  TRUE             TRUE
-## A.articl.log           0.03061849   FALSE  TRUE            FALSE
-## A.can.log              0.04592774   FALSE  TRUE            FALSE
-## A.compani.log          0.04592774   FALSE FALSE            FALSE
-## A.day.log              0.04592774   FALSE  TRUE            FALSE
-## A.fashion.log          0.04592774   FALSE  TRUE            FALSE
-## A.first.log            0.04592774   FALSE  TRUE            FALSE
-## A.has.http             0.03061849   FALSE  TRUE             TRUE
-## A.intern.log           0.04592774   FALSE  TRUE            FALSE
-## A.make.log             0.04592774   FALSE  TRUE            FALSE
-## A.ndgts.log            0.29087569   FALSE FALSE            FALSE
-## A.new.log              0.04592774   FALSE FALSE            FALSE
-## A.newyork.log          0.06123699   FALSE FALSE            FALSE
-## A.npnct01.log          0.06123699   FALSE  TRUE            FALSE
-## A.npnct02.log          0.04592774   FALSE  TRUE             TRUE
-## A.npnct03.log          0.03061849   FALSE  TRUE             TRUE
-## A.npnct04.log          0.07654623   FALSE  TRUE            FALSE
-## A.npnct05.log          0.01530925    TRUE  TRUE               NA
-## A.npnct06.log          0.03061849   FALSE  TRUE            FALSE
-## A.npnct08.log          0.04592774   FALSE  TRUE             TRUE
-## A.npnct09.log          0.06123699   FALSE  TRUE             TRUE
-## A.npnct10.log          0.01530925    TRUE  TRUE               NA
-## A.npnct11.log          0.03061849   FALSE  TRUE             TRUE
-## A.npnct12.log          0.13778322   FALSE FALSE            FALSE
-## A.npnct13.log          0.12247397   FALSE FALSE            FALSE
-## A.npnct16.log          0.04592774   FALSE FALSE            FALSE
-## A.npnct20.log          0.04592774   FALSE  TRUE             TRUE
-## A.npnct22.log          0.03061849   FALSE  TRUE            FALSE
-## A.npnct24.log          0.01530925    TRUE  TRUE               NA
-## A.npnct25.log          0.04592774   FALSE  TRUE             TRUE
-## A.npnct26.log          0.01530925    TRUE  TRUE             TRUE
-## A.npnct28.log          0.01530925    TRUE  TRUE               NA
-## A.npnct29.log          0.01530925    TRUE  TRUE               NA
-## A.npnct30.log          0.04592774   FALSE  TRUE            FALSE
-## A.npnct31.log          0.01530925    TRUE  TRUE               NA
-## A.npnct32.log          0.01530925    TRUE  TRUE               NA
-## A.nuppr.log            0.33680343   FALSE FALSE            FALSE
-## A.presid.log           0.06123699   FALSE  TRUE            FALSE
-## A.report.log           0.06123699   FALSE  TRUE            FALSE
-## A.share.log            0.04592774   FALSE  TRUE            FALSE
-## A.show.log             0.06123699   FALSE  TRUE            FALSE
-## A.take.log             0.04592774   FALSE  TRUE            FALSE
-## A.time.log             0.04592774   FALSE FALSE            FALSE
-## A.week.log             0.04592774   FALSE FALSE            FALSE
-## A.will.log             0.06123699   FALSE FALSE            FALSE
-## A.year.log             0.06123699   FALSE FALSE            FALSE
-## H.fashion.log          0.04592774   FALSE  TRUE            FALSE
-## H.has.http             0.01530925    TRUE  TRUE               NA
-## H.has.year.colon       0.03061849   FALSE  TRUE            FALSE
-## H.npnct03.log          0.03061849   FALSE  TRUE             TRUE
-## H.npnct06.log          0.06123699   FALSE  TRUE            FALSE
-## H.npnct08.log          0.03061849   FALSE  TRUE            FALSE
-## H.npnct10.log          0.01530925    TRUE  TRUE               NA
-## H.npnct18.log          0.01530925    TRUE  TRUE               NA
-## H.npnct19.log          0.01530925    TRUE  TRUE               NA
-## H.npnct20.log          0.01530925    TRUE  TRUE               NA
-## H.npnct23.log          0.01530925    TRUE  TRUE               NA
-## H.npnct24.log          0.01530925    TRUE  TRUE               NA
-## H.npnct25.log          0.01530925    TRUE  TRUE               NA
-## H.npnct26.log          0.01530925    TRUE  TRUE             TRUE
-## H.npnct27.log          0.01530925    TRUE  TRUE               NA
-## H.npnct28.log          0.01530925    TRUE  TRUE               NA
-## H.npnct29.log          0.01530925    TRUE  TRUE               NA
-## H.npnct31.log          0.01530925    TRUE  TRUE               NA
-## H.npnct32.log          0.01530925    TRUE  TRUE               NA
-## H.nwrds.unq.log        0.21432945   FALSE FALSE            FALSE
-## H.X2015.log            0.03061849   FALSE  TRUE            FALSE
-## Popular                0.03061849   FALSE FALSE            FALSE
-## Popular.fctr                   NA      NA    NA               NA
-## PubDate.last1         36.49724434   FALSE FALSE            FALSE
-## PubDate.last10        79.05695040   FALSE FALSE            FALSE
-## PubDate.last100       92.52908757   FALSE FALSE            FALSE
-## PubDate.month.fctr     0.04592774   FALSE FALSE            FALSE
-## PubDate.POSIX         99.86221678   FALSE FALSE             TRUE
-## PubDate.year.fctr      0.01530925    TRUE  TRUE               NA
-## PubDate.zoo           99.86221678   FALSE FALSE             TRUE
-## S.has.http             0.01530925    TRUE  TRUE               NA
-## S.has.year.colon       0.03061849   FALSE  TRUE             TRUE
-## S.nchrs.log            3.72014697   FALSE FALSE            FALSE
-## S.npnct05.log          0.01530925    TRUE  TRUE               NA
-## S.npnct07.log          0.04592774   FALSE  TRUE             TRUE
-## S.npnct10.log          0.01530925    TRUE  TRUE               NA
-## S.npnct11.log          0.03061849   FALSE  TRUE             TRUE
-## S.npnct14.log          0.16840171   FALSE FALSE            FALSE
-## S.npnct17.log          0.04592774   FALSE  TRUE             TRUE
-## S.npnct18.log          0.01530925    TRUE  TRUE               NA
-## S.npnct19.log          0.01530925    TRUE  TRUE               NA
-## S.npnct20.log          0.01530925    TRUE  TRUE               NA
-## S.npnct21.log          0.07654623   FALSE FALSE            FALSE
-## S.npnct23.log          0.03061849   FALSE  TRUE            FALSE
-## S.npnct24.log          0.01530925    TRUE  TRUE               NA
-## S.npnct25.log          0.03061849   FALSE  TRUE            FALSE
-## S.npnct26.log          0.01530925    TRUE  TRUE             TRUE
-## S.npnct27.log          0.01530925    TRUE  TRUE               NA
-## S.npnct28.log          0.01530925    TRUE  TRUE               NA
-## S.npnct29.log          0.01530925    TRUE  TRUE               NA
-## S.npnct31.log          0.01530925    TRUE  TRUE               NA
-## S.npnct32.log          0.01530925    TRUE  TRUE               NA
-## S.nwrds.log            0.45927740   FALSE FALSE            FALSE
-## S.nwrds.unq.log        0.44396816   FALSE FALSE            FALSE
-## S.said.log             0.04592774   FALSE  TRUE             TRUE
-## UniqueID             100.00000000   FALSE FALSE             TRUE
-## WordCount             24.15799143   FALSE FALSE            FALSE
-##                     rsp_var_raw id_var rsp_var Low.cor.X.glm.importance
-## A.npnct23.log             FALSE     NA      NA             1.000000e+02
-## WordCount.log             FALSE     NA      NA             1.288801e-05
-## myCategory.fctr           FALSE     NA      NA             1.002204e-05
-## H.npnct21.log             FALSE     NA      NA             5.018143e-06
-## A.npnct21.log             FALSE     NA      NA             4.625851e-06
-## S.nuppr.log               FALSE     NA      NA             4.569486e-06
-## A.npnct14.log             FALSE     NA      NA             3.906452e-06
-## H.today.log               FALSE     NA      NA             3.716137e-06
-## H.nuppr.log               FALSE     NA      NA             3.182025e-06
-## H.npnct09.log             FALSE     NA      NA             3.059125e-06
-## PubDate.wkday.fctr        FALSE     NA      NA             2.985990e-06
-## S.ndgts.log               FALSE     NA      NA             2.333324e-06
-## H.nchrs.log               FALSE     NA      NA             2.327769e-06
-## S.report.log              FALSE     NA      NA             2.241758e-06
-## A.said.log                FALSE     NA      NA             2.225691e-06
-## S.newyork.log             FALSE     NA      NA             2.215953e-06
-## H.npnct12.log             FALSE     NA      NA             2.149261e-06
-## H.npnct04.log             FALSE     NA      NA             2.100497e-06
-## PubDate.last10.log        FALSE     NA      NA             1.997887e-06
-## H.ndgts.log               FALSE     NA      NA             1.993583e-06
-## H.nwrds.log               FALSE     NA      NA             1.855196e-06
-## H.npnct17.log             FALSE     NA      NA             1.847313e-06
-## S.npnct04.log             FALSE     NA      NA             1.760068e-06
-## PubDate.second.fctr       FALSE     NA      NA             1.752346e-06
-## S.can.log                 FALSE     NA      NA             1.698109e-06
-## S.share.log               FALSE     NA      NA             1.577347e-06
-## H.new.log                 FALSE     NA      NA             1.501228e-06
-## S.will.log                FALSE     NA      NA             1.438120e-06
-## H.npnct07.log             FALSE     NA      NA             1.251748e-06
-## S.take.log                FALSE     NA      NA             1.242853e-06
-## PubDate.minute.fctr       FALSE     NA      NA             1.202598e-06
-## PubDate.last1.log         FALSE     NA      NA             1.200389e-06
-## S.npnct01.log             FALSE     NA      NA             1.175535e-06
-## H.npnct13.log             FALSE     NA      NA             1.166146e-06
-## H.day.log                 FALSE     NA      NA             1.165449e-06
-## H.npnct14.log             FALSE     NA      NA             1.162212e-06
-## S.npnct12.log             FALSE     NA      NA             1.145878e-06
-## S.compani.log             FALSE     NA      NA             1.136156e-06
-## H.npnct01.log             FALSE     NA      NA             1.095863e-06
-## A.nwrds.unq.log           FALSE     NA      NA             1.074022e-06
-## S.show.log                FALSE     NA      NA             1.071063e-06
-## PubDate.hour.fctr         FALSE     NA      NA             1.052433e-06
-## S.presid.log              FALSE     NA      NA             1.031221e-06
-## S.npnct16.log             FALSE     NA      NA             1.022348e-06
-## S.make.log                FALSE     NA      NA             1.008816e-06
-## S.state.log               FALSE     NA      NA             9.110520e-07
-## A.state.log               FALSE     NA      NA             9.110520e-07
-## A.npnct27.log             FALSE     NA      NA             9.110520e-07
-## S.year.log                FALSE     NA      NA             8.851511e-07
-## H.npnct16.log             FALSE     NA      NA             8.710662e-07
-## S.intern.log              FALSE     NA      NA             8.387696e-07
-## H.has.ebola               FALSE     NA      NA             8.241580e-07
-## PubDate.date.fctr         FALSE     NA      NA             8.233073e-07
-## H.report.log              FALSE     NA      NA             8.039331e-07
-## H.X2014.log               FALSE     NA      NA             7.740347e-07
-## S.npnct13.log             FALSE     NA      NA             7.695263e-07
-## H.week.log                FALSE     NA      NA             7.110312e-07
-## S.time.log                FALSE     NA      NA             6.384092e-07
-## PubDate.wkend             FALSE     NA      NA             6.089193e-07
-## S.week.log                FALSE     NA      NA             5.723540e-07
-## A.nwrds.log               FALSE     NA      NA             5.580949e-07
-## A.nchrs.log               FALSE     NA      NA             5.287682e-07
-## PubDate.last100.log       FALSE     NA      NA             5.212444e-07
-## S.day.log                 FALSE     NA      NA             3.145965e-07
-## A.npnct17.log             FALSE     NA      NA             3.000151e-07
-## S.first.log               FALSE     NA      NA             2.555518e-07
-## H.newyork.log             FALSE     NA      NA             1.800829e-07
-## S.articl.log              FALSE     NA      NA             1.796068e-07
-## H.daili.log               FALSE     NA      NA             1.287108e-07
-## H.npnct30.log             FALSE     NA      NA             9.686374e-08
-## .rnorm                    FALSE     NA      NA             8.784761e-08
-## S.new.log                 FALSE     NA      NA             4.862671e-08
-## S.npnct06.log             FALSE     NA      NA             2.225651e-08
-## S.fashion.log             FALSE     NA      NA             1.098049e-09
-## H.npnct15.log             FALSE     NA      NA             7.395235e-10
-## S.npnct30.log             FALSE     NA      NA             5.609428e-10
-## A.has.year.colon          FALSE     NA      NA             2.912418e-10
-## H.npnct02.log             FALSE     NA      NA             2.666142e-10
-## S.npnct22.log             FALSE     NA      NA             2.461340e-10
-## S.npnct03.log             FALSE     NA      NA             2.304835e-10
-## H.npnct05.log             FALSE     NA      NA             1.846671e-10
-## A.npnct07.log             FALSE     NA      NA             1.653979e-10
-## S.npnct02.log             FALSE     NA      NA             7.575296e-11
-## S.npnct08.log             FALSE     NA      NA             7.353677e-11
-## S.npnct09.log             FALSE     NA      NA             6.715377e-11
-## A.one.log                 FALSE     NA      NA             6.660788e-11
-## S.one.log                 FALSE     NA      NA             6.580549e-11
-## H.npnct11.log             FALSE     NA      NA             6.416570e-11
-## S.npnct15.log             FALSE     NA      NA             5.392046e-12
-## A.npnct15.log             FALSE     NA      NA             4.905261e-12
-## A.npnct18.log             FALSE     NA      NA             1.783598e-12
-## H.npnct22.log             FALSE     NA      NA             1.467473e-12
-## A.npnct19.log             FALSE     NA      NA             0.000000e+00
-## A.articl.log              FALSE     NA      NA                       NA
-## A.can.log                 FALSE     NA      NA                       NA
-## A.compani.log             FALSE     NA      NA                       NA
-## A.day.log                 FALSE     NA      NA                       NA
-## A.fashion.log             FALSE     NA      NA                       NA
-## A.first.log               FALSE     NA      NA                       NA
-## A.has.http                FALSE     NA      NA                       NA
-## A.intern.log              FALSE     NA      NA                       NA
-## A.make.log                FALSE     NA      NA                       NA
-## A.ndgts.log               FALSE     NA      NA                       NA
-## A.new.log                 FALSE     NA      NA                       NA
-## A.newyork.log             FALSE     NA      NA                       NA
-## A.npnct01.log             FALSE     NA      NA                       NA
-## A.npnct02.log             FALSE     NA      NA                       NA
-## A.npnct03.log             FALSE     NA      NA                       NA
-## A.npnct04.log             FALSE     NA      NA                       NA
-## A.npnct05.log             FALSE     NA      NA                       NA
-## A.npnct06.log             FALSE     NA      NA                       NA
-## A.npnct08.log             FALSE     NA      NA                       NA
-## A.npnct09.log             FALSE     NA      NA                       NA
-## A.npnct10.log             FALSE     NA      NA                       NA
-## A.npnct11.log             FALSE     NA      NA                       NA
-## A.npnct12.log             FALSE     NA      NA                       NA
-## A.npnct13.log             FALSE     NA      NA                       NA
-## A.npnct16.log             FALSE     NA      NA                       NA
-## A.npnct20.log             FALSE     NA      NA                       NA
-## A.npnct22.log             FALSE     NA      NA                       NA
-## A.npnct24.log             FALSE     NA      NA                       NA
-## A.npnct25.log             FALSE     NA      NA                       NA
-## A.npnct26.log             FALSE     NA      NA                       NA
-## A.npnct28.log             FALSE     NA      NA                       NA
-## A.npnct29.log             FALSE     NA      NA                       NA
-## A.npnct30.log             FALSE     NA      NA                       NA
-## A.npnct31.log             FALSE     NA      NA                       NA
-## A.npnct32.log             FALSE     NA      NA                       NA
-## A.nuppr.log               FALSE     NA      NA                       NA
-## A.presid.log              FALSE     NA      NA                       NA
-## A.report.log              FALSE     NA      NA                       NA
-## A.share.log               FALSE     NA      NA                       NA
-## A.show.log                FALSE     NA      NA                       NA
-## A.take.log                FALSE     NA      NA                       NA
-## A.time.log                FALSE     NA      NA                       NA
-## A.week.log                FALSE     NA      NA                       NA
-## A.will.log                FALSE     NA      NA                       NA
-## A.year.log                FALSE     NA      NA                       NA
-## H.fashion.log             FALSE     NA      NA                       NA
-## H.has.http                FALSE     NA      NA                       NA
-## H.has.year.colon          FALSE     NA      NA                       NA
-## H.npnct03.log             FALSE     NA      NA                       NA
-## H.npnct06.log             FALSE     NA      NA                       NA
-## H.npnct08.log             FALSE     NA      NA                       NA
-## H.npnct10.log             FALSE     NA      NA                       NA
-## H.npnct18.log             FALSE     NA      NA                       NA
-## H.npnct19.log             FALSE     NA      NA                       NA
-## H.npnct20.log             FALSE     NA      NA                       NA
-## H.npnct23.log             FALSE     NA      NA                       NA
-## H.npnct24.log             FALSE     NA      NA                       NA
-## H.npnct25.log             FALSE     NA      NA                       NA
-## H.npnct26.log             FALSE     NA      NA                       NA
-## H.npnct27.log             FALSE     NA      NA                       NA
-## H.npnct28.log             FALSE     NA      NA                       NA
-## H.npnct29.log             FALSE     NA      NA                       NA
-## H.npnct31.log             FALSE     NA      NA                       NA
-## H.npnct32.log             FALSE     NA      NA                       NA
-## H.nwrds.unq.log           FALSE     NA      NA                       NA
-## H.X2015.log               FALSE     NA      NA                       NA
-## Popular                    TRUE     NA      NA                       NA
-## Popular.fctr                 NA     NA    TRUE                       NA
-## PubDate.last1             FALSE     NA      NA                       NA
-## PubDate.last10            FALSE     NA      NA                       NA
-## PubDate.last100           FALSE     NA      NA                       NA
-## PubDate.month.fctr        FALSE     NA      NA                       NA
-## PubDate.POSIX             FALSE     NA      NA                       NA
-## PubDate.year.fctr         FALSE     NA      NA                       NA
-## PubDate.zoo               FALSE     NA      NA                       NA
-## S.has.http                FALSE     NA      NA                       NA
-## S.has.year.colon          FALSE     NA      NA                       NA
-## S.nchrs.log               FALSE     NA      NA                       NA
-## S.npnct05.log             FALSE     NA      NA                       NA
-## S.npnct07.log             FALSE     NA      NA                       NA
-## S.npnct10.log             FALSE     NA      NA                       NA
-## S.npnct11.log             FALSE     NA      NA                       NA
-## S.npnct14.log             FALSE     NA      NA                       NA
-## S.npnct17.log             FALSE     NA      NA                       NA
-## S.npnct18.log             FALSE     NA      NA                       NA
-## S.npnct19.log             FALSE     NA      NA                       NA
-## S.npnct20.log             FALSE     NA      NA                       NA
-## S.npnct21.log             FALSE     NA      NA                       NA
-## S.npnct23.log             FALSE     NA      NA                       NA
-## S.npnct24.log             FALSE     NA      NA                       NA
-## S.npnct25.log             FALSE     NA      NA                       NA
-## S.npnct26.log             FALSE     NA      NA                       NA
-## S.npnct27.log             FALSE     NA      NA                       NA
-## S.npnct28.log             FALSE     NA      NA                       NA
-## S.npnct29.log             FALSE     NA      NA                       NA
-## S.npnct31.log             FALSE     NA      NA                       NA
-## S.npnct32.log             FALSE     NA      NA                       NA
-## S.nwrds.log               FALSE     NA      NA                       NA
-## S.nwrds.unq.log           FALSE     NA      NA                       NA
-## S.said.log                FALSE     NA      NA                       NA
-## UniqueID                  FALSE   TRUE      NA                       NA
-## WordCount                 FALSE     NA      NA                       NA
-##                     Final.glm.importance
-## A.npnct23.log               1.000000e+02
-## WordCount.log               1.288801e-05
-## myCategory.fctr             1.002204e-05
-## H.npnct21.log               5.018143e-06
-## A.npnct21.log               4.625851e-06
-## S.nuppr.log                 4.569486e-06
-## A.npnct14.log               3.906452e-06
-## H.today.log                 3.716137e-06
-## H.nuppr.log                 3.182025e-06
-## H.npnct09.log               3.059125e-06
-## PubDate.wkday.fctr          2.985990e-06
-## S.ndgts.log                 2.333324e-06
-## H.nchrs.log                 2.327769e-06
-## S.report.log                2.241758e-06
-## A.said.log                  2.225691e-06
-## S.newyork.log               2.215953e-06
-## H.npnct12.log               2.149261e-06
-## H.npnct04.log               2.100497e-06
-## PubDate.last10.log          1.997887e-06
-## H.ndgts.log                 1.993583e-06
-## H.nwrds.log                 1.855196e-06
-## H.npnct17.log               1.847313e-06
-## S.npnct04.log               1.760068e-06
-## PubDate.second.fctr         1.752346e-06
-## S.can.log                   1.698109e-06
-## S.share.log                 1.577347e-06
-## H.new.log                   1.501228e-06
-## S.will.log                  1.438120e-06
-## H.npnct07.log               1.251748e-06
-## S.take.log                  1.242853e-06
-## PubDate.minute.fctr         1.202598e-06
-## PubDate.last1.log           1.200389e-06
-## S.npnct01.log               1.175535e-06
-## H.npnct13.log               1.166146e-06
-## H.day.log                   1.165449e-06
-## H.npnct14.log               1.162212e-06
-## S.npnct12.log               1.145878e-06
-## S.compani.log               1.136156e-06
-## H.npnct01.log               1.095863e-06
-## A.nwrds.unq.log             1.074022e-06
-## S.show.log                  1.071063e-06
-## PubDate.hour.fctr           1.052433e-06
-## S.presid.log                1.031221e-06
-## S.npnct16.log               1.022348e-06
-## S.make.log                  1.008816e-06
-## S.state.log                 9.110520e-07
-## A.state.log                 9.110520e-07
-## A.npnct27.log               9.110520e-07
-## S.year.log                  8.851511e-07
-## H.npnct16.log               8.710662e-07
-## S.intern.log                8.387696e-07
-## H.has.ebola                 8.241580e-07
-## PubDate.date.fctr           8.233073e-07
-## H.report.log                8.039331e-07
-## H.X2014.log                 7.740347e-07
-## S.npnct13.log               7.695263e-07
-## H.week.log                  7.110312e-07
-## S.time.log                  6.384092e-07
-## PubDate.wkend               6.089193e-07
-## S.week.log                  5.723540e-07
-## A.nwrds.log                 5.580949e-07
-## A.nchrs.log                 5.287682e-07
-## PubDate.last100.log         5.212444e-07
-## S.day.log                   3.145965e-07
-## A.npnct17.log               3.000151e-07
-## S.first.log                 2.555518e-07
-## H.newyork.log               1.800829e-07
-## S.articl.log                1.796068e-07
-## H.daili.log                 1.287108e-07
-## H.npnct30.log               9.686374e-08
-## .rnorm                      8.784761e-08
-## S.new.log                   4.862671e-08
-## S.npnct06.log               2.225651e-08
-## S.fashion.log               1.098049e-09
-## H.npnct15.log               7.395235e-10
-## S.npnct30.log               5.609428e-10
-## A.has.year.colon            2.912418e-10
-## H.npnct02.log               2.666142e-10
-## S.npnct22.log               2.461340e-10
-## S.npnct03.log               2.304835e-10
-## H.npnct05.log               1.846671e-10
-## A.npnct07.log               1.653979e-10
-## S.npnct02.log               7.575296e-11
-## S.npnct08.log               7.353677e-11
-## S.npnct09.log               6.715377e-11
-## A.one.log                   6.660788e-11
-## S.one.log                   6.580549e-11
-## H.npnct11.log               6.416570e-11
-## S.npnct15.log               5.392046e-12
-## A.npnct15.log               4.905261e-12
-## A.npnct18.log               1.783598e-12
-## H.npnct22.log               1.467473e-12
-## A.npnct19.log               0.000000e+00
-## A.articl.log                          NA
-## A.can.log                             NA
-## A.compani.log                         NA
-## A.day.log                             NA
-## A.fashion.log                         NA
-## A.first.log                           NA
-## A.has.http                            NA
-## A.intern.log                          NA
-## A.make.log                            NA
-## A.ndgts.log                           NA
-## A.new.log                             NA
-## A.newyork.log                         NA
-## A.npnct01.log                         NA
-## A.npnct02.log                         NA
-## A.npnct03.log                         NA
-## A.npnct04.log                         NA
-## A.npnct05.log                         NA
-## A.npnct06.log                         NA
-## A.npnct08.log                         NA
-## A.npnct09.log                         NA
-## A.npnct10.log                         NA
-## A.npnct11.log                         NA
-## A.npnct12.log                         NA
-## A.npnct13.log                         NA
-## A.npnct16.log                         NA
-## A.npnct20.log                         NA
-## A.npnct22.log                         NA
-## A.npnct24.log                         NA
-## A.npnct25.log                         NA
-## A.npnct26.log                         NA
-## A.npnct28.log                         NA
-## A.npnct29.log                         NA
-## A.npnct30.log                         NA
-## A.npnct31.log                         NA
-## A.npnct32.log                         NA
-## A.nuppr.log                           NA
-## A.presid.log                          NA
-## A.report.log                          NA
-## A.share.log                           NA
-## A.show.log                            NA
-## A.take.log                            NA
-## A.time.log                            NA
-## A.week.log                            NA
-## A.will.log                            NA
-## A.year.log                            NA
-## H.fashion.log                         NA
-## H.has.http                            NA
-## H.has.year.colon                      NA
-## H.npnct03.log                         NA
-## H.npnct06.log                         NA
-## H.npnct08.log                         NA
-## H.npnct10.log                         NA
-## H.npnct18.log                         NA
-## H.npnct19.log                         NA
-## H.npnct20.log                         NA
-## H.npnct23.log                         NA
-## H.npnct24.log                         NA
-## H.npnct25.log                         NA
-## H.npnct26.log                         NA
-## H.npnct27.log                         NA
-## H.npnct28.log                         NA
-## H.npnct29.log                         NA
-## H.npnct31.log                         NA
-## H.npnct32.log                         NA
-## H.nwrds.unq.log                       NA
-## H.X2015.log                           NA
-## Popular                               NA
-## Popular.fctr                          NA
-## PubDate.last1                         NA
-## PubDate.last10                        NA
-## PubDate.last100                       NA
-## PubDate.month.fctr                    NA
-## PubDate.POSIX                         NA
-## PubDate.year.fctr                     NA
-## PubDate.zoo                           NA
-## S.has.http                            NA
-## S.has.year.colon                      NA
-## S.nchrs.log                           NA
-## S.npnct05.log                         NA
-## S.npnct07.log                         NA
-## S.npnct10.log                         NA
-## S.npnct11.log                         NA
-## S.npnct14.log                         NA
-## S.npnct17.log                         NA
-## S.npnct18.log                         NA
-## S.npnct19.log                         NA
-## S.npnct20.log                         NA
-## S.npnct21.log                         NA
-## S.npnct23.log                         NA
-## S.npnct24.log                         NA
-## S.npnct25.log                         NA
-## S.npnct26.log                         NA
-## S.npnct27.log                         NA
-## S.npnct28.log                         NA
-## S.npnct29.log                         NA
-## S.npnct31.log                         NA
-## S.npnct32.log                         NA
-## S.nwrds.log                           NA
-## S.nwrds.unq.log                       NA
-## S.said.log                            NA
-## UniqueID                              NA
-## WordCount                             NA
+##                     exclude.as.feat    cor.y.abs       cor.high.X
+## myCategory.fctr               FALSE 1.234541e-02             <NA>
+## WordCount.log                 FALSE 2.656836e-01             <NA>
+## H.npnct21.log                 FALSE 1.283641e-01             <NA>
+## PubDate.hour.fctr             FALSE 1.354368e-01             <NA>
+## A.make.log                    FALSE 2.334962e-02       S.make.log
+## A.fashion.log                 FALSE 8.724932e-02    S.fashion.log
+## H.npnct30.log                 FALSE 8.917338e-02             <NA>
+## A.report.log                  FALSE 5.032801e-02     S.report.log
+## A.articl.log                  FALSE 5.952055e-02     S.articl.log
+## A.npnct04.log                 FALSE 6.294642e-02    S.npnct04.log
+## H.X2015.log                   FALSE 6.658489e-02    H.npnct15.log
+## A.share.log                   FALSE 5.138139e-02      S.share.log
+## H.today.log                   FALSE 6.372306e-02             <NA>
+## H.new.log                     FALSE 5.313316e-02             <NA>
+## H.has.year.colon              FALSE 7.842875e-02     A.intern.log
+## A.said.log                    FALSE 3.735051e-04             <NA>
+## H.ndgts.log                   FALSE 1.196633e-01             <NA>
+## PubDate.last10.log            FALSE 4.931702e-02             <NA>
+## H.npnct04.log                 FALSE 5.126277e-02             <NA>
+## H.npnct08.log                 FALSE 5.375262e-02    H.npnct09.log
+## A.newyork.log                 FALSE 6.219997e-02    S.newyork.log
+## S.npnct15.log                 FALSE 2.121844e-02             <NA>
+## A.npnct15.log                 FALSE 2.407715e-02    A.npnct02.log
+## PubDate.wkday.fctr            FALSE 3.980129e-02             <NA>
+## .rnorm                        FALSE 8.244230e-03             <NA>
+## A.week.log                    FALSE 8.840293e-02       S.week.log
+## H.npnct13.log                 FALSE 1.305305e-02             <NA>
+## A.show.log                    FALSE 4.897915e-02       S.show.log
+## A.intern.log                  FALSE 6.864274e-02     S.intern.log
+## S.time.log                    FALSE 5.759227e-02             <NA>
+## H.npnct07.log                 FALSE 1.201741e-02             <NA>
+## A.npnct18.log                 FALSE 1.451467e-02    A.npnct20.log
+## H.npnct06.log                 FALSE 3.190718e-02    H.npnct17.log
+## S.state.log                   FALSE 7.050791e-03             <NA>
+## PubDate.minute.fctr           FALSE 3.407385e-02             <NA>
+## A.npnct19.log                 FALSE 1.271661e-02             <NA>
+## A.can.log                     FALSE 3.169296e-02        S.can.log
+## PubDate.date.fctr             FALSE 1.164756e-02             <NA>
+## S.npnct12.log                 FALSE 9.158156e-02             <NA>
+## A.npnct12.log                 FALSE 9.183870e-02    S.npnct12.log
+## H.nuppr.log                   FALSE 1.278085e-01             <NA>
+## H.week.log                    FALSE 7.510522e-02             <NA>
+## A.state.log                   FALSE 6.668101e-03             <NA>
+## S.npnct13.log                 FALSE 3.638891e-02             <NA>
+## A.npnct13.log                 FALSE 3.760012e-02    S.npnct13.log
+## A.presid.log                  FALSE 2.014404e-02     S.presid.log
+## S.npnct16.log                 FALSE 6.770952e-02             <NA>
+## S.npnct08.log                 FALSE 2.413868e-03             <NA>
+## S.can.log                     FALSE 3.077833e-02             <NA>
+## A.npnct17.log                 FALSE 1.587454e-03             <NA>
+## A.will.log                    FALSE 6.147068e-02       S.will.log
+## S.ndgts.log                   FALSE 1.242046e-01             <NA>
+## S.compani.log                 FALSE 5.261812e-02             <NA>
+## H.npnct05.log                 FALSE 9.653967e-03             <NA>
+## A.npnct21.log                 FALSE 5.482747e-02             <NA>
+## S.nuppr.log                   FALSE 2.718459e-01             <NA>
+## H.nchrs.log                   FALSE 1.710624e-01             <NA>
+## A.year.log                    FALSE 5.094457e-02       S.year.log
+## A.npnct01.log                 FALSE 3.093101e-02    S.npnct01.log
+## S.will.log                    FALSE 6.103349e-02             <NA>
+## A.ndgts.log                   FALSE 1.249484e-01      S.ndgts.log
+## PubDate.last100.log           FALSE 7.663322e-03             <NA>
+## A.npnct22.log                 FALSE 1.923169e-02    S.npnct22.log
+## A.nuppr.log                   FALSE 2.720962e-01      S.nuppr.log
+## S.day.log                     FALSE 4.555421e-02             <NA>
+## S.one.log                     FALSE 4.891059e-03             <NA>
+## A.one.log                     FALSE 4.368856e-03             <NA>
+## PubDate.second.fctr           FALSE 1.187946e-02             <NA>
+## H.X2014.log                   FALSE 4.620638e-02             <NA>
+## H.report.log                  FALSE 6.494810e-02             <NA>
+## S.take.log                    FALSE 2.569295e-02             <NA>
+## S.nwrds.unq.log               FALSE 2.507969e-01      S.nchrs.log
+## S.npnct09.log                 FALSE 3.986882e-03             <NA>
+## A.nwrds.unq.log               FALSE 2.506012e-01             <NA>
+## H.npnct12.log                 FALSE 1.333613e-02             <NA>
+## H.fashion.log                 FALSE 8.204998e-02       H.week.log
+## S.npnct21.log                 FALSE 5.503894e-02    A.npnct21.log
+## S.new.log                     FALSE 3.483189e-02             <NA>
+## H.npnct15.log                 FALSE 6.158577e-02             <NA>
+## A.new.log                     FALSE 3.524871e-02        S.new.log
+## A.nchrs.log                   FALSE 2.245488e-01             <NA>
+## S.nchrs.log                   FALSE 2.246930e-01      A.nchrs.log
+## S.npnct30.log                 FALSE 4.370037e-02             <NA>
+## H.npnct17.log                 FALSE 3.039622e-02             <NA>
+## A.npnct06.log                 FALSE 2.389145e-02    S.npnct06.log
+## A.npnct30.log                 FALSE 4.373349e-02    S.npnct30.log
+## H.nwrds.unq.log               FALSE 2.044964e-01      H.nuppr.log
+## S.nwrds.log                   FALSE 2.453541e-01      A.nwrds.log
+## A.npnct07.log                 FALSE 1.214357e-02    S.npnct07.log
+## H.npnct01.log                 FALSE 2.271577e-02             <NA>
+## A.nwrds.log                   FALSE 2.450733e-01             <NA>
+## H.has.ebola                   FALSE 2.588140e-02             <NA>
+## A.npnct14.log                 FALSE 4.999563e-02             <NA>
+## S.npnct14.log                 FALSE 5.332519e-02    A.npnct14.log
+## PubDate.last1.log             FALSE 4.635751e-02             <NA>
+## A.npnct02.log                 FALSE 1.451467e-02    A.npnct18.log
+## H.day.log                     FALSE 6.272898e-02             <NA>
+## A.first.log                   FALSE 5.345938e-02      S.first.log
+## S.npnct03.log                 FALSE 1.240734e-02             <NA>
+## H.newyork.log                 FALSE 5.797009e-02             <NA>
+## A.has.year.colon              FALSE 1.755336e-02 S.has.year.colon
+## PubDate.wkend                 FALSE 1.067288e-01             <NA>
+## H.npnct16.log                 FALSE 8.273237e-02             <NA>
+## H.npnct14.log                 FALSE 2.524770e-02             <NA>
+## H.nwrds.log                   FALSE 2.006864e-01             <NA>
+## H.npnct02.log                 FALSE 2.001851e-02             <NA>
+## H.daili.log                   FALSE 6.919298e-02             <NA>
+## A.compani.log                 FALSE 5.268413e-02    S.compani.log
+## A.day.log                     FALSE 4.581783e-02        S.day.log
+## A.has.http                    FALSE 1.359260e-02    A.npnct19.log
+## A.npnct03.log                 FALSE 1.359260e-02    S.npnct03.log
+## A.npnct05.log                 FALSE           NA             <NA>
+## A.npnct08.log                 FALSE 3.258100e-03             <NA>
+## A.npnct09.log                 FALSE 4.775988e-03             <NA>
+## A.npnct10.log                 FALSE           NA             <NA>
+## A.npnct11.log                 FALSE 5.547032e-03             <NA>
+## A.npnct16.log                 FALSE 6.893301e-02    S.npnct16.log
+## A.npnct20.log                 FALSE 1.451467e-02             <NA>
+## A.npnct23.log                 FALSE 1.537569e-02    A.npnct25.log
+## A.npnct24.log                 FALSE           NA             <NA>
+## A.npnct25.log                 FALSE 1.537569e-02             <NA>
+## A.npnct26.log                 FALSE 9.890046e-19             <NA>
+## A.npnct27.log                 FALSE 5.547032e-03             <NA>
+## A.npnct28.log                 FALSE           NA             <NA>
+## A.npnct29.log                 FALSE           NA             <NA>
+## A.npnct31.log                 FALSE           NA             <NA>
+## A.npnct32.log                 FALSE           NA             <NA>
+## A.take.log                    FALSE 2.601772e-02       S.take.log
+## A.time.log                    FALSE 5.779371e-02       S.time.log
+## H.has.http                    FALSE           NA             <NA>
+## H.npnct03.log                 FALSE 9.533020e-03             <NA>
+## H.npnct09.log                 FALSE 5.375262e-02             <NA>
+## H.npnct10.log                 FALSE           NA             <NA>
+## H.npnct11.log                 FALSE 5.547032e-03             <NA>
+## H.npnct18.log                 FALSE           NA             <NA>
+## H.npnct19.log                 FALSE           NA             <NA>
+## H.npnct20.log                 FALSE           NA             <NA>
+## H.npnct22.log                 FALSE 5.547032e-03             <NA>
+## H.npnct23.log                 FALSE           NA             <NA>
+## H.npnct24.log                 FALSE           NA             <NA>
+## H.npnct25.log                 FALSE           NA             <NA>
+## H.npnct26.log                 FALSE 9.890046e-19             <NA>
+## H.npnct27.log                 FALSE           NA             <NA>
+## H.npnct28.log                 FALSE           NA             <NA>
+## H.npnct29.log                 FALSE           NA             <NA>
+## H.npnct31.log                 FALSE           NA             <NA>
+## H.npnct32.log                 FALSE           NA             <NA>
+## Popular                        TRUE 1.000000e+00             <NA>
+## Popular.fctr                   TRUE           NA             <NA>
+## PubDate.last1                  TRUE 3.592267e-02             <NA>
+## PubDate.last10                 TRUE 5.398093e-02             <NA>
+## PubDate.last100                TRUE 3.989229e-02             <NA>
+## PubDate.month.fctr             TRUE 1.914874e-02             <NA>
+## PubDate.POSIX                  TRUE 1.568326e-02             <NA>
+## PubDate.year.fctr             FALSE           NA             <NA>
+## PubDate.zoo                    TRUE 1.568326e-02             <NA>
+## S.articl.log                  FALSE 5.952055e-02             <NA>
+## S.fashion.log                 FALSE 8.724932e-02             <NA>
+## S.first.log                   FALSE 5.345938e-02             <NA>
+## S.has.http                    FALSE           NA             <NA>
+## S.has.year.colon              FALSE 1.755336e-02             <NA>
+## S.intern.log                  FALSE 6.864274e-02             <NA>
+## S.make.log                    FALSE 2.334962e-02             <NA>
+## S.newyork.log                 FALSE 6.219997e-02             <NA>
+## S.npnct01.log                 FALSE 3.093101e-02             <NA>
+## S.npnct02.log                 FALSE 5.547032e-03             <NA>
+## S.npnct04.log                 FALSE 6.294642e-02             <NA>
+## S.npnct05.log                 FALSE           NA             <NA>
+## S.npnct06.log                 FALSE 2.389145e-02             <NA>
+## S.npnct07.log                 FALSE 1.214357e-02             <NA>
+## S.npnct10.log                 FALSE           NA             <NA>
+## S.npnct11.log                 FALSE 5.547032e-03             <NA>
+## S.npnct17.log                 FALSE 1.587454e-03             <NA>
+## S.npnct18.log                 FALSE           NA             <NA>
+## S.npnct19.log                 FALSE           NA             <NA>
+## S.npnct20.log                 FALSE           NA             <NA>
+## S.npnct22.log                 FALSE 1.923169e-02             <NA>
+## S.npnct23.log                 FALSE 2.760321e-02    A.npnct23.log
+## S.npnct24.log                 FALSE           NA             <NA>
+## S.npnct25.log                 FALSE 2.760321e-02             <NA>
+## S.npnct26.log                 FALSE 9.890046e-19             <NA>
+## S.npnct27.log                 FALSE           NA             <NA>
+## S.npnct28.log                 FALSE           NA             <NA>
+## S.npnct29.log                 FALSE           NA             <NA>
+## S.npnct31.log                 FALSE           NA             <NA>
+## S.npnct32.log                 FALSE           NA             <NA>
+## S.presid.log                  FALSE 2.014404e-02             <NA>
+## S.report.log                  FALSE 5.032801e-02             <NA>
+## S.said.log                    FALSE 3.735051e-04             <NA>
+## S.share.log                   FALSE 5.138139e-02             <NA>
+## S.show.log                    FALSE 4.897915e-02             <NA>
+## S.week.log                    FALSE 8.840293e-02             <NA>
+## S.year.log                    FALSE 5.094457e-02             <NA>
+## UniqueID                       TRUE 1.182492e-02             <NA>
+## WordCount                      TRUE 2.575265e-01             <NA>
+##                       freqRatio percentUnique zeroVar   nzv myNearZV
+## myCategory.fctr        1.337185    0.30618494   FALSE FALSE    FALSE
+## WordCount.log          1.300000   24.14268218   FALSE FALSE    FALSE
+## H.npnct21.log         14.995098    0.06123699   FALSE FALSE    FALSE
+## PubDate.hour.fctr      1.835040    0.04592774   FALSE FALSE    FALSE
+## A.make.log            27.378261    0.04592774   FALSE  TRUE    FALSE
+## A.fashion.log         25.737705    0.04592774   FALSE  TRUE    FALSE
+## H.npnct30.log         24.123077    0.03061849   FALSE  TRUE    FALSE
+## A.report.log          24.204633    0.06123699   FALSE  TRUE    FALSE
+## A.articl.log          30.863415    0.03061849   FALSE  TRUE    FALSE
+## A.npnct04.log         28.536364    0.07654623   FALSE  TRUE    FALSE
+## H.X2015.log           45.326241    0.03061849   FALSE  TRUE    FALSE
+## A.share.log           32.654639    0.04592774   FALSE  TRUE    FALSE
+## H.today.log           36.757225    0.03061849   FALSE  TRUE    FALSE
+## H.new.log             25.228916    0.04592774   FALSE  TRUE    FALSE
+## H.has.year.colon      32.670103    0.03061849   FALSE  TRUE    FALSE
+## A.said.log            25.212851    0.04592774   FALSE  TRUE    FALSE
+## H.ndgts.log           13.616137    0.18371096   FALSE FALSE    FALSE
+## PubDate.last10.log     1.666667   79.05695040   FALSE FALSE    FALSE
+## H.npnct04.log         38.325301    0.04592774   FALSE  TRUE    FALSE
+## H.npnct08.log        111.620690    0.03061849   FALSE  TRUE    FALSE
+## A.newyork.log         15.153465    0.06123699   FALSE FALSE    FALSE
+## S.npnct15.log        203.062500    0.04592774   FALSE  TRUE    FALSE
+## A.npnct15.log        196.696970    0.10716473   FALSE  TRUE    FALSE
+## PubDate.wkday.fctr     1.003268    0.10716473   FALSE FALSE    FALSE
+## .rnorm                 2.000000   99.98469075   FALSE FALSE    FALSE
+## A.week.log            13.278509    0.04592774   FALSE FALSE    FALSE
+## H.npnct13.log         13.126638    0.09185548   FALSE FALSE    FALSE
+## A.show.log            30.512077    0.06123699   FALSE  TRUE    FALSE
+## A.intern.log          29.801887    0.04592774   FALSE  TRUE    FALSE
+## S.time.log            13.483296    0.04592774   FALSE FALSE    FALSE
+## H.npnct07.log          5.437234    0.12247397   FALSE FALSE    FALSE
+## A.npnct18.log       1087.500000    0.04592774   FALSE  TRUE    FALSE
+## H.npnct06.log         68.935484    0.06123699   FALSE  TRUE    FALSE
+## S.state.log           30.655340    0.04592774   FALSE  TRUE    FALSE
+## PubDate.minute.fctr    1.483365    0.06123699   FALSE FALSE    FALSE
+## A.npnct19.log       1631.500000    0.06123699   FALSE  TRUE    FALSE
+## A.can.log             26.166667    0.04592774   FALSE  TRUE    FALSE
+## PubDate.date.fctr      1.021394    0.07654623   FALSE FALSE    FALSE
+## S.npnct12.log          1.660473    0.13778322   FALSE FALSE    FALSE
+## A.npnct12.log          1.660473    0.13778322   FALSE FALSE    FALSE
+## H.nuppr.log            1.033930    0.29087569   FALSE FALSE    FALSE
+## H.week.log            24.818182    0.03061849   FALSE  TRUE    FALSE
+## A.state.log           30.502415    0.04592774   FALSE  TRUE    FALSE
+## S.npnct13.log          5.706263    0.09185548   FALSE FALSE    FALSE
+## A.npnct13.log          5.715368    0.12247397   FALSE FALSE    FALSE
+## A.presid.log          26.854701    0.06123699   FALSE  TRUE    FALSE
+## S.npnct16.log         13.647191    0.04592774   FALSE FALSE    FALSE
+## S.npnct08.log        175.513514    0.04592774   FALSE  TRUE    FALSE
+## S.can.log             26.058091    0.04592774   FALSE  TRUE    FALSE
+## A.npnct17.log        434.133333    0.04592774   FALSE  TRUE    FALSE
+## A.will.log            11.212406    0.06123699   FALSE FALSE    FALSE
+## S.ndgts.log           10.511247    0.26025720   FALSE FALSE    FALSE
+## S.compani.log         18.093842    0.04592774   FALSE FALSE    FALSE
+## H.npnct05.log        543.333333    0.03061849   FALSE  TRUE    FALSE
+## A.npnct21.log         12.798715    0.07654623   FALSE FALSE    FALSE
+## S.nuppr.log            1.152620    0.33680343   FALSE FALSE    FALSE
+## H.nchrs.log            1.023810    1.57685242   FALSE FALSE    FALSE
+## A.year.log            18.456716    0.06123699   FALSE FALSE    FALSE
+## A.npnct01.log        309.952381    0.06123699   FALSE  TRUE    FALSE
+## S.will.log            11.237288    0.06123699   FALSE FALSE    FALSE
+## A.ndgts.log           10.501022    0.29087569   FALSE FALSE    FALSE
+## PubDate.last100.log   25.000000   92.19228414   FALSE FALSE    FALSE
+## A.npnct22.log        543.333333    0.03061849   FALSE  TRUE    FALSE
+## A.nuppr.log            1.151308    0.33680343   FALSE FALSE    FALSE
+## S.day.log             24.692913    0.04592774   FALSE  TRUE    FALSE
+## S.one.log             22.777372    0.04592774   FALSE  TRUE    FALSE
+## A.one.log             22.773723    0.04592774   FALSE  TRUE    FALSE
+## PubDate.second.fctr    1.018204    0.06123699   FALSE FALSE    FALSE
+## H.X2014.log           63.673267    0.03061849   FALSE  TRUE    FALSE
+## H.report.log          30.403846    0.03061849   FALSE  TRUE    FALSE
+## S.take.log            29.376744    0.04592774   FALSE  TRUE    FALSE
+## S.nwrds.unq.log        1.061567    0.44396816   FALSE FALSE    FALSE
+## S.npnct09.log        175.486486    0.06123699   FALSE  TRUE    FALSE
+## A.nwrds.unq.log        1.061567    0.55113288   FALSE FALSE    FALSE
+## H.npnct12.log          4.937442    0.07654623   FALSE FALSE    FALSE
+## H.fashion.log         28.542986    0.04592774   FALSE  TRUE    FALSE
+## S.npnct21.log         12.862366    0.07654623   FALSE FALSE    FALSE
+## S.new.log             10.124573    0.04592774   FALSE FALSE    FALSE
+## H.npnct15.log         52.983471    0.03061849   FALSE  TRUE    FALSE
+## A.new.log             10.086735    0.04592774   FALSE FALSE    FALSE
+## A.nchrs.log            1.328571    4.39375383   FALSE FALSE    FALSE
+## S.nchrs.log            1.328571    3.72014697   FALSE FALSE    FALSE
+## S.npnct30.log        134.791667    0.04592774   FALSE  TRUE    FALSE
+## H.npnct17.log         96.104478    0.06123699   FALSE  TRUE    FALSE
+## A.npnct06.log        115.642857    0.03061849   FALSE  TRUE    FALSE
+## A.npnct30.log        126.862745    0.04592774   FALSE  TRUE    FALSE
+## H.nwrds.unq.log        1.019071    0.21432945   FALSE FALSE    FALSE
+## S.nwrds.log            1.029183    0.45927740   FALSE FALSE    FALSE
+## A.npnct07.log       1631.750000    0.04592774   FALSE  TRUE    FALSE
+## H.npnct01.log        282.913043    0.04592774   FALSE  TRUE    FALSE
+## A.nwrds.log            1.029183    0.59706062   FALSE FALSE    FALSE
+## H.has.ebola           73.227273    0.03061849   FALSE  TRUE    FALSE
+## A.npnct14.log          4.603330    0.16840171   FALSE FALSE    FALSE
+## S.npnct14.log          4.672000    0.16840171   FALSE FALSE    FALSE
+## PubDate.last1.log      1.142857   36.49724434   FALSE FALSE    FALSE
+## A.npnct02.log       1087.500000    0.04592774   FALSE  TRUE    FALSE
+## H.day.log             29.801887    0.04592774   FALSE  TRUE    FALSE
+## A.first.log           29.509346    0.04592774   FALSE  TRUE    FALSE
+## S.npnct03.log       1305.400000    0.03061849   FALSE  TRUE    FALSE
+## H.newyork.log         26.795745    0.03061849   FALSE  TRUE    FALSE
+## A.has.year.colon     652.200000    0.03061849   FALSE  TRUE    FALSE
+## PubDate.wkend          9.095827    0.03061849   FALSE FALSE    FALSE
+## H.npnct16.log          3.914910    0.04592774   FALSE FALSE    FALSE
+## H.npnct14.log         22.802326    0.12247397   FALSE  TRUE    FALSE
+## H.nwrds.log            1.019119    0.21432945   FALSE FALSE    FALSE
+## H.npnct02.log        501.461538    0.03061849   FALSE  TRUE    FALSE
+## H.daili.log           41.973684    0.03061849   FALSE  TRUE    FALSE
+## A.compani.log         18.147059    0.04592774   FALSE FALSE    FALSE
+## A.day.log             24.592157    0.04592774   FALSE  TRUE    FALSE
+## A.has.http          1087.666667    0.03061849   FALSE  TRUE    FALSE
+## A.npnct03.log       1087.666667    0.03061849   FALSE  TRUE    FALSE
+## A.npnct05.log          0.000000    0.01530925    TRUE  TRUE     TRUE
+## A.npnct08.log        170.868421    0.04592774   FALSE  TRUE    FALSE
+## A.npnct09.log        170.842105    0.06123699   FALSE  TRUE    FALSE
+## A.npnct10.log          0.000000    0.01530925    TRUE  TRUE     TRUE
+## A.npnct11.log       6531.000000    0.03061849   FALSE  TRUE     TRUE
+## A.npnct16.log         13.482222    0.04592774   FALSE FALSE    FALSE
+## A.npnct20.log       1087.500000    0.04592774   FALSE  TRUE    FALSE
+## A.npnct23.log       3264.500000    0.04592774   FALSE  TRUE     TRUE
+## A.npnct24.log          0.000000    0.01530925    TRUE  TRUE     TRUE
+## A.npnct25.log       3264.500000    0.04592774   FALSE  TRUE     TRUE
+## A.npnct26.log          0.000000    0.01530925    TRUE  TRUE     TRUE
+## A.npnct27.log       6531.000000    0.03061849   FALSE  TRUE     TRUE
+## A.npnct28.log          0.000000    0.01530925    TRUE  TRUE     TRUE
+## A.npnct29.log          0.000000    0.01530925    TRUE  TRUE     TRUE
+## A.npnct31.log          0.000000    0.01530925    TRUE  TRUE     TRUE
+## A.npnct32.log          0.000000    0.01530925    TRUE  TRUE     TRUE
+## A.take.log            29.236111    0.04592774   FALSE  TRUE    FALSE
+## A.time.log            13.451111    0.04592774   FALSE FALSE    FALSE
+## H.has.http             0.000000    0.01530925    TRUE  TRUE     TRUE
+## H.npnct03.log       2176.333333    0.03061849   FALSE  TRUE     TRUE
+## H.npnct09.log        111.620690    0.03061849   FALSE  TRUE    FALSE
+## H.npnct10.log          0.000000    0.01530925    TRUE  TRUE     TRUE
+## H.npnct11.log       6531.000000    0.03061849   FALSE  TRUE     TRUE
+## H.npnct18.log          0.000000    0.01530925    TRUE  TRUE     TRUE
+## H.npnct19.log          0.000000    0.01530925    TRUE  TRUE     TRUE
+## H.npnct20.log          0.000000    0.01530925    TRUE  TRUE     TRUE
+## H.npnct22.log       6531.000000    0.03061849   FALSE  TRUE     TRUE
+## H.npnct23.log          0.000000    0.01530925    TRUE  TRUE     TRUE
+## H.npnct24.log          0.000000    0.01530925    TRUE  TRUE     TRUE
+## H.npnct25.log          0.000000    0.01530925    TRUE  TRUE     TRUE
+## H.npnct26.log          0.000000    0.01530925    TRUE  TRUE     TRUE
+## H.npnct27.log          0.000000    0.01530925    TRUE  TRUE     TRUE
+## H.npnct28.log          0.000000    0.01530925    TRUE  TRUE     TRUE
+## H.npnct29.log          0.000000    0.01530925    TRUE  TRUE     TRUE
+## H.npnct31.log          0.000000    0.01530925    TRUE  TRUE     TRUE
+## H.npnct32.log          0.000000    0.01530925    TRUE  TRUE     TRUE
+## Popular                4.976212    0.03061849   FALSE FALSE    FALSE
+## Popular.fctr                 NA            NA      NA    NA       NA
+## PubDate.last1          1.142857   36.49724434   FALSE FALSE    FALSE
+## PubDate.last10         1.666667   79.05695040   FALSE FALSE    FALSE
+## PubDate.last100       25.000000   92.52908757   FALSE FALSE    FALSE
+## PubDate.month.fctr     1.017514    0.04592774   FALSE FALSE    FALSE
+## PubDate.POSIX          1.000000   99.86221678   FALSE FALSE    FALSE
+## PubDate.year.fctr      0.000000    0.01530925    TRUE  TRUE     TRUE
+## PubDate.zoo            1.000000   99.86221678   FALSE FALSE    FALSE
+## S.articl.log          30.863415    0.03061849   FALSE  TRUE    FALSE
+## S.fashion.log         25.737705    0.04592774   FALSE  TRUE    FALSE
+## S.first.log           29.509346    0.04592774   FALSE  TRUE    FALSE
+## S.has.http             0.000000    0.01530925    TRUE  TRUE     TRUE
+## S.has.year.colon     652.200000    0.03061849   FALSE  TRUE    FALSE
+## S.intern.log          29.801887    0.04592774   FALSE  TRUE    FALSE
+## S.make.log            27.378261    0.04592774   FALSE  TRUE    FALSE
+## S.newyork.log         15.153465    0.06123699   FALSE FALSE    FALSE
+## S.npnct01.log        309.952381    0.06123699   FALSE  TRUE    FALSE
+## S.npnct02.log       6531.000000    0.03061849   FALSE  TRUE     TRUE
+## S.npnct04.log         28.536364    0.07654623   FALSE  TRUE    FALSE
+## S.npnct05.log          0.000000    0.01530925    TRUE  TRUE     TRUE
+## S.npnct06.log        115.642857    0.03061849   FALSE  TRUE    FALSE
+## S.npnct07.log       1631.750000    0.04592774   FALSE  TRUE    FALSE
+## S.npnct10.log          0.000000    0.01530925    TRUE  TRUE     TRUE
+## S.npnct11.log       6531.000000    0.03061849   FALSE  TRUE     TRUE
+## S.npnct17.log        434.133333    0.04592774   FALSE  TRUE    FALSE
+## S.npnct18.log          0.000000    0.01530925    TRUE  TRUE     TRUE
+## S.npnct19.log          0.000000    0.01530925    TRUE  TRUE     TRUE
+## S.npnct20.log          0.000000    0.01530925    TRUE  TRUE     TRUE
+## S.npnct22.log        543.333333    0.03061849   FALSE  TRUE    FALSE
+## S.npnct23.log       6531.000000    0.03061849   FALSE  TRUE     TRUE
+## S.npnct24.log          0.000000    0.01530925    TRUE  TRUE     TRUE
+## S.npnct25.log       6531.000000    0.03061849   FALSE  TRUE     TRUE
+## S.npnct26.log          0.000000    0.01530925    TRUE  TRUE     TRUE
+## S.npnct27.log          0.000000    0.01530925    TRUE  TRUE     TRUE
+## S.npnct28.log          0.000000    0.01530925    TRUE  TRUE     TRUE
+## S.npnct29.log          0.000000    0.01530925    TRUE  TRUE     TRUE
+## S.npnct31.log          0.000000    0.01530925    TRUE  TRUE     TRUE
+## S.npnct32.log          0.000000    0.01530925    TRUE  TRUE     TRUE
+## S.presid.log          26.854701    0.06123699   FALSE  TRUE    FALSE
+## S.report.log          24.204633    0.06123699   FALSE  TRUE    FALSE
+## S.said.log            25.212851    0.04592774   FALSE  TRUE    FALSE
+## S.share.log           32.654639    0.04592774   FALSE  TRUE    FALSE
+## S.show.log            30.512077    0.06123699   FALSE  TRUE    FALSE
+## S.week.log            13.278509    0.04592774   FALSE FALSE    FALSE
+## S.year.log            18.456716    0.06123699   FALSE FALSE    FALSE
+## UniqueID               1.000000  100.00000000   FALSE FALSE    FALSE
+## WordCount              2.315789   24.15799143   FALSE FALSE    FALSE
+##                     is.cor.y.abs.low rsp_var_raw id_var rsp_var
+## myCategory.fctr                FALSE       FALSE     NA      NA
+## WordCount.log                  FALSE       FALSE     NA      NA
+## H.npnct21.log                  FALSE       FALSE     NA      NA
+## PubDate.hour.fctr              FALSE       FALSE     NA      NA
+## A.make.log                     FALSE       FALSE     NA      NA
+## A.fashion.log                  FALSE       FALSE     NA      NA
+## H.npnct30.log                  FALSE       FALSE     NA      NA
+## A.report.log                   FALSE       FALSE     NA      NA
+## A.articl.log                   FALSE       FALSE     NA      NA
+## A.npnct04.log                  FALSE       FALSE     NA      NA
+## H.X2015.log                    FALSE       FALSE     NA      NA
+## A.share.log                    FALSE       FALSE     NA      NA
+## H.today.log                    FALSE       FALSE     NA      NA
+## H.new.log                      FALSE       FALSE     NA      NA
+## H.has.year.colon               FALSE       FALSE     NA      NA
+## A.said.log                      TRUE       FALSE     NA      NA
+## H.ndgts.log                    FALSE       FALSE     NA      NA
+## PubDate.last10.log             FALSE       FALSE     NA      NA
+## H.npnct04.log                  FALSE       FALSE     NA      NA
+## H.npnct08.log                  FALSE       FALSE     NA      NA
+## A.newyork.log                  FALSE       FALSE     NA      NA
+## S.npnct15.log                  FALSE       FALSE     NA      NA
+## A.npnct15.log                  FALSE       FALSE     NA      NA
+## PubDate.wkday.fctr             FALSE       FALSE     NA      NA
+## .rnorm                         FALSE       FALSE     NA      NA
+## A.week.log                     FALSE       FALSE     NA      NA
+## H.npnct13.log                  FALSE       FALSE     NA      NA
+## A.show.log                     FALSE       FALSE     NA      NA
+## A.intern.log                   FALSE       FALSE     NA      NA
+## S.time.log                     FALSE       FALSE     NA      NA
+## H.npnct07.log                  FALSE       FALSE     NA      NA
+## A.npnct18.log                  FALSE       FALSE     NA      NA
+## H.npnct06.log                  FALSE       FALSE     NA      NA
+## S.state.log                     TRUE       FALSE     NA      NA
+## PubDate.minute.fctr            FALSE       FALSE     NA      NA
+## A.npnct19.log                  FALSE       FALSE     NA      NA
+## A.can.log                      FALSE       FALSE     NA      NA
+## PubDate.date.fctr              FALSE       FALSE     NA      NA
+## S.npnct12.log                  FALSE       FALSE     NA      NA
+## A.npnct12.log                  FALSE       FALSE     NA      NA
+## H.nuppr.log                    FALSE       FALSE     NA      NA
+## H.week.log                     FALSE       FALSE     NA      NA
+## A.state.log                     TRUE       FALSE     NA      NA
+## S.npnct13.log                  FALSE       FALSE     NA      NA
+## A.npnct13.log                  FALSE       FALSE     NA      NA
+## A.presid.log                   FALSE       FALSE     NA      NA
+## S.npnct16.log                  FALSE       FALSE     NA      NA
+## S.npnct08.log                   TRUE       FALSE     NA      NA
+## S.can.log                      FALSE       FALSE     NA      NA
+## A.npnct17.log                   TRUE       FALSE     NA      NA
+## A.will.log                     FALSE       FALSE     NA      NA
+## S.ndgts.log                    FALSE       FALSE     NA      NA
+## S.compani.log                  FALSE       FALSE     NA      NA
+## H.npnct05.log                  FALSE       FALSE     NA      NA
+## A.npnct21.log                  FALSE       FALSE     NA      NA
+## S.nuppr.log                    FALSE       FALSE     NA      NA
+## H.nchrs.log                    FALSE       FALSE     NA      NA
+## A.year.log                     FALSE       FALSE     NA      NA
+## A.npnct01.log                  FALSE       FALSE     NA      NA
+## S.will.log                     FALSE       FALSE     NA      NA
+## A.ndgts.log                    FALSE       FALSE     NA      NA
+## PubDate.last100.log             TRUE       FALSE     NA      NA
+## A.npnct22.log                  FALSE       FALSE     NA      NA
+## A.nuppr.log                    FALSE       FALSE     NA      NA
+## S.day.log                      FALSE       FALSE     NA      NA
+## S.one.log                       TRUE       FALSE     NA      NA
+## A.one.log                       TRUE       FALSE     NA      NA
+## PubDate.second.fctr            FALSE       FALSE     NA      NA
+## H.X2014.log                    FALSE       FALSE     NA      NA
+## H.report.log                   FALSE       FALSE     NA      NA
+## S.take.log                     FALSE       FALSE     NA      NA
+## S.nwrds.unq.log                FALSE       FALSE     NA      NA
+## S.npnct09.log                   TRUE       FALSE     NA      NA
+## A.nwrds.unq.log                FALSE       FALSE     NA      NA
+## H.npnct12.log                  FALSE       FALSE     NA      NA
+## H.fashion.log                  FALSE       FALSE     NA      NA
+## S.npnct21.log                  FALSE       FALSE     NA      NA
+## S.new.log                      FALSE       FALSE     NA      NA
+## H.npnct15.log                  FALSE       FALSE     NA      NA
+## A.new.log                      FALSE       FALSE     NA      NA
+## A.nchrs.log                    FALSE       FALSE     NA      NA
+## S.nchrs.log                    FALSE       FALSE     NA      NA
+## S.npnct30.log                  FALSE       FALSE     NA      NA
+## H.npnct17.log                  FALSE       FALSE     NA      NA
+## A.npnct06.log                  FALSE       FALSE     NA      NA
+## A.npnct30.log                  FALSE       FALSE     NA      NA
+## H.nwrds.unq.log                FALSE       FALSE     NA      NA
+## S.nwrds.log                    FALSE       FALSE     NA      NA
+## A.npnct07.log                  FALSE       FALSE     NA      NA
+## H.npnct01.log                  FALSE       FALSE     NA      NA
+## A.nwrds.log                    FALSE       FALSE     NA      NA
+## H.has.ebola                    FALSE       FALSE     NA      NA
+## A.npnct14.log                  FALSE       FALSE     NA      NA
+## S.npnct14.log                  FALSE       FALSE     NA      NA
+## PubDate.last1.log              FALSE       FALSE     NA      NA
+## A.npnct02.log                  FALSE       FALSE     NA      NA
+## H.day.log                      FALSE       FALSE     NA      NA
+## A.first.log                    FALSE       FALSE     NA      NA
+## S.npnct03.log                  FALSE       FALSE     NA      NA
+## H.newyork.log                  FALSE       FALSE     NA      NA
+## A.has.year.colon               FALSE       FALSE     NA      NA
+## PubDate.wkend                  FALSE       FALSE     NA      NA
+## H.npnct16.log                  FALSE       FALSE     NA      NA
+## H.npnct14.log                  FALSE       FALSE     NA      NA
+## H.nwrds.log                    FALSE       FALSE     NA      NA
+## H.npnct02.log                  FALSE       FALSE     NA      NA
+## H.daili.log                    FALSE       FALSE     NA      NA
+## A.compani.log                  FALSE       FALSE     NA      NA
+## A.day.log                      FALSE       FALSE     NA      NA
+## A.has.http                     FALSE       FALSE     NA      NA
+## A.npnct03.log                  FALSE       FALSE     NA      NA
+## A.npnct05.log                     NA       FALSE     NA      NA
+## A.npnct08.log                   TRUE       FALSE     NA      NA
+## A.npnct09.log                   TRUE       FALSE     NA      NA
+## A.npnct10.log                     NA       FALSE     NA      NA
+## A.npnct11.log                   TRUE       FALSE     NA      NA
+## A.npnct16.log                  FALSE       FALSE     NA      NA
+## A.npnct20.log                  FALSE       FALSE     NA      NA
+## A.npnct23.log                  FALSE       FALSE     NA      NA
+## A.npnct24.log                     NA       FALSE     NA      NA
+## A.npnct25.log                  FALSE       FALSE     NA      NA
+## A.npnct26.log                   TRUE       FALSE     NA      NA
+## A.npnct27.log                   TRUE       FALSE     NA      NA
+## A.npnct28.log                     NA       FALSE     NA      NA
+## A.npnct29.log                     NA       FALSE     NA      NA
+## A.npnct31.log                     NA       FALSE     NA      NA
+## A.npnct32.log                     NA       FALSE     NA      NA
+## A.take.log                     FALSE       FALSE     NA      NA
+## A.time.log                     FALSE       FALSE     NA      NA
+## H.has.http                        NA       FALSE     NA      NA
+## H.npnct03.log                  FALSE       FALSE     NA      NA
+## H.npnct09.log                  FALSE       FALSE     NA      NA
+## H.npnct10.log                     NA       FALSE     NA      NA
+## H.npnct11.log                   TRUE       FALSE     NA      NA
+## H.npnct18.log                     NA       FALSE     NA      NA
+## H.npnct19.log                     NA       FALSE     NA      NA
+## H.npnct20.log                     NA       FALSE     NA      NA
+## H.npnct22.log                   TRUE       FALSE     NA      NA
+## H.npnct23.log                     NA       FALSE     NA      NA
+## H.npnct24.log                     NA       FALSE     NA      NA
+## H.npnct25.log                     NA       FALSE     NA      NA
+## H.npnct26.log                   TRUE       FALSE     NA      NA
+## H.npnct27.log                     NA       FALSE     NA      NA
+## H.npnct28.log                     NA       FALSE     NA      NA
+## H.npnct29.log                     NA       FALSE     NA      NA
+## H.npnct31.log                     NA       FALSE     NA      NA
+## H.npnct32.log                     NA       FALSE     NA      NA
+## Popular                        FALSE        TRUE     NA      NA
+## Popular.fctr                      NA          NA     NA    TRUE
+## PubDate.last1                  FALSE       FALSE     NA      NA
+## PubDate.last10                 FALSE       FALSE     NA      NA
+## PubDate.last100                FALSE       FALSE     NA      NA
+## PubDate.month.fctr             FALSE       FALSE     NA      NA
+## PubDate.POSIX                  FALSE       FALSE     NA      NA
+## PubDate.year.fctr                 NA       FALSE     NA      NA
+## PubDate.zoo                    FALSE       FALSE     NA      NA
+## S.articl.log                   FALSE       FALSE     NA      NA
+## S.fashion.log                  FALSE       FALSE     NA      NA
+## S.first.log                    FALSE       FALSE     NA      NA
+## S.has.http                        NA       FALSE     NA      NA
+## S.has.year.colon               FALSE       FALSE     NA      NA
+## S.intern.log                   FALSE       FALSE     NA      NA
+## S.make.log                     FALSE       FALSE     NA      NA
+## S.newyork.log                  FALSE       FALSE     NA      NA
+## S.npnct01.log                  FALSE       FALSE     NA      NA
+## S.npnct02.log                   TRUE       FALSE     NA      NA
+## S.npnct04.log                  FALSE       FALSE     NA      NA
+## S.npnct05.log                     NA       FALSE     NA      NA
+## S.npnct06.log                  FALSE       FALSE     NA      NA
+## S.npnct07.log                  FALSE       FALSE     NA      NA
+## S.npnct10.log                     NA       FALSE     NA      NA
+## S.npnct11.log                   TRUE       FALSE     NA      NA
+## S.npnct17.log                   TRUE       FALSE     NA      NA
+## S.npnct18.log                     NA       FALSE     NA      NA
+## S.npnct19.log                     NA       FALSE     NA      NA
+## S.npnct20.log                     NA       FALSE     NA      NA
+## S.npnct22.log                  FALSE       FALSE     NA      NA
+## S.npnct23.log                  FALSE       FALSE     NA      NA
+## S.npnct24.log                     NA       FALSE     NA      NA
+## S.npnct25.log                  FALSE       FALSE     NA      NA
+## S.npnct26.log                   TRUE       FALSE     NA      NA
+## S.npnct27.log                     NA       FALSE     NA      NA
+## S.npnct28.log                     NA       FALSE     NA      NA
+## S.npnct29.log                     NA       FALSE     NA      NA
+## S.npnct31.log                     NA       FALSE     NA      NA
+## S.npnct32.log                     NA       FALSE     NA      NA
+## S.presid.log                   FALSE       FALSE     NA      NA
+## S.report.log                   FALSE       FALSE     NA      NA
+## S.said.log                      TRUE       FALSE     NA      NA
+## S.share.log                    FALSE       FALSE     NA      NA
+## S.show.log                     FALSE       FALSE     NA      NA
+## S.week.log                     FALSE       FALSE     NA      NA
+## S.year.log                     FALSE       FALSE     NA      NA
+## UniqueID                       FALSE       FALSE   TRUE      NA
+## WordCount                      FALSE       FALSE     NA      NA
+##                     All.X.glm.importance Final.glm.importance
+## myCategory.fctr             100.00000000         100.00000000
+## WordCount.log                70.43241920          70.43241920
+## H.npnct21.log                32.71499686          32.71499686
+## PubDate.hour.fctr            28.49497858          28.49497858
+## A.make.log                   24.82458430          24.82458430
+## A.fashion.log                22.86799201          22.86799201
+## H.npnct30.log                18.66889549          18.66889549
+## A.report.log                 17.94396169          17.94396169
+## A.articl.log                 17.31584878          17.31584878
+## A.npnct04.log                16.42726704          16.42726704
+## H.X2015.log                  16.18781324          16.18781324
+## A.share.log                  16.05772852          16.05772852
+## H.today.log                  15.09058570          15.09058570
+## H.new.log                    14.58884852          14.58884852
+## H.has.year.colon             14.48643170          14.48643170
+## A.said.log                   13.53465142          13.53465142
+## H.ndgts.log                  13.52245535          13.52245535
+## PubDate.last10.log           12.97780472          12.97780472
+## H.npnct04.log                12.76927377          12.76927377
+## H.npnct08.log                12.06593521          12.06593521
+## A.newyork.log                11.59720267          11.59720267
+## S.npnct15.log                10.97856358          10.97856358
+## A.npnct15.log                10.79302566          10.79302566
+## PubDate.wkday.fctr           10.68599632          10.68599632
+## .rnorm                       10.55274877          10.55274877
+## A.week.log                    9.81958866           9.81958866
+## H.npnct13.log                 9.71218057           9.71218057
+## A.show.log                    9.68407375           9.68407375
+## A.intern.log                  9.66632050           9.66632050
+## S.time.log                    9.55323497           9.55323497
+## H.npnct07.log                 9.53685753           9.53685753
+## A.npnct18.log                 9.41984800           9.41984800
+## H.npnct06.log                 9.23627876           9.23627876
+## S.state.log                   8.92098916           8.92098916
+## PubDate.minute.fctr           8.53101958           8.53101958
+## A.npnct19.log                 8.47715771           8.47715771
+## A.can.log                     8.10387656           8.10387656
+## PubDate.date.fctr             8.03583604           8.03583604
+## S.npnct12.log                 8.03465413           8.03465413
+## A.npnct12.log                 7.98621020           7.98621020
+## H.nuppr.log                   7.85639322           7.85639322
+## H.week.log                    7.79627328           7.79627328
+## A.state.log                   7.26321159           7.26321159
+## S.npnct13.log                 7.17910453           7.17910453
+## A.npnct13.log                 7.17784272           7.17784272
+## A.presid.log                  7.16305732           7.16305732
+## S.npnct16.log                 7.14944805           7.14944805
+## S.npnct08.log                 7.07080676           7.07080676
+## S.can.log                     7.02341628           7.02341628
+## A.npnct17.log                 6.89744623           6.89744623
+## A.will.log                    6.81698075           6.81698075
+## S.ndgts.log                   6.75768296           6.75768296
+## S.compani.log                 6.68327086           6.68327086
+## H.npnct05.log                 6.59752354           6.59752354
+## A.npnct21.log                 6.53946049           6.53946049
+## S.nuppr.log                   6.48716764           6.48716764
+## H.nchrs.log                   6.36565681           6.36565681
+## A.year.log                    6.30335271           6.30335271
+## A.npnct01.log                 6.26548239           6.26548239
+## S.will.log                    6.21988118           6.21988118
+## A.ndgts.log                   6.12230312           6.12230312
+## PubDate.last100.log           6.10602730           6.10602730
+## A.npnct22.log                 5.81913883           5.81913883
+## A.nuppr.log                   5.73056332           5.73056332
+## S.day.log                     5.55760002           5.55760002
+## S.one.log                     5.29435441           5.29435441
+## A.one.log                     5.19360228           5.19360228
+## PubDate.second.fctr           4.57971207           4.57971207
+## H.X2014.log                   4.46472089           4.46472089
+## H.report.log                  4.40029310           4.40029310
+## S.take.log                    4.26732531           4.26732531
+## S.nwrds.unq.log               4.13474268           4.13474268
+## S.npnct09.log                 4.11245488           4.11245488
+## A.nwrds.unq.log               3.95688107           3.95688107
+## H.npnct12.log                 3.76801998           3.76801998
+## H.fashion.log                 3.76390763           3.76390763
+## S.npnct21.log                 3.66026012           3.66026012
+## S.new.log                     3.52281315           3.52281315
+## H.npnct15.log                 3.45385040           3.45385040
+## A.new.log                     3.41102464           3.41102464
+## A.nchrs.log                   3.12081764           3.12081764
+## S.nchrs.log                   2.97802811           2.97802811
+## S.npnct30.log                 2.88153488           2.88153488
+## H.npnct17.log                 2.24624596           2.24624596
+## A.npnct06.log                 2.18674221           2.18674221
+## A.npnct30.log                 2.11807078           2.11807078
+## H.nwrds.unq.log               2.09016785           2.09016785
+## S.nwrds.log                   2.07125498           2.07125498
+## A.npnct07.log                 2.04536000           2.04536000
+## H.npnct01.log                 2.03495324           2.03495324
+## A.nwrds.log                   1.93513242           1.93513242
+## H.has.ebola                   1.75502087           1.75502087
+## A.npnct14.log                 1.53950062           1.53950062
+## S.npnct14.log                 1.28524340           1.28524340
+## PubDate.last1.log             1.18736302           1.18736302
+## A.npnct02.log                 1.14672657           1.14672657
+## H.day.log                     1.12673197           1.12673197
+## A.first.log                   1.11773697           1.11773697
+## S.npnct03.log                 1.07345568           1.07345568
+## H.newyork.log                 1.03389528           1.03389528
+## A.has.year.colon              0.89413765           0.89413765
+## PubDate.wkend                 0.64555965           0.64555965
+## H.npnct16.log                 0.59350225           0.59350225
+## H.npnct14.log                 0.52235605           0.52235605
+## H.nwrds.log                   0.46021386           0.46021386
+## H.npnct02.log                 0.04154952           0.04154952
+## H.daili.log                   0.00000000           0.00000000
+## A.compani.log                         NA                   NA
+## A.day.log                             NA                   NA
+## A.has.http                            NA                   NA
+## A.npnct03.log                         NA                   NA
+## A.npnct05.log                         NA                   NA
+## A.npnct08.log                         NA                   NA
+## A.npnct09.log                         NA                   NA
+## A.npnct10.log                         NA                   NA
+## A.npnct11.log                         NA                   NA
+## A.npnct16.log                         NA                   NA
+## A.npnct20.log                         NA                   NA
+## A.npnct23.log                         NA                   NA
+## A.npnct24.log                         NA                   NA
+## A.npnct25.log                         NA                   NA
+## A.npnct26.log                         NA                   NA
+## A.npnct27.log                         NA                   NA
+## A.npnct28.log                         NA                   NA
+## A.npnct29.log                         NA                   NA
+## A.npnct31.log                         NA                   NA
+## A.npnct32.log                         NA                   NA
+## A.take.log                            NA                   NA
+## A.time.log                            NA                   NA
+## H.has.http                            NA                   NA
+## H.npnct03.log                         NA                   NA
+## H.npnct09.log                         NA                   NA
+## H.npnct10.log                         NA                   NA
+## H.npnct11.log                         NA                   NA
+## H.npnct18.log                         NA                   NA
+## H.npnct19.log                         NA                   NA
+## H.npnct20.log                         NA                   NA
+## H.npnct22.log                         NA                   NA
+## H.npnct23.log                         NA                   NA
+## H.npnct24.log                         NA                   NA
+## H.npnct25.log                         NA                   NA
+## H.npnct26.log                         NA                   NA
+## H.npnct27.log                         NA                   NA
+## H.npnct28.log                         NA                   NA
+## H.npnct29.log                         NA                   NA
+## H.npnct31.log                         NA                   NA
+## H.npnct32.log                         NA                   NA
+## Popular                               NA                   NA
+## Popular.fctr                          NA                   NA
+## PubDate.last1                         NA                   NA
+## PubDate.last10                        NA                   NA
+## PubDate.last100                       NA                   NA
+## PubDate.month.fctr                    NA                   NA
+## PubDate.POSIX                         NA                   NA
+## PubDate.year.fctr                     NA                   NA
+## PubDate.zoo                           NA                   NA
+## S.articl.log                          NA                   NA
+## S.fashion.log                         NA                   NA
+## S.first.log                           NA                   NA
+## S.has.http                            NA                   NA
+## S.has.year.colon                      NA                   NA
+## S.intern.log                          NA                   NA
+## S.make.log                            NA                   NA
+## S.newyork.log                         NA                   NA
+## S.npnct01.log                         NA                   NA
+## S.npnct02.log                         NA                   NA
+## S.npnct04.log                         NA                   NA
+## S.npnct05.log                         NA                   NA
+## S.npnct06.log                         NA                   NA
+## S.npnct07.log                         NA                   NA
+## S.npnct10.log                         NA                   NA
+## S.npnct11.log                         NA                   NA
+## S.npnct17.log                         NA                   NA
+## S.npnct18.log                         NA                   NA
+## S.npnct19.log                         NA                   NA
+## S.npnct20.log                         NA                   NA
+## S.npnct22.log                         NA                   NA
+## S.npnct23.log                         NA                   NA
+## S.npnct24.log                         NA                   NA
+## S.npnct25.log                         NA                   NA
+## S.npnct26.log                         NA                   NA
+## S.npnct27.log                         NA                   NA
+## S.npnct28.log                         NA                   NA
+## S.npnct29.log                         NA                   NA
+## S.npnct31.log                         NA                   NA
+## S.npnct32.log                         NA                   NA
+## S.presid.log                          NA                   NA
+## S.report.log                          NA                   NA
+## S.said.log                            NA                   NA
+## S.share.log                           NA                   NA
+## S.show.log                            NA                   NA
+## S.week.log                            NA                   NA
+## S.year.log                            NA                   NA
+## UniqueID                              NA                   NA
+## WordCount                             NA                   NA
 ```
 
 ```r
@@ -11859,7 +12056,7 @@ glb_analytics_diag_plots(obs_df=glb_trnent_df, mdl_id=glb_fin_mdl_id,
 
 ```
 ## Warning in glb_analytics_diag_plots(obs_df = glb_trnent_df, mdl_id =
-## glb_fin_mdl_id, : Limiting important feature scatter plots to 5 out of 92
+## glb_fin_mdl_id, : Limiting important feature scatter plots to 5 out of 106
 ```
 
 ![](NYTBlogs_txtfeat_files/figure-html/fit.data.training_1-1.png) ![](NYTBlogs_txtfeat_files/figure-html/fit.data.training_1-2.png) ![](NYTBlogs_txtfeat_files/figure-html/fit.data.training_1-3.png) ![](NYTBlogs_txtfeat_files/figure-html/fit.data.training_1-4.png) ![](NYTBlogs_txtfeat_files/figure-html/fit.data.training_1-5.png) 
@@ -11867,134 +12064,102 @@ glb_analytics_diag_plots(obs_df=glb_trnent_df, mdl_id=glb_fin_mdl_id,
 ```
 ## [1] "Min/Max Boundaries: "
 ##      UniqueID Popular.fctr Popular.fctr.predict.Final.glm.prob
-## 116       116            Y                        0.2051620389
-## 33         33            Y                        0.5092652390
-## 1132     1132            Y                        0.9390023962
-## 1507     1507            N                        0.0004584335
-## 6370     6370            Y                        0.6745455614
-## 7           7            N                        0.3098352282
-## 20         20            N                        0.7530306415
-## 17         17            N                        0.9014839570
-## 15         15            N                        0.9137842861
-## 26         26            N                        1.0000000000
+## 6370     6370            Y                        0.7203429879
+## 1507     1507            N                        0.0004021506
 ##      Popular.fctr.predict.Final.glm
-## 116                               N
-## 33                                Y
-## 1132                              Y
+## 6370                              N
 ## 1507                              N
-## 6370                              Y
-## 7                                 Y
-## 20                                Y
-## 17                                Y
-## 15                                Y
-## 26                                Y
 ##      Popular.fctr.predict.Final.glm.accurate
-## 116                                    FALSE
-## 33                                      TRUE
-## 1132                                    TRUE
+## 6370                                   FALSE
 ## 1507                                    TRUE
-## 6370                                    TRUE
-## 7                                      FALSE
-## 20                                     FALSE
-## 17                                     FALSE
-## 15                                     FALSE
-## 26                                     FALSE
 ##      Popular.fctr.predict.Final.glm.error .label
-## 116                          -0.094837961    116
-## 33                            0.000000000     33
-## 1132                          0.000000000   1132
-## 1507                          0.000000000   1507
-## 6370                          0.000000000   6370
-## 7                             0.009835228      7
-## 20                            0.453030642     20
-## 17                            0.601483957     17
-## 15                            0.613784286     15
-## 26                            0.700000000     26
+## 6370                            -0.179657   6370
+## 1507                             0.000000   1507
 ## [1] "Inaccurate: "
 ##      UniqueID Popular.fctr Popular.fctr.predict.Final.glm.prob
-## 2182     2182            Y                         0.002532344
-## 6101     6101            Y                         0.002794767
-## 1923     1923            Y                         0.002901106
-## 4721     4721            Y                         0.002992607
-## 3113     3113            Y                         0.005772207
-## 6441     6441            Y                         0.006472160
+## 6101     6101            Y                         0.002533866
+## 4721     4721            Y                         0.002748124
+## 1923     1923            Y                         0.002923488
+## 2182     2182            Y                         0.003895315
+## 3113     3113            Y                         0.005880657
+## 5486     5486            Y                         0.005958308
 ##      Popular.fctr.predict.Final.glm
-## 2182                              N
 ## 6101                              N
-## 1923                              N
 ## 4721                              N
+## 1923                              N
+## 2182                              N
 ## 3113                              N
-## 6441                              N
+## 5486                              N
 ##      Popular.fctr.predict.Final.glm.accurate
-## 2182                                   FALSE
 ## 6101                                   FALSE
-## 1923                                   FALSE
 ## 4721                                   FALSE
+## 1923                                   FALSE
+## 2182                                   FALSE
 ## 3113                                   FALSE
-## 6441                                   FALSE
+## 5486                                   FALSE
 ##      Popular.fctr.predict.Final.glm.error
-## 2182                           -0.2974677
-## 6101                           -0.2972052
-## 1923                           -0.2970989
-## 4721                           -0.2970074
-## 3113                           -0.2942278
-## 6441                           -0.2935278
+## 6101                           -0.8974661
+## 4721                           -0.8972519
+## 1923                           -0.8970765
+## 2182                           -0.8961047
+## 3113                           -0.8941193
+## 5486                           -0.8940417
 ##      UniqueID Popular.fctr Popular.fctr.predict.Final.glm.prob
-## 3113     3113            Y                         0.005772207
-## 3216     3216            Y                         0.156023210
-## 2318     2318            Y                         0.197496539
-## 3485     3485            Y                         0.259227885
-## 4987     4987            N                         0.474808469
-## 2216     2216            N                         1.000000000
+## 3113     3113            Y                         0.005880657
+## 3880     3880            Y                         0.186338969
+## 825       825            Y                         0.229296417
+## 2752     2752            Y                         0.316310041
+## 6143     6143            Y                         0.629357041
+## 371       371            Y                         0.851015096
 ##      Popular.fctr.predict.Final.glm
 ## 3113                              N
-## 3216                              N
-## 2318                              N
-## 3485                              N
-## 4987                              Y
-## 2216                              Y
+## 3880                              N
+## 825                               N
+## 2752                              N
+## 6143                              N
+## 371                               N
 ##      Popular.fctr.predict.Final.glm.accurate
 ## 3113                                   FALSE
-## 3216                                   FALSE
-## 2318                                   FALSE
-## 3485                                   FALSE
-## 4987                                   FALSE
-## 2216                                   FALSE
+## 3880                                   FALSE
+## 825                                    FALSE
+## 2752                                   FALSE
+## 6143                                   FALSE
+## 371                                    FALSE
 ##      Popular.fctr.predict.Final.glm.error
-## 3113                          -0.29422779
-## 3216                          -0.14397679
-## 2318                          -0.10250346
-## 3485                          -0.04077211
-## 4987                           0.17480847
-## 2216                           0.70000000
+## 3113                           -0.8941193
+## 3880                           -0.7136610
+## 825                            -0.6707036
+## 2752                           -0.5836900
+## 6143                           -0.2706430
+## 371                            -0.0489849
 ##      UniqueID Popular.fctr Popular.fctr.predict.Final.glm.prob
-## 6428     6428            N                                   1
-## 6426     6426            N                                   1
-## 6472     6472            N                                   1
-## 6500     6500            N                                   1
-## 6514     6514            N                                   1
-## 6530     6530            N                                   1
+## 1612     1612            N                           0.9548095
+## 1667     1667            N                           0.9549935
+## 1448     1448            N                           0.9751221
+## 4882     4882            N                           0.9769537
+## 59         59            N                           0.9770689
+## 770       770            N                           0.9798837
 ##      Popular.fctr.predict.Final.glm
-## 6428                              Y
-## 6426                              Y
-## 6472                              Y
-## 6500                              Y
-## 6514                              Y
-## 6530                              Y
+## 1612                              Y
+## 1667                              Y
+## 1448                              Y
+## 4882                              Y
+## 59                                Y
+## 770                               Y
 ##      Popular.fctr.predict.Final.glm.accurate
-## 6428                                   FALSE
-## 6426                                   FALSE
-## 6472                                   FALSE
-## 6500                                   FALSE
-## 6514                                   FALSE
-## 6530                                   FALSE
+## 1612                                   FALSE
+## 1667                                   FALSE
+## 1448                                   FALSE
+## 4882                                   FALSE
+## 59                                     FALSE
+## 770                                    FALSE
 ##      Popular.fctr.predict.Final.glm.error
-## 6428                                  0.7
-## 6426                                  0.7
-## 6472                                  0.7
-## 6500                                  0.7
-## 6514                                  0.7
-## 6530                                  0.7
+## 1612                           0.05480953
+## 1667                           0.05499353
+## 1448                           0.07512209
+## 4882                           0.07695368
+## 59                             0.07706890
+## 770                            0.07988369
 ```
 
 ![](NYTBlogs_txtfeat_files/figure-html/fit.data.training_1-6.png) 
@@ -12011,10 +12176,10 @@ print(glb_trnent_df[glb_trnent_df$UniqueID %in% FN_OOB_ids,
 
 ```
 ##      Popular.fctr Popular.fctr.predict.Final.glm.prob
-## 92              Y                         0.032201582
-## 693             Y                         0.059293075
-## 4020            Y                         0.007688928
-## 4721            Y                         0.002992607
+## 92              Y                         0.040690149
+## 693             Y                         0.052822202
+## 4020            Y                         0.007595007
+## 4721            Y                         0.002748124
 ##      Popular.fctr.predict.Final.glm
 ## 92                                N
 ## 693                               N
@@ -12099,9 +12264,9 @@ glb_chunks_df <- myadd_chunk(glb_chunks_df, "predict.data.new", major.inc=TRUE)
 ```
 
 ```
-##                label step_major step_minor     bgn    end elapsed
-## 14 fit.data.training          7          1 594.083 604.89  10.807
-## 15  predict.data.new          8          0 604.891     NA      NA
+##                label step_major step_minor     bgn     end elapsed
+## 14 fit.data.training          7          1 476.848 487.891  11.043
+## 15  predict.data.new          8          0 487.892      NA      NA
 ```
 
 ## Step `8.0: predict data new`
@@ -12117,7 +12282,7 @@ glb_newent_df <- glb_get_predictions(glb_newent_df, mdl_id=glb_fin_mdl_id,
 
 ```
 ## Warning in glb_get_predictions(glb_newent_df, mdl_id = glb_fin_mdl_id,
-## rsp_var_out = glb_rsp_var_out, : Using default probability threshold: 0.3
+## rsp_var_out = glb_rsp_var_out, : Using default probability threshold: 0.9
 ```
 
 ```r
@@ -12129,7 +12294,7 @@ glb_analytics_diag_plots(obs_df=glb_newent_df, mdl_id=glb_fin_mdl_id,
 
 ```
 ## Warning in glb_analytics_diag_plots(obs_df = glb_newent_df, mdl_id =
-## glb_fin_mdl_id, : Limiting important feature scatter plots to 5 out of 92
+## glb_fin_mdl_id, : Limiting important feature scatter plots to 5 out of 106
 ```
 
 ```
@@ -12225,19 +12390,15 @@ glb_analytics_diag_plots(obs_df=glb_newent_df, mdl_id=glb_fin_mdl_id,
 ```
 ## [1] "Min/Max Boundaries: "
 ##      UniqueID Popular.fctr Popular.fctr.predict.Final.glm.prob
-## 6630     6630         <NA>                        8.941092e-11
-## 6753     6753         <NA>                        7.883965e-01
-## 7309     7309         <NA>                        2.612492e-04
+## 6753     6753         <NA>                        8.292048e-01
+## 7309     7309         <NA>                        2.017900e-07
 ##      Popular.fctr.predict.Final.glm
-## 6630                              N
-## 6753                              Y
+## 6753                              N
 ## 7309                              N
 ##      Popular.fctr.predict.Final.glm.accurate
-## 6630                                      NA
 ## 6753                                      NA
 ## 7309                                      NA
 ##      Popular.fctr.predict.Final.glm.error .label
-## 6630                                    0   6630
 ## 6753                                    0   6753
 ## 7309                                    0   7309
 ## [1] "Inaccurate: "
@@ -12348,7 +12509,7 @@ print(glb_models_df[glb_models_df$model_id == glb_sel_mdl_id,
 ```
 
 ```
-## [1] 0.3
+## [1] 0.9
 ```
 
 ```r
@@ -12356,7 +12517,7 @@ print(sprintf("glb_sel_mdl_id: %s", glb_sel_mdl_id))
 ```
 
 ```
-## [1] "glb_sel_mdl_id: Low.cor.X.glm"
+## [1] "glb_sel_mdl_id: All.X.glm"
 ```
 
 ```r
@@ -12381,27 +12542,27 @@ print(dsp_models_df)
 
 ```
 ##                     model_id max.Accuracy.OOB max.auc.OOB max.Kappa.OOB
-## 8              Low.cor.X.glm        0.9027710   0.9226367     0.6664245
-## 9                  All.X.glm        0.8930481   0.8196249     0.6247359
+## 9                  All.X.glm        0.9042295   0.7972982     0.6336042
+## 8              Low.cor.X.glm        0.9037433   0.9262548     0.6675461
 ## 10      All.X.no.rnorm.rpart        0.8862421   0.7084504     0.5054039
-## 11         All.X.no.rnorm.rf        0.8847837   0.9189958     0.6111869
+## 11         All.X.no.rnorm.rf        0.8838114   0.9217314     0.6079058
 ## 1          MFO.myMFO_classfr        0.8327662   0.5000000     0.0000000
 ## 3       Max.cor.Y.cv.0.rpart        0.8327662   0.5000000     0.0000000
 ## 4  Max.cor.Y.cv.0.cp.0.rpart        0.8327662   0.5000000     0.0000000
 ## 5            Max.cor.Y.rpart        0.8327662   0.5000000     0.0000000
-## 7    Interact.High.cor.Y.glm        0.7953330   0.7766863     0.3354449
+## 7    Interact.High.cor.Y.glm        0.7914439   0.7739949     0.3256506
 ## 6              Max.cor.Y.glm        0.7316480   0.7102060     0.2283681
 ## 2    Random.myrandom_classfr        0.1672338   0.4909227     0.0000000
 ##    min.aic.fit opt.prob.threshold.OOB
-## 8     2092.942                    0.3
-## 9    33948.772                    0.9
+## 9    30122.145                    0.9
+## 8     2079.176                    0.3
 ## 10          NA                    0.7
 ## 11          NA                    0.3
 ## 1           NA                    0.5
 ## 3           NA                    0.5
 ## 4           NA                    0.5
 ## 5           NA                    0.5
-## 7     3419.307                    0.3
+## 7     3424.717                    0.3
 ## 6     3714.601                    0.2
 ## 2           NA                    0.1
 ```
@@ -12411,7 +12572,7 @@ print(sprintf("%s OOB confusion matrix & accuracy: ", glb_sel_mdl_id))
 ```
 
 ```
-## [1] "Low.cor.X.glm OOB confusion matrix & accuracy: "
+## [1] "All.X.glm OOB confusion matrix & accuracy: "
 ```
 
 ```r
@@ -12422,8 +12583,8 @@ print(t(confusionMatrix(glb_OOBent_df[, paste0(glb_rsp_var_out, glb_sel_mdl_id)]
 ```
 ##          Prediction
 ## Reference    N    Y
-##         N 1593  120
-##         Y   80  264
+##         N 1641   72
+##         Y  125  219
 ```
 
 ```r
@@ -12452,39 +12613,39 @@ print(orderBy(~-accurate.OOB.FALSE, glb_ctgry_df))
 ## 6        Business#Business Day#Dealbook    312    304    0.162566845
 ## 15                        OpEd#Opinion#    154    164    0.087700535
 ## 18                         Styles#U.S.#     54     62    0.033155080
+## 10                        Culture#Arts#    225    244    0.130481283
 ## 9                  Business#Technology#    114    113    0.060427807
 ## 16                      Science#Health#     66     57    0.030481283
-## 10                        Culture#Arts#    225    244    0.130481283
+## 20                             TStyle##    221    105    0.056149733
+## 4            #Opinion#The Public Editor     10     10    0.005347594
 ## 8            Business#Crosswords/Games#     40     42    0.022459893
 ## 13                 Metro#N.Y. / Region#     60     67    0.035828877
 ## 3              #Opinion#Room For Debate     21     24    0.012834225
-## 4            #Opinion#The Public Editor     10     10    0.005347594
 ## 7  Business#Business Day#Small Business     45     42    0.022459893
-## 20                             TStyle##    221    105    0.056149733
+## 5                       #U.S.#Education     93     90    0.048128342
 ## 17                      Styles##Fashion     41     15    0.008021390
 ## 2                          #Multimedia#     42     52    0.027807487
-## 5                       #U.S.#Education     93     90    0.048128342
 ## 11                       Foreign#World#     47     47    0.025133690
 ## 12           Foreign#World#Asia Pacific     61     56    0.029946524
 ## 14                              myOther     13      3    0.001604278
 ## 19                       Travel#Travel#     31     35    0.018716578
 ##    .freqRatio.OOB accurate.OOB.FALSE accurate.OOB.TRUE max.accuracy.OOB
-## 1     0.197860963                 38               369        0.9066339
-## 6     0.151677200                 33               279        0.8942308
-## 15    0.074866310                 27               127        0.8246753
-## 18    0.026251823                 25                29        0.5370370
-## 9     0.055420515                 21                93        0.8157895
-## 16    0.032085561                 20                46        0.6969697
-## 10    0.109382596                 11               214        0.9511111
-## 8     0.019445795                  8                32        0.8000000
-## 13    0.029168692                  6                54        0.9000000
-## 3     0.010209042                  3                18        0.8571429
+## 1     0.197860963                 37               370        0.9090909
+## 6     0.151677200                 32               280        0.8974359
+## 15    0.074866310                 32               122        0.7922078
+## 18    0.026251823                 27                27        0.5000000
+## 10    0.109382596                 18               207        0.9200000
+## 9     0.055420515                 16                98        0.8596491
+## 16    0.032085561                 15                51        0.7727273
+## 20    0.107438017                  5               216        0.9773756
 ## 4     0.004861449                  3                 7        0.7000000
+## 8     0.019445795                  3                37        0.9250000
+## 13    0.029168692                  3                57        0.9500000
+## 3     0.010209042                  2                19        0.9047619
 ## 7     0.021876519                  2                43        0.9555556
-## 20    0.107438017                  2               219        0.9909502
+## 5     0.045211473                  1                92        0.9892473
 ## 17    0.019931940                  1                40        0.9756098
 ## 2     0.020418085                  0                42        1.0000000
-## 5     0.045211473                  0                93        1.0000000
 ## 11    0.022848809                  0                47        1.0000000
 ## 12    0.029654837                  0                61        1.0000000
 ## 14    0.006319883                  0                13        1.0000000
@@ -12523,10 +12684,10 @@ print(glb_OOBent_df[glb_OOBent_df$UniqueID %in% FN_OOB_ids,
 ```
 
 ```
-## [1] Popular.fctr                               
-## [2] Popular.fctr.predict.Low.cor.X.glm.prob    
-## [3] Popular.fctr.predict.Low.cor.X.glm         
-## [4] Popular.fctr.predict.Low.cor.X.glm.accurate
+## [1] Popular.fctr                           
+## [2] Popular.fctr.predict.All.X.glm.prob    
+## [3] Popular.fctr.predict.All.X.glm         
+## [4] Popular.fctr.predict.All.X.glm.accurate
 ## <0 rows> (or 0-length row.names)
 ```
 
@@ -12677,367 +12838,357 @@ dsp_hdlpfx_results <- function(hdlpfx) {
 #     c("is.ConditionalX.y", 
 #       grep("importance", names(glb_feats_df), fixed=TRUE, value=TRUE))])
 print(subset(glb_feats_df, !is.na(importance))[,
-    c("zeroVar", "nzv", 
+    c("zeroVar", "nzv", "myNearZV", 
       grep("importance", names(glb_feats_df), fixed=TRUE, value=TRUE))])
 ```
 
 ```
-##                     zeroVar   nzv   importance Low.cor.X.glm.importance
-## A.npnct23.log         FALSE  TRUE 1.000000e+02             1.000000e+02
-## WordCount.log         FALSE FALSE 1.288801e-05             1.288801e-05
-## myCategory.fctr       FALSE FALSE 1.002204e-05             1.002204e-05
-## H.npnct21.log         FALSE FALSE 5.018143e-06             5.018143e-06
-## A.npnct21.log         FALSE FALSE 4.625851e-06             4.625851e-06
-## S.nuppr.log           FALSE FALSE 4.569486e-06             4.569486e-06
-## A.npnct14.log         FALSE FALSE 3.906452e-06             3.906452e-06
-## H.today.log           FALSE  TRUE 3.716137e-06             3.716137e-06
-## H.nuppr.log           FALSE FALSE 3.182025e-06             3.182025e-06
-## H.npnct09.log         FALSE  TRUE 3.059125e-06             3.059125e-06
-## PubDate.wkday.fctr    FALSE FALSE 2.985990e-06             2.985990e-06
-## S.ndgts.log           FALSE FALSE 2.333324e-06             2.333324e-06
-## H.nchrs.log           FALSE FALSE 2.327769e-06             2.327769e-06
-## S.report.log          FALSE  TRUE 2.241758e-06             2.241758e-06
-## A.said.log            FALSE  TRUE 2.225691e-06             2.225691e-06
-## S.newyork.log         FALSE FALSE 2.215953e-06             2.215953e-06
-## H.npnct12.log         FALSE FALSE 2.149261e-06             2.149261e-06
-## H.npnct04.log         FALSE  TRUE 2.100497e-06             2.100497e-06
-## PubDate.last10.log    FALSE FALSE 1.997887e-06             1.997887e-06
-## H.ndgts.log           FALSE FALSE 1.993583e-06             1.993583e-06
-## H.nwrds.log           FALSE FALSE 1.855196e-06             1.855196e-06
-## H.npnct17.log         FALSE  TRUE 1.847313e-06             1.847313e-06
-## S.npnct04.log         FALSE  TRUE 1.760068e-06             1.760068e-06
-## PubDate.second.fctr   FALSE FALSE 1.752346e-06             1.752346e-06
-## S.can.log             FALSE  TRUE 1.698109e-06             1.698109e-06
-## S.share.log           FALSE  TRUE 1.577347e-06             1.577347e-06
-## H.new.log             FALSE  TRUE 1.501228e-06             1.501228e-06
-## S.will.log            FALSE FALSE 1.438120e-06             1.438120e-06
-## H.npnct07.log         FALSE FALSE 1.251748e-06             1.251748e-06
-## S.take.log            FALSE  TRUE 1.242853e-06             1.242853e-06
-## PubDate.minute.fctr   FALSE FALSE 1.202598e-06             1.202598e-06
-## PubDate.last1.log     FALSE FALSE 1.200389e-06             1.200389e-06
-## S.npnct01.log         FALSE  TRUE 1.175535e-06             1.175535e-06
-## H.npnct13.log         FALSE FALSE 1.166146e-06             1.166146e-06
-## H.day.log             FALSE  TRUE 1.165449e-06             1.165449e-06
-## H.npnct14.log         FALSE  TRUE 1.162212e-06             1.162212e-06
-## S.npnct12.log         FALSE FALSE 1.145878e-06             1.145878e-06
-## S.compani.log         FALSE FALSE 1.136156e-06             1.136156e-06
-## H.npnct01.log         FALSE  TRUE 1.095863e-06             1.095863e-06
-## A.nwrds.unq.log       FALSE FALSE 1.074022e-06             1.074022e-06
-## S.show.log            FALSE  TRUE 1.071063e-06             1.071063e-06
-## PubDate.hour.fctr     FALSE FALSE 1.052433e-06             1.052433e-06
-## S.presid.log          FALSE  TRUE 1.031221e-06             1.031221e-06
-## S.npnct16.log         FALSE FALSE 1.022348e-06             1.022348e-06
-## S.make.log            FALSE  TRUE 1.008816e-06             1.008816e-06
-## S.state.log           FALSE  TRUE 9.110520e-07             9.110520e-07
-## A.state.log           FALSE  TRUE 9.110520e-07             9.110520e-07
-## A.npnct27.log         FALSE  TRUE 9.110520e-07             9.110520e-07
-## S.year.log            FALSE FALSE 8.851511e-07             8.851511e-07
-## H.npnct16.log         FALSE FALSE 8.710662e-07             8.710662e-07
-## S.intern.log          FALSE  TRUE 8.387696e-07             8.387696e-07
-## H.has.ebola           FALSE  TRUE 8.241580e-07             8.241580e-07
-## PubDate.date.fctr     FALSE FALSE 8.233073e-07             8.233073e-07
-## H.report.log          FALSE  TRUE 8.039331e-07             8.039331e-07
-## H.X2014.log           FALSE  TRUE 7.740347e-07             7.740347e-07
-## S.npnct13.log         FALSE FALSE 7.695263e-07             7.695263e-07
-## H.week.log            FALSE  TRUE 7.110312e-07             7.110312e-07
-## S.time.log            FALSE FALSE 6.384092e-07             6.384092e-07
-## PubDate.wkend         FALSE FALSE 6.089193e-07             6.089193e-07
-## S.week.log            FALSE FALSE 5.723540e-07             5.723540e-07
-## A.nwrds.log           FALSE FALSE 5.580949e-07             5.580949e-07
-## A.nchrs.log           FALSE FALSE 5.287682e-07             5.287682e-07
-## PubDate.last100.log   FALSE FALSE 5.212444e-07             5.212444e-07
-## S.day.log             FALSE  TRUE 3.145965e-07             3.145965e-07
-## A.npnct17.log         FALSE  TRUE 3.000151e-07             3.000151e-07
-## S.first.log           FALSE  TRUE 2.555518e-07             2.555518e-07
-## H.newyork.log         FALSE  TRUE 1.800829e-07             1.800829e-07
-## S.articl.log          FALSE  TRUE 1.796068e-07             1.796068e-07
-## H.daili.log           FALSE  TRUE 1.287108e-07             1.287108e-07
-## H.npnct30.log         FALSE  TRUE 9.686374e-08             9.686374e-08
-## .rnorm                FALSE FALSE 8.784761e-08             8.784761e-08
-## S.new.log             FALSE FALSE 4.862671e-08             4.862671e-08
-## S.npnct06.log         FALSE  TRUE 2.225651e-08             2.225651e-08
-## S.fashion.log         FALSE  TRUE 1.098049e-09             1.098049e-09
-## H.npnct15.log         FALSE  TRUE 7.395235e-10             7.395235e-10
-## S.npnct30.log         FALSE  TRUE 5.609428e-10             5.609428e-10
-## A.has.year.colon      FALSE  TRUE 2.912418e-10             2.912418e-10
-## H.npnct02.log         FALSE  TRUE 2.666142e-10             2.666142e-10
-## S.npnct22.log         FALSE  TRUE 2.461340e-10             2.461340e-10
-## S.npnct03.log         FALSE  TRUE 2.304835e-10             2.304835e-10
-## H.npnct05.log         FALSE  TRUE 1.846671e-10             1.846671e-10
-## A.npnct07.log         FALSE  TRUE 1.653979e-10             1.653979e-10
-## S.npnct02.log         FALSE  TRUE 7.575296e-11             7.575296e-11
-## S.npnct08.log         FALSE  TRUE 7.353677e-11             7.353677e-11
-## S.npnct09.log         FALSE  TRUE 6.715377e-11             6.715377e-11
-## A.one.log             FALSE  TRUE 6.660788e-11             6.660788e-11
-## S.one.log             FALSE  TRUE 6.580549e-11             6.580549e-11
-## H.npnct11.log         FALSE  TRUE 6.416570e-11             6.416570e-11
-## S.npnct15.log         FALSE  TRUE 5.392046e-12             5.392046e-12
-## A.npnct15.log         FALSE  TRUE 4.905261e-12             4.905261e-12
-## A.npnct18.log         FALSE  TRUE 1.783598e-12             1.783598e-12
-## H.npnct22.log         FALSE  TRUE 1.467473e-12             1.467473e-12
-## A.npnct19.log         FALSE  TRUE 0.000000e+00             0.000000e+00
-##                     Final.glm.importance
-## A.npnct23.log               1.000000e+02
-## WordCount.log               1.288801e-05
-## myCategory.fctr             1.002204e-05
-## H.npnct21.log               5.018143e-06
-## A.npnct21.log               4.625851e-06
-## S.nuppr.log                 4.569486e-06
-## A.npnct14.log               3.906452e-06
-## H.today.log                 3.716137e-06
-## H.nuppr.log                 3.182025e-06
-## H.npnct09.log               3.059125e-06
-## PubDate.wkday.fctr          2.985990e-06
-## S.ndgts.log                 2.333324e-06
-## H.nchrs.log                 2.327769e-06
-## S.report.log                2.241758e-06
-## A.said.log                  2.225691e-06
-## S.newyork.log               2.215953e-06
-## H.npnct12.log               2.149261e-06
-## H.npnct04.log               2.100497e-06
-## PubDate.last10.log          1.997887e-06
-## H.ndgts.log                 1.993583e-06
-## H.nwrds.log                 1.855196e-06
-## H.npnct17.log               1.847313e-06
-## S.npnct04.log               1.760068e-06
-## PubDate.second.fctr         1.752346e-06
-## S.can.log                   1.698109e-06
-## S.share.log                 1.577347e-06
-## H.new.log                   1.501228e-06
-## S.will.log                  1.438120e-06
-## H.npnct07.log               1.251748e-06
-## S.take.log                  1.242853e-06
-## PubDate.minute.fctr         1.202598e-06
-## PubDate.last1.log           1.200389e-06
-## S.npnct01.log               1.175535e-06
-## H.npnct13.log               1.166146e-06
-## H.day.log                   1.165449e-06
-## H.npnct14.log               1.162212e-06
-## S.npnct12.log               1.145878e-06
-## S.compani.log               1.136156e-06
-## H.npnct01.log               1.095863e-06
-## A.nwrds.unq.log             1.074022e-06
-## S.show.log                  1.071063e-06
-## PubDate.hour.fctr           1.052433e-06
-## S.presid.log                1.031221e-06
-## S.npnct16.log               1.022348e-06
-## S.make.log                  1.008816e-06
-## S.state.log                 9.110520e-07
-## A.state.log                 9.110520e-07
-## A.npnct27.log               9.110520e-07
-## S.year.log                  8.851511e-07
-## H.npnct16.log               8.710662e-07
-## S.intern.log                8.387696e-07
-## H.has.ebola                 8.241580e-07
-## PubDate.date.fctr           8.233073e-07
-## H.report.log                8.039331e-07
-## H.X2014.log                 7.740347e-07
-## S.npnct13.log               7.695263e-07
-## H.week.log                  7.110312e-07
-## S.time.log                  6.384092e-07
-## PubDate.wkend               6.089193e-07
-## S.week.log                  5.723540e-07
-## A.nwrds.log                 5.580949e-07
-## A.nchrs.log                 5.287682e-07
-## PubDate.last100.log         5.212444e-07
-## S.day.log                   3.145965e-07
-## A.npnct17.log               3.000151e-07
-## S.first.log                 2.555518e-07
-## H.newyork.log               1.800829e-07
-## S.articl.log                1.796068e-07
-## H.daili.log                 1.287108e-07
-## H.npnct30.log               9.686374e-08
-## .rnorm                      8.784761e-08
-## S.new.log                   4.862671e-08
-## S.npnct06.log               2.225651e-08
-## S.fashion.log               1.098049e-09
-## H.npnct15.log               7.395235e-10
-## S.npnct30.log               5.609428e-10
-## A.has.year.colon            2.912418e-10
-## H.npnct02.log               2.666142e-10
-## S.npnct22.log               2.461340e-10
-## S.npnct03.log               2.304835e-10
-## H.npnct05.log               1.846671e-10
-## A.npnct07.log               1.653979e-10
-## S.npnct02.log               7.575296e-11
-## S.npnct08.log               7.353677e-11
-## S.npnct09.log               6.715377e-11
-## A.one.log                   6.660788e-11
-## S.one.log                   6.580549e-11
-## H.npnct11.log               6.416570e-11
-## S.npnct15.log               5.392046e-12
-## A.npnct15.log               4.905261e-12
-## A.npnct18.log               1.783598e-12
-## H.npnct22.log               1.467473e-12
-## A.npnct19.log               0.000000e+00
+##                     zeroVar   nzv myNearZV   importance
+## myCategory.fctr       FALSE FALSE    FALSE 100.00000000
+## WordCount.log         FALSE FALSE    FALSE  70.43241920
+## H.npnct21.log         FALSE FALSE    FALSE  32.71499686
+## PubDate.hour.fctr     FALSE FALSE    FALSE  28.49497858
+## A.make.log            FALSE  TRUE    FALSE  24.82458430
+## A.fashion.log         FALSE  TRUE    FALSE  22.86799201
+## H.npnct30.log         FALSE  TRUE    FALSE  18.66889549
+## A.report.log          FALSE  TRUE    FALSE  17.94396169
+## A.articl.log          FALSE  TRUE    FALSE  17.31584878
+## A.npnct04.log         FALSE  TRUE    FALSE  16.42726704
+## H.X2015.log           FALSE  TRUE    FALSE  16.18781324
+## A.share.log           FALSE  TRUE    FALSE  16.05772852
+## H.today.log           FALSE  TRUE    FALSE  15.09058570
+## H.new.log             FALSE  TRUE    FALSE  14.58884852
+## H.has.year.colon      FALSE  TRUE    FALSE  14.48643170
+## A.said.log            FALSE  TRUE    FALSE  13.53465142
+## H.ndgts.log           FALSE FALSE    FALSE  13.52245535
+## PubDate.last10.log    FALSE FALSE    FALSE  12.97780472
+## H.npnct04.log         FALSE  TRUE    FALSE  12.76927377
+## H.npnct08.log         FALSE  TRUE    FALSE  12.06593521
+## A.newyork.log         FALSE FALSE    FALSE  11.59720267
+## S.npnct15.log         FALSE  TRUE    FALSE  10.97856358
+## A.npnct15.log         FALSE  TRUE    FALSE  10.79302566
+## PubDate.wkday.fctr    FALSE FALSE    FALSE  10.68599632
+## .rnorm                FALSE FALSE    FALSE  10.55274877
+## A.week.log            FALSE FALSE    FALSE   9.81958866
+## H.npnct13.log         FALSE FALSE    FALSE   9.71218057
+## A.show.log            FALSE  TRUE    FALSE   9.68407375
+## A.intern.log          FALSE  TRUE    FALSE   9.66632050
+## S.time.log            FALSE FALSE    FALSE   9.55323497
+## H.npnct07.log         FALSE FALSE    FALSE   9.53685753
+## A.npnct18.log         FALSE  TRUE    FALSE   9.41984800
+## H.npnct06.log         FALSE  TRUE    FALSE   9.23627876
+## S.state.log           FALSE  TRUE    FALSE   8.92098916
+## PubDate.minute.fctr   FALSE FALSE    FALSE   8.53101958
+## A.npnct19.log         FALSE  TRUE    FALSE   8.47715771
+## A.can.log             FALSE  TRUE    FALSE   8.10387656
+## PubDate.date.fctr     FALSE FALSE    FALSE   8.03583604
+## S.npnct12.log         FALSE FALSE    FALSE   8.03465413
+## A.npnct12.log         FALSE FALSE    FALSE   7.98621020
+## H.nuppr.log           FALSE FALSE    FALSE   7.85639322
+## H.week.log            FALSE  TRUE    FALSE   7.79627328
+## A.state.log           FALSE  TRUE    FALSE   7.26321159
+## S.npnct13.log         FALSE FALSE    FALSE   7.17910453
+## A.npnct13.log         FALSE FALSE    FALSE   7.17784272
+## A.presid.log          FALSE  TRUE    FALSE   7.16305732
+## S.npnct16.log         FALSE FALSE    FALSE   7.14944805
+## S.npnct08.log         FALSE  TRUE    FALSE   7.07080676
+## S.can.log             FALSE  TRUE    FALSE   7.02341628
+## A.npnct17.log         FALSE  TRUE    FALSE   6.89744623
+## A.will.log            FALSE FALSE    FALSE   6.81698075
+## S.ndgts.log           FALSE FALSE    FALSE   6.75768296
+## S.compani.log         FALSE FALSE    FALSE   6.68327086
+## H.npnct05.log         FALSE  TRUE    FALSE   6.59752354
+## A.npnct21.log         FALSE FALSE    FALSE   6.53946049
+## S.nuppr.log           FALSE FALSE    FALSE   6.48716764
+## H.nchrs.log           FALSE FALSE    FALSE   6.36565681
+## A.year.log            FALSE FALSE    FALSE   6.30335271
+## A.npnct01.log         FALSE  TRUE    FALSE   6.26548239
+## S.will.log            FALSE FALSE    FALSE   6.21988118
+## A.ndgts.log           FALSE FALSE    FALSE   6.12230312
+## PubDate.last100.log   FALSE FALSE    FALSE   6.10602730
+## A.npnct22.log         FALSE  TRUE    FALSE   5.81913883
+## A.nuppr.log           FALSE FALSE    FALSE   5.73056332
+## S.day.log             FALSE  TRUE    FALSE   5.55760002
+## S.one.log             FALSE  TRUE    FALSE   5.29435441
+## A.one.log             FALSE  TRUE    FALSE   5.19360228
+## PubDate.second.fctr   FALSE FALSE    FALSE   4.57971207
+## H.X2014.log           FALSE  TRUE    FALSE   4.46472089
+## H.report.log          FALSE  TRUE    FALSE   4.40029310
+## S.take.log            FALSE  TRUE    FALSE   4.26732531
+## S.nwrds.unq.log       FALSE FALSE    FALSE   4.13474268
+## S.npnct09.log         FALSE  TRUE    FALSE   4.11245488
+## A.nwrds.unq.log       FALSE FALSE    FALSE   3.95688107
+## H.npnct12.log         FALSE FALSE    FALSE   3.76801998
+## H.fashion.log         FALSE  TRUE    FALSE   3.76390763
+## S.npnct21.log         FALSE FALSE    FALSE   3.66026012
+## S.new.log             FALSE FALSE    FALSE   3.52281315
+## H.npnct15.log         FALSE  TRUE    FALSE   3.45385040
+## A.new.log             FALSE FALSE    FALSE   3.41102464
+## A.nchrs.log           FALSE FALSE    FALSE   3.12081764
+## S.nchrs.log           FALSE FALSE    FALSE   2.97802811
+## S.npnct30.log         FALSE  TRUE    FALSE   2.88153488
+## H.npnct17.log         FALSE  TRUE    FALSE   2.24624596
+## A.npnct06.log         FALSE  TRUE    FALSE   2.18674221
+## A.npnct30.log         FALSE  TRUE    FALSE   2.11807078
+## H.nwrds.unq.log       FALSE FALSE    FALSE   2.09016785
+## S.nwrds.log           FALSE FALSE    FALSE   2.07125498
+## A.npnct07.log         FALSE  TRUE    FALSE   2.04536000
+## H.npnct01.log         FALSE  TRUE    FALSE   2.03495324
+## A.nwrds.log           FALSE FALSE    FALSE   1.93513242
+## H.has.ebola           FALSE  TRUE    FALSE   1.75502087
+## A.npnct14.log         FALSE FALSE    FALSE   1.53950062
+## S.npnct14.log         FALSE FALSE    FALSE   1.28524340
+## PubDate.last1.log     FALSE FALSE    FALSE   1.18736302
+## A.npnct02.log         FALSE  TRUE    FALSE   1.14672657
+## H.day.log             FALSE  TRUE    FALSE   1.12673197
+## A.first.log           FALSE  TRUE    FALSE   1.11773697
+## S.npnct03.log         FALSE  TRUE    FALSE   1.07345568
+## H.newyork.log         FALSE  TRUE    FALSE   1.03389528
+## A.has.year.colon      FALSE  TRUE    FALSE   0.89413765
+## PubDate.wkend         FALSE FALSE    FALSE   0.64555965
+## H.npnct16.log         FALSE FALSE    FALSE   0.59350225
+## H.npnct14.log         FALSE  TRUE    FALSE   0.52235605
+## H.nwrds.log           FALSE FALSE    FALSE   0.46021386
+## H.npnct02.log         FALSE  TRUE    FALSE   0.04154952
+## H.daili.log           FALSE  TRUE    FALSE   0.00000000
+##                     All.X.glm.importance Final.glm.importance
+## myCategory.fctr             100.00000000         100.00000000
+## WordCount.log                70.43241920          70.43241920
+## H.npnct21.log                32.71499686          32.71499686
+## PubDate.hour.fctr            28.49497858          28.49497858
+## A.make.log                   24.82458430          24.82458430
+## A.fashion.log                22.86799201          22.86799201
+## H.npnct30.log                18.66889549          18.66889549
+## A.report.log                 17.94396169          17.94396169
+## A.articl.log                 17.31584878          17.31584878
+## A.npnct04.log                16.42726704          16.42726704
+## H.X2015.log                  16.18781324          16.18781324
+## A.share.log                  16.05772852          16.05772852
+## H.today.log                  15.09058570          15.09058570
+## H.new.log                    14.58884852          14.58884852
+## H.has.year.colon             14.48643170          14.48643170
+## A.said.log                   13.53465142          13.53465142
+## H.ndgts.log                  13.52245535          13.52245535
+## PubDate.last10.log           12.97780472          12.97780472
+## H.npnct04.log                12.76927377          12.76927377
+## H.npnct08.log                12.06593521          12.06593521
+## A.newyork.log                11.59720267          11.59720267
+## S.npnct15.log                10.97856358          10.97856358
+## A.npnct15.log                10.79302566          10.79302566
+## PubDate.wkday.fctr           10.68599632          10.68599632
+## .rnorm                       10.55274877          10.55274877
+## A.week.log                    9.81958866           9.81958866
+## H.npnct13.log                 9.71218057           9.71218057
+## A.show.log                    9.68407375           9.68407375
+## A.intern.log                  9.66632050           9.66632050
+## S.time.log                    9.55323497           9.55323497
+## H.npnct07.log                 9.53685753           9.53685753
+## A.npnct18.log                 9.41984800           9.41984800
+## H.npnct06.log                 9.23627876           9.23627876
+## S.state.log                   8.92098916           8.92098916
+## PubDate.minute.fctr           8.53101958           8.53101958
+## A.npnct19.log                 8.47715771           8.47715771
+## A.can.log                     8.10387656           8.10387656
+## PubDate.date.fctr             8.03583604           8.03583604
+## S.npnct12.log                 8.03465413           8.03465413
+## A.npnct12.log                 7.98621020           7.98621020
+## H.nuppr.log                   7.85639322           7.85639322
+## H.week.log                    7.79627328           7.79627328
+## A.state.log                   7.26321159           7.26321159
+## S.npnct13.log                 7.17910453           7.17910453
+## A.npnct13.log                 7.17784272           7.17784272
+## A.presid.log                  7.16305732           7.16305732
+## S.npnct16.log                 7.14944805           7.14944805
+## S.npnct08.log                 7.07080676           7.07080676
+## S.can.log                     7.02341628           7.02341628
+## A.npnct17.log                 6.89744623           6.89744623
+## A.will.log                    6.81698075           6.81698075
+## S.ndgts.log                   6.75768296           6.75768296
+## S.compani.log                 6.68327086           6.68327086
+## H.npnct05.log                 6.59752354           6.59752354
+## A.npnct21.log                 6.53946049           6.53946049
+## S.nuppr.log                   6.48716764           6.48716764
+## H.nchrs.log                   6.36565681           6.36565681
+## A.year.log                    6.30335271           6.30335271
+## A.npnct01.log                 6.26548239           6.26548239
+## S.will.log                    6.21988118           6.21988118
+## A.ndgts.log                   6.12230312           6.12230312
+## PubDate.last100.log           6.10602730           6.10602730
+## A.npnct22.log                 5.81913883           5.81913883
+## A.nuppr.log                   5.73056332           5.73056332
+## S.day.log                     5.55760002           5.55760002
+## S.one.log                     5.29435441           5.29435441
+## A.one.log                     5.19360228           5.19360228
+## PubDate.second.fctr           4.57971207           4.57971207
+## H.X2014.log                   4.46472089           4.46472089
+## H.report.log                  4.40029310           4.40029310
+## S.take.log                    4.26732531           4.26732531
+## S.nwrds.unq.log               4.13474268           4.13474268
+## S.npnct09.log                 4.11245488           4.11245488
+## A.nwrds.unq.log               3.95688107           3.95688107
+## H.npnct12.log                 3.76801998           3.76801998
+## H.fashion.log                 3.76390763           3.76390763
+## S.npnct21.log                 3.66026012           3.66026012
+## S.new.log                     3.52281315           3.52281315
+## H.npnct15.log                 3.45385040           3.45385040
+## A.new.log                     3.41102464           3.41102464
+## A.nchrs.log                   3.12081764           3.12081764
+## S.nchrs.log                   2.97802811           2.97802811
+## S.npnct30.log                 2.88153488           2.88153488
+## H.npnct17.log                 2.24624596           2.24624596
+## A.npnct06.log                 2.18674221           2.18674221
+## A.npnct30.log                 2.11807078           2.11807078
+## H.nwrds.unq.log               2.09016785           2.09016785
+## S.nwrds.log                   2.07125498           2.07125498
+## A.npnct07.log                 2.04536000           2.04536000
+## H.npnct01.log                 2.03495324           2.03495324
+## A.nwrds.log                   1.93513242           1.93513242
+## H.has.ebola                   1.75502087           1.75502087
+## A.npnct14.log                 1.53950062           1.53950062
+## S.npnct14.log                 1.28524340           1.28524340
+## PubDate.last1.log             1.18736302           1.18736302
+## A.npnct02.log                 1.14672657           1.14672657
+## H.day.log                     1.12673197           1.12673197
+## A.first.log                   1.11773697           1.11773697
+## S.npnct03.log                 1.07345568           1.07345568
+## H.newyork.log                 1.03389528           1.03389528
+## A.has.year.colon              0.89413765           0.89413765
+## PubDate.wkend                 0.64555965           0.64555965
+## H.npnct16.log                 0.59350225           0.59350225
+## H.npnct14.log                 0.52235605           0.52235605
+## H.nwrds.log                   0.46021386           0.46021386
+## H.npnct02.log                 0.04154952           0.04154952
+## H.daili.log                   0.00000000           0.00000000
 ```
 
 ```r
 print(subset(glb_feats_df, is.na(importance))[,
-    c("zeroVar", "nzv",  
+    c("zeroVar", "nzv", "myNearZV", 
       grep("importance", names(glb_feats_df), fixed=TRUE, value=TRUE))])
 ```
 
 ```
-##                    zeroVar   nzv importance Low.cor.X.glm.importance
-## A.articl.log         FALSE  TRUE         NA                       NA
-## A.can.log            FALSE  TRUE         NA                       NA
-## A.compani.log        FALSE FALSE         NA                       NA
-## A.day.log            FALSE  TRUE         NA                       NA
-## A.fashion.log        FALSE  TRUE         NA                       NA
-## A.first.log          FALSE  TRUE         NA                       NA
-## A.has.http           FALSE  TRUE         NA                       NA
-## A.intern.log         FALSE  TRUE         NA                       NA
-## A.make.log           FALSE  TRUE         NA                       NA
-## A.ndgts.log          FALSE FALSE         NA                       NA
-## A.new.log            FALSE FALSE         NA                       NA
-## A.newyork.log        FALSE FALSE         NA                       NA
-## A.npnct01.log        FALSE  TRUE         NA                       NA
-## A.npnct02.log        FALSE  TRUE         NA                       NA
-## A.npnct03.log        FALSE  TRUE         NA                       NA
-## A.npnct04.log        FALSE  TRUE         NA                       NA
-## A.npnct05.log         TRUE  TRUE         NA                       NA
-## A.npnct06.log        FALSE  TRUE         NA                       NA
-## A.npnct08.log        FALSE  TRUE         NA                       NA
-## A.npnct09.log        FALSE  TRUE         NA                       NA
-## A.npnct10.log         TRUE  TRUE         NA                       NA
-## A.npnct11.log        FALSE  TRUE         NA                       NA
-## A.npnct12.log        FALSE FALSE         NA                       NA
-## A.npnct13.log        FALSE FALSE         NA                       NA
-## A.npnct16.log        FALSE FALSE         NA                       NA
-## A.npnct20.log        FALSE  TRUE         NA                       NA
-## A.npnct22.log        FALSE  TRUE         NA                       NA
-## A.npnct24.log         TRUE  TRUE         NA                       NA
-## A.npnct25.log        FALSE  TRUE         NA                       NA
-## A.npnct26.log         TRUE  TRUE         NA                       NA
-## A.npnct28.log         TRUE  TRUE         NA                       NA
-## A.npnct29.log         TRUE  TRUE         NA                       NA
-## A.npnct30.log        FALSE  TRUE         NA                       NA
-## A.npnct31.log         TRUE  TRUE         NA                       NA
-## A.npnct32.log         TRUE  TRUE         NA                       NA
-## A.nuppr.log          FALSE FALSE         NA                       NA
-## A.presid.log         FALSE  TRUE         NA                       NA
-## A.report.log         FALSE  TRUE         NA                       NA
-## A.share.log          FALSE  TRUE         NA                       NA
-## A.show.log           FALSE  TRUE         NA                       NA
-## A.take.log           FALSE  TRUE         NA                       NA
-## A.time.log           FALSE FALSE         NA                       NA
-## A.week.log           FALSE FALSE         NA                       NA
-## A.will.log           FALSE FALSE         NA                       NA
-## A.year.log           FALSE FALSE         NA                       NA
-## H.fashion.log        FALSE  TRUE         NA                       NA
-## H.has.http            TRUE  TRUE         NA                       NA
-## H.has.year.colon     FALSE  TRUE         NA                       NA
-## H.npnct03.log        FALSE  TRUE         NA                       NA
-## H.npnct06.log        FALSE  TRUE         NA                       NA
-## H.npnct08.log        FALSE  TRUE         NA                       NA
-## H.npnct10.log         TRUE  TRUE         NA                       NA
-## H.npnct18.log         TRUE  TRUE         NA                       NA
-## H.npnct19.log         TRUE  TRUE         NA                       NA
-## H.npnct20.log         TRUE  TRUE         NA                       NA
-## H.npnct23.log         TRUE  TRUE         NA                       NA
-## H.npnct24.log         TRUE  TRUE         NA                       NA
-## H.npnct25.log         TRUE  TRUE         NA                       NA
-## H.npnct26.log         TRUE  TRUE         NA                       NA
-## H.npnct27.log         TRUE  TRUE         NA                       NA
-## H.npnct28.log         TRUE  TRUE         NA                       NA
-## H.npnct29.log         TRUE  TRUE         NA                       NA
-## H.npnct31.log         TRUE  TRUE         NA                       NA
-## H.npnct32.log         TRUE  TRUE         NA                       NA
-## H.nwrds.unq.log      FALSE FALSE         NA                       NA
-## H.X2015.log          FALSE  TRUE         NA                       NA
-## Popular              FALSE FALSE         NA                       NA
-## Popular.fctr            NA    NA         NA                       NA
-## PubDate.last1        FALSE FALSE         NA                       NA
-## PubDate.last10       FALSE FALSE         NA                       NA
-## PubDate.last100      FALSE FALSE         NA                       NA
-## PubDate.month.fctr   FALSE FALSE         NA                       NA
-## PubDate.POSIX        FALSE FALSE         NA                       NA
-## PubDate.year.fctr     TRUE  TRUE         NA                       NA
-## PubDate.zoo          FALSE FALSE         NA                       NA
-## S.has.http            TRUE  TRUE         NA                       NA
-## S.has.year.colon     FALSE  TRUE         NA                       NA
-## S.nchrs.log          FALSE FALSE         NA                       NA
-## S.npnct05.log         TRUE  TRUE         NA                       NA
-## S.npnct07.log        FALSE  TRUE         NA                       NA
-## S.npnct10.log         TRUE  TRUE         NA                       NA
-## S.npnct11.log        FALSE  TRUE         NA                       NA
-## S.npnct14.log        FALSE FALSE         NA                       NA
-## S.npnct17.log        FALSE  TRUE         NA                       NA
-## S.npnct18.log         TRUE  TRUE         NA                       NA
-## S.npnct19.log         TRUE  TRUE         NA                       NA
-## S.npnct20.log         TRUE  TRUE         NA                       NA
-## S.npnct21.log        FALSE FALSE         NA                       NA
-## S.npnct23.log        FALSE  TRUE         NA                       NA
-## S.npnct24.log         TRUE  TRUE         NA                       NA
-## S.npnct25.log        FALSE  TRUE         NA                       NA
-## S.npnct26.log         TRUE  TRUE         NA                       NA
-## S.npnct27.log         TRUE  TRUE         NA                       NA
-## S.npnct28.log         TRUE  TRUE         NA                       NA
-## S.npnct29.log         TRUE  TRUE         NA                       NA
-## S.npnct31.log         TRUE  TRUE         NA                       NA
-## S.npnct32.log         TRUE  TRUE         NA                       NA
-## S.nwrds.log          FALSE FALSE         NA                       NA
-## S.nwrds.unq.log      FALSE FALSE         NA                       NA
-## S.said.log           FALSE  TRUE         NA                       NA
-## UniqueID             FALSE FALSE         NA                       NA
-## WordCount            FALSE FALSE         NA                       NA
+##                    zeroVar   nzv myNearZV importance All.X.glm.importance
+## A.compani.log        FALSE FALSE    FALSE         NA                   NA
+## A.day.log            FALSE  TRUE    FALSE         NA                   NA
+## A.has.http           FALSE  TRUE    FALSE         NA                   NA
+## A.npnct03.log        FALSE  TRUE    FALSE         NA                   NA
+## A.npnct05.log         TRUE  TRUE     TRUE         NA                   NA
+## A.npnct08.log        FALSE  TRUE    FALSE         NA                   NA
+## A.npnct09.log        FALSE  TRUE    FALSE         NA                   NA
+## A.npnct10.log         TRUE  TRUE     TRUE         NA                   NA
+## A.npnct11.log        FALSE  TRUE     TRUE         NA                   NA
+## A.npnct16.log        FALSE FALSE    FALSE         NA                   NA
+## A.npnct20.log        FALSE  TRUE    FALSE         NA                   NA
+## A.npnct23.log        FALSE  TRUE     TRUE         NA                   NA
+## A.npnct24.log         TRUE  TRUE     TRUE         NA                   NA
+## A.npnct25.log        FALSE  TRUE     TRUE         NA                   NA
+## A.npnct26.log         TRUE  TRUE     TRUE         NA                   NA
+## A.npnct27.log        FALSE  TRUE     TRUE         NA                   NA
+## A.npnct28.log         TRUE  TRUE     TRUE         NA                   NA
+## A.npnct29.log         TRUE  TRUE     TRUE         NA                   NA
+## A.npnct31.log         TRUE  TRUE     TRUE         NA                   NA
+## A.npnct32.log         TRUE  TRUE     TRUE         NA                   NA
+## A.take.log           FALSE  TRUE    FALSE         NA                   NA
+## A.time.log           FALSE FALSE    FALSE         NA                   NA
+## H.has.http            TRUE  TRUE     TRUE         NA                   NA
+## H.npnct03.log        FALSE  TRUE     TRUE         NA                   NA
+## H.npnct09.log        FALSE  TRUE    FALSE         NA                   NA
+## H.npnct10.log         TRUE  TRUE     TRUE         NA                   NA
+## H.npnct11.log        FALSE  TRUE     TRUE         NA                   NA
+## H.npnct18.log         TRUE  TRUE     TRUE         NA                   NA
+## H.npnct19.log         TRUE  TRUE     TRUE         NA                   NA
+## H.npnct20.log         TRUE  TRUE     TRUE         NA                   NA
+## H.npnct22.log        FALSE  TRUE     TRUE         NA                   NA
+## H.npnct23.log         TRUE  TRUE     TRUE         NA                   NA
+## H.npnct24.log         TRUE  TRUE     TRUE         NA                   NA
+## H.npnct25.log         TRUE  TRUE     TRUE         NA                   NA
+## H.npnct26.log         TRUE  TRUE     TRUE         NA                   NA
+## H.npnct27.log         TRUE  TRUE     TRUE         NA                   NA
+## H.npnct28.log         TRUE  TRUE     TRUE         NA                   NA
+## H.npnct29.log         TRUE  TRUE     TRUE         NA                   NA
+## H.npnct31.log         TRUE  TRUE     TRUE         NA                   NA
+## H.npnct32.log         TRUE  TRUE     TRUE         NA                   NA
+## Popular              FALSE FALSE    FALSE         NA                   NA
+## Popular.fctr            NA    NA       NA         NA                   NA
+## PubDate.last1        FALSE FALSE    FALSE         NA                   NA
+## PubDate.last10       FALSE FALSE    FALSE         NA                   NA
+## PubDate.last100      FALSE FALSE    FALSE         NA                   NA
+## PubDate.month.fctr   FALSE FALSE    FALSE         NA                   NA
+## PubDate.POSIX        FALSE FALSE    FALSE         NA                   NA
+## PubDate.year.fctr     TRUE  TRUE     TRUE         NA                   NA
+## PubDate.zoo          FALSE FALSE    FALSE         NA                   NA
+## S.articl.log         FALSE  TRUE    FALSE         NA                   NA
+## S.fashion.log        FALSE  TRUE    FALSE         NA                   NA
+## S.first.log          FALSE  TRUE    FALSE         NA                   NA
+## S.has.http            TRUE  TRUE     TRUE         NA                   NA
+## S.has.year.colon     FALSE  TRUE    FALSE         NA                   NA
+## S.intern.log         FALSE  TRUE    FALSE         NA                   NA
+## S.make.log           FALSE  TRUE    FALSE         NA                   NA
+## S.newyork.log        FALSE FALSE    FALSE         NA                   NA
+## S.npnct01.log        FALSE  TRUE    FALSE         NA                   NA
+## S.npnct02.log        FALSE  TRUE     TRUE         NA                   NA
+## S.npnct04.log        FALSE  TRUE    FALSE         NA                   NA
+## S.npnct05.log         TRUE  TRUE     TRUE         NA                   NA
+## S.npnct06.log        FALSE  TRUE    FALSE         NA                   NA
+## S.npnct07.log        FALSE  TRUE    FALSE         NA                   NA
+## S.npnct10.log         TRUE  TRUE     TRUE         NA                   NA
+## S.npnct11.log        FALSE  TRUE     TRUE         NA                   NA
+## S.npnct17.log        FALSE  TRUE    FALSE         NA                   NA
+## S.npnct18.log         TRUE  TRUE     TRUE         NA                   NA
+## S.npnct19.log         TRUE  TRUE     TRUE         NA                   NA
+## S.npnct20.log         TRUE  TRUE     TRUE         NA                   NA
+## S.npnct22.log        FALSE  TRUE    FALSE         NA                   NA
+## S.npnct23.log        FALSE  TRUE     TRUE         NA                   NA
+## S.npnct24.log         TRUE  TRUE     TRUE         NA                   NA
+## S.npnct25.log        FALSE  TRUE     TRUE         NA                   NA
+## S.npnct26.log         TRUE  TRUE     TRUE         NA                   NA
+## S.npnct27.log         TRUE  TRUE     TRUE         NA                   NA
+## S.npnct28.log         TRUE  TRUE     TRUE         NA                   NA
+## S.npnct29.log         TRUE  TRUE     TRUE         NA                   NA
+## S.npnct31.log         TRUE  TRUE     TRUE         NA                   NA
+## S.npnct32.log         TRUE  TRUE     TRUE         NA                   NA
+## S.presid.log         FALSE  TRUE    FALSE         NA                   NA
+## S.report.log         FALSE  TRUE    FALSE         NA                   NA
+## S.said.log           FALSE  TRUE    FALSE         NA                   NA
+## S.share.log          FALSE  TRUE    FALSE         NA                   NA
+## S.show.log           FALSE  TRUE    FALSE         NA                   NA
+## S.week.log           FALSE FALSE    FALSE         NA                   NA
+## S.year.log           FALSE FALSE    FALSE         NA                   NA
+## UniqueID             FALSE FALSE    FALSE         NA                   NA
+## WordCount            FALSE FALSE    FALSE         NA                   NA
 ##                    Final.glm.importance
-## A.articl.log                         NA
-## A.can.log                            NA
 ## A.compani.log                        NA
 ## A.day.log                            NA
-## A.fashion.log                        NA
-## A.first.log                          NA
 ## A.has.http                           NA
-## A.intern.log                         NA
-## A.make.log                           NA
-## A.ndgts.log                          NA
-## A.new.log                            NA
-## A.newyork.log                        NA
-## A.npnct01.log                        NA
-## A.npnct02.log                        NA
 ## A.npnct03.log                        NA
-## A.npnct04.log                        NA
 ## A.npnct05.log                        NA
-## A.npnct06.log                        NA
 ## A.npnct08.log                        NA
 ## A.npnct09.log                        NA
 ## A.npnct10.log                        NA
 ## A.npnct11.log                        NA
-## A.npnct12.log                        NA
-## A.npnct13.log                        NA
 ## A.npnct16.log                        NA
 ## A.npnct20.log                        NA
-## A.npnct22.log                        NA
+## A.npnct23.log                        NA
 ## A.npnct24.log                        NA
 ## A.npnct25.log                        NA
 ## A.npnct26.log                        NA
+## A.npnct27.log                        NA
 ## A.npnct28.log                        NA
 ## A.npnct29.log                        NA
-## A.npnct30.log                        NA
 ## A.npnct31.log                        NA
 ## A.npnct32.log                        NA
-## A.nuppr.log                          NA
-## A.presid.log                         NA
-## A.report.log                         NA
-## A.share.log                          NA
-## A.show.log                           NA
 ## A.take.log                           NA
 ## A.time.log                           NA
-## A.week.log                           NA
-## A.will.log                           NA
-## A.year.log                           NA
-## H.fashion.log                        NA
 ## H.has.http                           NA
-## H.has.year.colon                     NA
 ## H.npnct03.log                        NA
-## H.npnct06.log                        NA
-## H.npnct08.log                        NA
+## H.npnct09.log                        NA
 ## H.npnct10.log                        NA
+## H.npnct11.log                        NA
 ## H.npnct18.log                        NA
 ## H.npnct19.log                        NA
 ## H.npnct20.log                        NA
+## H.npnct22.log                        NA
 ## H.npnct23.log                        NA
 ## H.npnct24.log                        NA
 ## H.npnct25.log                        NA
@@ -13047,8 +13198,6 @@ print(subset(glb_feats_df, is.na(importance))[,
 ## H.npnct29.log                        NA
 ## H.npnct31.log                        NA
 ## H.npnct32.log                        NA
-## H.nwrds.unq.log                      NA
-## H.X2015.log                          NA
 ## Popular                              NA
 ## Popular.fctr                         NA
 ## PubDate.last1                        NA
@@ -13058,19 +13207,27 @@ print(subset(glb_feats_df, is.na(importance))[,
 ## PubDate.POSIX                        NA
 ## PubDate.year.fctr                    NA
 ## PubDate.zoo                          NA
+## S.articl.log                         NA
+## S.fashion.log                        NA
+## S.first.log                          NA
 ## S.has.http                           NA
 ## S.has.year.colon                     NA
-## S.nchrs.log                          NA
+## S.intern.log                         NA
+## S.make.log                           NA
+## S.newyork.log                        NA
+## S.npnct01.log                        NA
+## S.npnct02.log                        NA
+## S.npnct04.log                        NA
 ## S.npnct05.log                        NA
+## S.npnct06.log                        NA
 ## S.npnct07.log                        NA
 ## S.npnct10.log                        NA
 ## S.npnct11.log                        NA
-## S.npnct14.log                        NA
 ## S.npnct17.log                        NA
 ## S.npnct18.log                        NA
 ## S.npnct19.log                        NA
 ## S.npnct20.log                        NA
-## S.npnct21.log                        NA
+## S.npnct22.log                        NA
 ## S.npnct23.log                        NA
 ## S.npnct24.log                        NA
 ## S.npnct25.log                        NA
@@ -13080,9 +13237,13 @@ print(subset(glb_feats_df, is.na(importance))[,
 ## S.npnct29.log                        NA
 ## S.npnct31.log                        NA
 ## S.npnct32.log                        NA
-## S.nwrds.log                          NA
-## S.nwrds.unq.log                      NA
+## S.presid.log                         NA
+## S.report.log                         NA
 ## S.said.log                           NA
+## S.share.log                          NA
+## S.show.log                           NA
+## S.week.log                           NA
+## S.year.log                           NA
 ## UniqueID                             NA
 ## WordCount                            NA
 ```
@@ -13146,9 +13307,9 @@ glb_chunks_df <- myadd_chunk(glb_chunks_df, "display.session.info", major.inc=TR
 ```
 
 ```
-##                   label step_major step_minor     bgn     end elapsed
-## 15     predict.data.new          8          0 604.891 613.612   8.721
-## 16 display.session.info          9          0 613.612      NA      NA
+##                   label step_major step_minor     bgn    end elapsed
+## 15     predict.data.new          8          0 487.892 497.05   9.158
+## 16 display.session.info          9          0 497.050     NA      NA
 ```
 
 Null Hypothesis ($\sf{H_{0}}$): mpg is not impacted by am_fctr.  
@@ -13163,44 +13324,57 @@ We reject the null hypothesis i.e. we have evidence to conclude that am_fctr imp
 
 ```
 ##                      label step_major step_minor     bgn     end elapsed
-## 10              fit.models          6          1 222.291 544.291 322.000
-## 6         extract.features          3          0  39.055 148.235 109.180
-## 9               fit.models          6          0 176.477 222.290  45.814
-## 7          select.features          4          0 148.235 175.347  27.112
-## 13       fit.data.training          7          0 569.038 594.083  25.045
-## 2             inspect.data          2          0  12.185  30.473  18.288
-## 11              fit.models          6          2 544.291 561.516  17.226
-## 14       fit.data.training          7          1 594.083 604.890  10.807
-## 15        predict.data.new          8          0 604.891 613.612   8.721
-## 12              fit.models          6          3 561.517 569.037   7.520
-## 4      manage.missing.data          2          2  34.314  38.998   4.684
-## 3             cleanse.data          2          1  30.474  34.314   3.840
-## 8  partition.data.training          5          0 175.348 176.476   1.128
-## 1              import.data          1          0  11.135  12.185   1.050
-## 5              encode.data          2          3  38.998  39.054   0.056
+## 10              fit.models          6          1 228.568 432.444 203.876
+## 6         extract.features          3          0  36.591 147.378 110.787
+## 7          select.features          4          0 147.378 188.221  40.843
+## 9               fit.models          6          0 189.590 228.568  38.978
+## 11              fit.models          6          2 432.444 451.331  18.888
+## 13       fit.data.training          7          0 458.165 476.847  18.682
+## 2             inspect.data          2          0   9.044  27.361  18.317
+## 14       fit.data.training          7          1 476.848 487.891  11.043
+## 15        predict.data.new          8          0 487.892 497.050   9.158
+## 12              fit.models          6          3 451.332 458.164   6.833
+## 4      manage.missing.data          2          2  31.544  36.532   4.989
+## 3             cleanse.data          2          1  27.362  31.544   4.182
+## 8  partition.data.training          5          0 188.222 189.589   1.367
+## 1              import.data          1          0   8.129   9.043   0.915
+## 5              encode.data          2          3  36.533  36.590   0.057
 ##    duration
-## 10  322.000
-## 6   109.180
-## 9    45.813
-## 7    27.112
-## 13   25.045
-## 2    18.288
-## 11   17.225
-## 14   10.807
-## 15    8.721
-## 12    7.520
-## 4     4.684
-## 3     3.840
-## 8     1.128
-## 1     1.050
-## 5     0.056
-```
-
-```
-## [1] "Total Elapsed Time: 613.612 secs"
+## 10  203.876
+## 6   110.787
+## 7    40.843
+## 9    38.978
+## 11   18.887
+## 13   18.682
+## 2    18.317
+## 14   11.043
+## 15    9.158
+## 12    6.832
+## 4     4.988
+## 3     4.182
+## 8     1.367
+## 1     0.914
+## 5     0.057
+## [1] "Total Elapsed Time: 497.05 secs"
 ```
 
 ![](NYTBlogs_txtfeat_files/figure-html/display.session.info-1.png) 
+
+```
+##                label step_major step_minor     bgn     end elapsed
+## 4    fit.models_1_rf          4          0 263.087 432.436 169.349
+## 2   fit.models_1_glm          2          0 232.726 250.408  17.682
+## 3 fit.models_1_rpart          3          0 250.408 263.087  12.679
+## 1   fit.models_1_bgn          1          0 232.714 232.725   0.012
+##   duration
+## 4  169.349
+## 2   17.682
+## 3   12.679
+## 1    0.011
+## [1] "Total Elapsed Time: 432.436 secs"
+```
+
+![](NYTBlogs_txtfeat_files/figure-html/display.session.info-2.png) 
 
 ```
 ## R version 3.1.3 (2015-03-09)
@@ -13211,8 +13385,8 @@ We reject the null hypothesis i.e. we have evidence to conclude that am_fctr imp
 ## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
 ## 
 ## attached base packages:
-## [1] tcltk     grid      stats     graphics  grDevices utils     datasets 
-## [8] methods   base     
+##  [1] tcltk     grid      parallel  stats     graphics  grDevices utils    
+##  [8] datasets  methods   base     
 ## 
 ## other attached packages:
 ##  [1] randomForest_4.6-10 rpart.plot_1.5.2    rpart_4.1-9        
@@ -13221,23 +13395,23 @@ We reject the null hypothesis i.e. we have evidence to conclude that am_fctr imp
 ## [10] mice_2.22           lattice_0.20-31     Rcpp_0.11.5        
 ## [13] plyr_1.8.1          zoo_1.7-12          sqldf_0.4-10       
 ## [16] RSQLite_1.0.0       DBI_0.3.1           gsubfn_0.6-6       
-## [19] proto_0.3-10        reshape2_1.4.1      doBy_4.5-13        
-## [22] survival_2.38-1     ggplot2_1.0.1      
+## [19] proto_0.3-10        reshape2_1.4.1      doMC_1.3.3         
+## [22] iterators_1.0.7     foreach_1.4.2       doBy_4.5-13        
+## [25] survival_2.38-1     ggplot2_1.0.1      
 ## 
 ## loaded via a namespace (and not attached):
 ##  [1] bitops_1.0-6        BradleyTerry2_1.0-6 brglm_0.5-9        
 ##  [4] car_2.0-25          chron_2.3-45        class_7.3-12       
 ##  [7] codetools_0.2-11    colorspace_1.2-6    compiler_3.1.3     
 ## [10] digest_0.6.8        e1071_1.6-4         evaluate_0.5.5     
-## [13] foreach_1.4.2       formatR_1.1         gdata_2.13.3       
-## [16] gtable_0.1.2        gtools_3.4.1        htmltools_0.2.6    
-## [19] iterators_1.0.7     KernSmooth_2.23-14  knitr_1.9          
-## [22] labeling_0.3        lme4_1.1-7          MASS_7.3-40        
-## [25] Matrix_1.2-0        mgcv_1.8-6          minqa_1.2.4        
-## [28] munsell_0.4.2       nlme_3.1-120        nloptr_1.0.4       
-## [31] nnet_7.3-9          parallel_3.1.3      pbkrtest_0.4-2     
-## [34] quantreg_5.11       RColorBrewer_1.1-2  rmarkdown_0.5.1    
-## [37] scales_0.2.4        slam_0.1-32         SparseM_1.6        
-## [40] splines_3.1.3       stringr_0.6.2       tools_3.1.3        
-## [43] yaml_2.1.13
+## [13] formatR_1.1         gdata_2.13.3        gtable_0.1.2       
+## [16] gtools_3.4.1        htmltools_0.2.6     KernSmooth_2.23-14 
+## [19] knitr_1.9           labeling_0.3        lme4_1.1-7         
+## [22] MASS_7.3-40         Matrix_1.2-0        mgcv_1.8-6         
+## [25] minqa_1.2.4         munsell_0.4.2       nlme_3.1-120       
+## [28] nloptr_1.0.4        nnet_7.3-9          pbkrtest_0.4-2     
+## [31] quantreg_5.11       RColorBrewer_1.1-2  rmarkdown_0.5.1    
+## [34] scales_0.2.4        slam_0.1-32         SparseM_1.6        
+## [37] splines_3.1.3       stringr_0.6.2       tools_3.1.3        
+## [40] yaml_2.1.13
 ```
