@@ -333,8 +333,8 @@ glb_chunks_df <- myadd_chunk(NULL, "import.data")
 ```
 
 ```
-##         label step_major step_minor   bgn end elapsed
-## 1 import.data          1          0 9.508  NA      NA
+##         label step_major step_minor    bgn end elapsed
+## 1 import.data          1          0 13.224  NA      NA
 ```
 
 ## Step `1.0: import data`
@@ -672,8 +672,8 @@ glb_chunks_df <- myadd_chunk(glb_chunks_df, "inspect.data", major.inc=TRUE)
 
 ```
 ##          label step_major step_minor    bgn    end elapsed
-## 1  import.data          1          0  9.508 10.557   1.049
-## 2 inspect.data          2          0 10.557     NA      NA
+## 1  import.data          1          0 13.224 14.257   1.033
+## 2 inspect.data          2          0 14.258     NA      NA
 ```
 
 ## Step `2.0: inspect data`
@@ -1286,9 +1286,9 @@ glb_chunks_df <- myadd_chunk(glb_chunks_df, "cleanse.data", major.inc=FALSE)
 ```
 
 ```
-##          label step_major step_minor    bgn    end elapsed
-## 2 inspect.data          2          0 10.557 29.598  19.041
-## 3 cleanse.data          2          1 29.599     NA      NA
+##          label step_major step_minor    bgn   end elapsed
+## 2 inspect.data          2          0 14.258 33.04  18.782
+## 3 cleanse.data          2          1 33.040    NA      NA
 ```
 
 ### Step `2.1: cleanse data`
@@ -1992,8 +1992,8 @@ glb_chunks_df <- myadd_chunk(glb_chunks_df, "manage.missing.data", major.inc=FAL
 
 ```
 ##                 label step_major step_minor    bgn    end elapsed
-## 3        cleanse.data          2          1 29.599 33.594   3.995
-## 4 manage.missing.data          2          2 33.594     NA      NA
+## 3        cleanse.data          2          1 33.040 36.982   3.942
+## 4 manage.missing.data          2          2 36.983     NA      NA
 ```
 
 ### Step `2.2: manage missing data`
@@ -2292,8 +2292,8 @@ glb_chunks_df <- myadd_chunk(glb_chunks_df, "encode.data", major.inc=FALSE)
 
 ```
 ##                 label step_major step_minor    bgn    end elapsed
-## 4 manage.missing.data          2          2 33.594 39.919   6.325
-## 5         encode.data          2          3 39.919     NA      NA
+## 4 manage.missing.data          2          2 36.983 42.439   5.456
+## 5         encode.data          2          3 42.440     NA      NA
 ```
 
 ### Step `2.3: encode data`
@@ -2321,8 +2321,8 @@ glb_chunks_df <- myadd_chunk(glb_chunks_df, "extract.features", major.inc=TRUE)
 
 ```
 ##              label step_major step_minor    bgn    end elapsed
-## 5      encode.data          2          3 39.919 40.092   0.174
-## 6 extract.features          3          0 40.093     NA      NA
+## 5      encode.data          2          3 42.440 42.468   0.028
+## 6 extract.features          3          0 42.469     NA      NA
 ```
 
 ## Step `3.0: extract features`
@@ -2334,7 +2334,7 @@ extract.features_chunk_df <- myadd_chunk(NULL, "extract.features_bgn")
 
 ```
 ##                  label step_major step_minor    bgn end elapsed
-## 1 extract.features_bgn          1          0 40.163  NA      NA
+## 1 extract.features_bgn          1          0 42.515  NA      NA
 ```
 
 ```r
@@ -2366,10 +2366,10 @@ extract.features_chunk_df <- myadd_chunk(extract.features_chunk_df,
 
 ```
 ##                                 label step_major step_minor    bgn    end
-## 1                extract.features_bgn          1          0 40.163 40.171
-## 2 extract.features_factorize.str.vars          2          0 40.172     NA
+## 1                extract.features_bgn          1          0 42.515 42.524
+## 2 extract.features_factorize.str.vars          2          0 42.525     NA
 ##   elapsed
-## 1   0.008
+## 1   0.009
 ## 2      NA
 ```
 
@@ -2934,10 +2934,10 @@ if (glb_is_textual) {
 
 ```
 ##                                 label step_major step_minor    bgn    end
-## 2 extract.features_factorize.str.vars          2          0 40.172 41.752
-## 3       extract.features_process.text          3          0 41.753     NA
+## 2 extract.features_factorize.str.vars          2          0 42.525 42.855
+## 3       extract.features_process.text          3          0 42.855     NA
 ##   elapsed
-## 2    1.58
+## 2    0.33
 ## 3      NA
 ## [1] "Building glb_txt_lst..."
 ## [1] "Remaining Acronyms in Headline:"
@@ -4297,17 +4297,17 @@ if (glb_is_textual) {
 ## twice-daily       1 twice-daily  FALSE
 ## two-fisted        1  two-fisted  FALSE
 ##                           label step_major step_minor     bgn     end
-## 3 extract.features_process.text          3          0  41.753 130.882
-## 4 extract.features_build.corpus          4          0 130.883      NA
+## 3 extract.features_process.text          3          0  42.855 105.036
+## 4 extract.features_build.corpus          4          0 105.036      NA
 ##   elapsed
-## 3  89.129
+## 3  62.181
 ## 4      NA
 ## [1] "Building glb_corpus_lst..."
 ##                           label step_major step_minor     bgn     end
-## 4 extract.features_build.corpus          4          0 130.883 144.737
-## 5  extract.features_extract.DTM          5          0 144.742      NA
+## 4 extract.features_build.corpus          4          0 105.036 117.142
+## 5  extract.features_extract.DTM          5          0 117.142      NA
 ##   elapsed
-## 4  13.855
+## 4  12.106
 ## 5      NA
 ## [1] "Extracting TfIDf terms for Headline..."
 ```
@@ -4335,10 +4335,10 @@ if (glb_is_textual) {
 
 ```
 ##                          label step_major step_minor     bgn     end
-## 5 extract.features_extract.DTM          5          0 144.742 158.699
-## 6  extract.features_report.DTM          6          0 158.699      NA
+## 5 extract.features_extract.DTM          5          0 117.142 131.219
+## 6  extract.features_report.DTM          6          0 131.220      NA
 ##   elapsed
-## 5  13.957
+## 5  14.077
 ## 6      NA
 ## [1] "Reporting TfIDf terms for Headline..."
 ## [1] "   Full TermMatrix:"
@@ -4446,17 +4446,17 @@ if (glb_is_textual) {
 
 ```
 ##                         label step_major step_minor     bgn     end
-## 6 extract.features_report.DTM          6          0 158.699 206.771
-## 7   extract.features_bind.DTM          7          0 206.771      NA
+## 6 extract.features_report.DTM          6          0 131.220 156.383
+## 7   extract.features_bind.DTM          7          0 156.383      NA
 ##   elapsed
-## 6  48.072
+## 6  25.163
 ## 7      NA
 ## [1] "Binding DTM for Headline..."
 ## [1] "Binding DTM for Snippet..."
 ## [1] "Binding DTM for Abstract..."
 ##                       label step_major step_minor     bgn     end elapsed
-## 7 extract.features_bind.DTM          7          0 206.771 206.916   0.145
-## 8 extract.features_bind.DXM          8          0 206.917      NA      NA
+## 7 extract.features_bind.DTM          7          0 156.383 156.461   0.078
+## 8 extract.features_bind.DXM          8          0 156.462      NA      NA
 ```
 
 ```
@@ -4487,8 +4487,8 @@ extract.features_chunk_df <- myadd_chunk(extract.features_chunk_df, "extract.fea
 
 ```
 ##                       label step_major step_minor     bgn     end elapsed
-## 8 extract.features_bind.DXM          8          0 206.917 278.549  71.635
-## 9      extract.features_end          9          0 278.553      NA      NA
+## 8 extract.features_bind.DXM          8          0 156.462 211.665  55.204
+## 9      extract.features_end          9          0 211.668      NA      NA
 ```
 
 ```r
@@ -4497,24 +4497,24 @@ myplt_chunk(extract.features_chunk_df)
 
 ```
 ##                                 label step_major step_minor     bgn
-## 3       extract.features_process.text          3          0  41.753
-## 8           extract.features_bind.DXM          8          0 206.917
-## 6         extract.features_report.DTM          6          0 158.699
-## 5        extract.features_extract.DTM          5          0 144.742
-## 4       extract.features_build.corpus          4          0 130.883
-## 2 extract.features_factorize.str.vars          2          0  40.172
-## 7           extract.features_bind.DTM          7          0 206.771
-## 1                extract.features_bgn          1          0  40.163
+## 3       extract.features_process.text          3          0  42.855
+## 8           extract.features_bind.DXM          8          0 156.462
+## 6         extract.features_report.DTM          6          0 131.220
+## 5        extract.features_extract.DTM          5          0 117.142
+## 4       extract.features_build.corpus          4          0 105.036
+## 2 extract.features_factorize.str.vars          2          0  42.525
+## 7           extract.features_bind.DTM          7          0 156.383
+## 1                extract.features_bgn          1          0  42.515
 ##       end elapsed duration
-## 3 130.882  89.129   89.129
-## 8 278.549  71.635   71.632
-## 6 206.771  48.072   48.072
-## 5 158.699  13.957   13.957
-## 4 144.737  13.855   13.854
-## 2  41.752   1.580    1.580
-## 7 206.916   0.145    0.145
-## 1  40.171   0.008    0.008
-## [1] "Total Elapsed Time: 278.549 secs"
+## 3 105.036  62.181   62.181
+## 8 211.665  55.204   55.203
+## 6 156.383  25.163   25.163
+## 5 131.219  14.077   14.077
+## 4 117.142  12.106   12.106
+## 2  42.855   0.330    0.330
+## 7 156.461   0.078    0.078
+## 1  42.524   0.009    0.009
+## [1] "Total Elapsed Time: 211.665 secs"
 ```
 
 ![](NYTBlogs_cluster_files/figure-html/extract.features-13.png) 
@@ -4547,8 +4547,8 @@ glb_chunks_df <- myadd_chunk(glb_chunks_df, "cluster.data", major.inc=TRUE)
 
 ```
 ##              label step_major step_minor     bgn     end elapsed
-## 6 extract.features          3          0  40.093 280.479 240.386
-## 7     cluster.data          4          0 280.480      NA      NA
+## 6 extract.features          3          0  42.469 213.686 171.217
+## 7     cluster.data          4          0 213.686      NA      NA
 ```
 
 ## Step `4.0: cluster data`
@@ -4564,7 +4564,7 @@ if (glb_cluster) {
 #     glb_hash_lst <- hash(key=unique(glb_allobs_df$myCategory), 
 #                      values=1:length(unique(glb_allobs_df$myCategory)))
     print("Clustering features: ")
-    #print(cluster_vars <- grep("[HSA]\\.[PT]\\.", names(ctgry_allobs_df), value=TRUE))
+    #print(cluster_vars <- grep("[HSA]\\.[PT]\\.", names(glb_allobs_df), value=TRUE))
     print(cluster_vars <- grep("[HSA]\\.", names(glb_allobs_df), value=TRUE))
     glb_allobs_df$.clusterid <- 1    
     print(max(table(glb_allobs_df$myCategory.fctr) / 20))
@@ -4596,7 +4596,9 @@ if (glb_cluster) {
         #clusterGroups = cutree(clusters, k=7)
         clusterGroups <- cutreeDynamic(clusters, minClusterSize=20, method="tree", deepSplit=0)
         # Unassigned groups are labeled 0; the largest group has label 1
-        table(clusterGroups, ctgry_allobs_df[, glb_rsp_var], useNA="ifany")        
+        table(clusterGroups, ctgry_allobs_df[, glb_rsp_var], useNA="ifany")   
+        #print(ctgry_allobs_df[which(clusterGroups == 1), c("UniqueID", "Popular", "Headline")])
+        #print(ctgry_allobs_df[(clusterGroups == 1) & !is.na(ctgry_allobs_df$Popular) & (ctgry_allobs_df$Popular==1), c("UniqueID", "Popular", "Headline")])
         clusterGroups[clusterGroups == 0] <- 1
         table(clusterGroups, ctgry_allobs_df[, glb_rsp_var], useNA="ifany")        
         #summary(factor(clusterGroups))
@@ -7681,8 +7683,8 @@ glb_chunks_df <- myadd_chunk(glb_chunks_df, "select.features", major.inc=TRUE)
 
 ```
 ##             label step_major step_minor     bgn     end elapsed
-## 7    cluster.data          4          0 280.480 301.781  21.302
-## 8 select.features          5          0 301.782      NA      NA
+## 7    cluster.data          4          0 213.686 235.859  22.173
+## 8 select.features          5          0 235.859      NA      NA
 ```
 
 ## Step `5.0: select features`
@@ -10843,8 +10845,8 @@ glb_chunks_df <- myadd_chunk(glb_chunks_df, "partition.data.training", major.inc
 
 ```
 ##                     label step_major step_minor     bgn     end elapsed
-## 8         select.features          5          0 301.782 437.606 135.824
-## 9 partition.data.training          6          0 437.606      NA      NA
+## 8         select.features          5          0 235.859 370.726 134.867
+## 9 partition.data.training          6          0 370.726      NA      NA
 ```
 
 ## Step `6.0: partition data training`
@@ -11168,8 +11170,8 @@ glb_chunks_df <- myadd_chunk(glb_chunks_df, "fit.models", major.inc=TRUE)
 
 ```
 ##                      label step_major step_minor     bgn     end elapsed
-## 9  partition.data.training          6          0 437.606 438.967   1.361
-## 10              fit.models          7          0 438.967      NA      NA
+## 9  partition.data.training          6          0 370.726 372.048   1.322
+## 10              fit.models          7          0 372.049      NA      NA
 ```
 
 ## Step `7.0: fit models`
@@ -11302,7 +11304,7 @@ ret_lst <- myfit_mdl(model_id="MFO",
 ##            model_id  model_method  feats max.nTuningRuns
 ## 1 MFO.myMFO_classfr myMFO_classfr .rnorm               0
 ##   min.elapsedtime.everything min.elapsedtime.final max.auc.fit
-## 1                      0.587                 0.003         0.5
+## 1                      0.765                 0.003         0.5
 ##   opt.prob.threshold.fit max.f.score.fit max.Accuracy.fit
 ## 1                    0.5               0        0.8326257
 ##   max.AccuracyLower.fit max.AccuracyUpper.fit max.Kappa.fit max.auc.OOB
@@ -11410,7 +11412,7 @@ if (glb_is_classification)
 ##                  model_id     model_method  feats max.nTuningRuns
 ## 1 Random.myrandom_classfr myrandom_classfr .rnorm               0
 ##   min.elapsedtime.everything min.elapsedtime.final max.auc.fit
-## 1                      0.363                 0.002   0.5072166
+## 1                      0.349                 0.002   0.5072166
 ##   opt.prob.threshold.fit max.f.score.fit max.Accuracy.fit
 ## 1                    0.1       0.2867534        0.1673743
 ##   max.AccuracyLower.fit max.AccuracyUpper.fit max.Kappa.fit max.auc.OOB
@@ -11503,7 +11505,7 @@ ret_lst <- myfit_mdl(model_id="Max.cor.Y.cv.0",
 ##               model_id model_method       feats max.nTuningRuns
 ## 1 Max.cor.Y.cv.0.rpart        rpart A.nuppr.log               0
 ##   min.elapsedtime.everything min.elapsedtime.final max.auc.fit
-## 1                      0.702                 0.055         0.5
+## 1                      0.686                 0.057         0.5
 ##   opt.prob.threshold.fit max.f.score.fit max.Accuracy.fit
 ## 1                    0.5               0        0.8326257
 ##   max.AccuracyLower.fit max.AccuracyUpper.fit max.Kappa.fit max.auc.OOB
@@ -11583,7 +11585,7 @@ ret_lst <- myfit_mdl(model_id="Max.cor.Y.cv.0.cp.0",
 ##                    model_id model_method       feats max.nTuningRuns
 ## 1 Max.cor.Y.cv.0.cp.0.rpart        rpart A.nuppr.log               0
 ##   min.elapsedtime.everything min.elapsedtime.final max.auc.fit
-## 1                      0.614                 0.054         0.5
+## 1                      0.607                 0.056         0.5
 ##   opt.prob.threshold.fit max.f.score.fit max.Accuracy.fit
 ## 1                    0.5               0        0.8326257
 ##   max.AccuracyLower.fit max.AccuracyUpper.fit max.Kappa.fit max.auc.OOB
@@ -11662,7 +11664,7 @@ ret_lst <- myfit_mdl(model_id="Max.cor.Y",
 ##          model_id model_method       feats max.nTuningRuns
 ## 1 Max.cor.Y.rpart        rpart A.nuppr.log               1
 ##   min.elapsedtime.everything min.elapsedtime.final max.auc.fit
-## 1                      1.219                 0.057         0.5
+## 1                      1.207                 0.057         0.5
 ##   opt.prob.threshold.fit max.f.score.fit max.Accuracy.fit
 ## 1                    0.5               0        0.8326258
 ##   max.AccuracyLower.fit max.AccuracyUpper.fit max.Kappa.fit max.auc.OOB
@@ -11799,7 +11801,7 @@ ret_lst <- myfit_mdl(model_id="Max.cor.Y",
 ##        model_id model_method       feats max.nTuningRuns
 ## 1 Max.cor.Y.glm          glm A.nuppr.log               1
 ##   min.elapsedtime.everything min.elapsedtime.final max.auc.fit
-## 1                      1.239                 0.081   0.7073742
+## 1                      1.228                  0.08   0.7073742
 ##   opt.prob.threshold.fit max.f.score.fit max.Accuracy.fit
 ## 1                    0.2       0.3986014        0.8324022
 ##   max.AccuracyLower.fit max.AccuracyUpper.fit max.Kappa.fit max.auc.OOB
@@ -12133,7 +12135,7 @@ if (length(int_feats <- setdiff(unique(glb_feats_df$cor.high.X), NA)) > 0) {
 ##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   feats
 ## 1 A.nuppr.log, A.nuppr.log:A.nstopwrds.log, A.nuppr.log:A.sum.TfIdf, A.nuppr.log:S.ratio.nstopwrds.nwrds, A.nuppr.log:A.npnct19.log, A.nuppr.log:S.T.make, A.nuppr.log:H.npnct16.log, A.nuppr.log:S.npnct01.log, A.nuppr.log:S.T.can, A.nuppr.log:A.npnct21.log, A.nuppr.log:S.T.said, A.nuppr.log:A.npnct23.log, A.nuppr.log:S.T.one, A.nuppr.log:S.npnct07.log, A.nuppr.log:A.npnct18.log, A.nuppr.log:S.npnct03.log, A.nuppr.log:A.P.http, A.nuppr.log:A.npnct02.log, A.nuppr.log:S.P.year.colon, A.nuppr.log:S.T.obama, A.nuppr.log:S.npnct20.log, A.nuppr.log:S.P.first.draft, A.nuppr.log:S.T.take, A.nuppr.log:S.npnct06.log, A.nuppr.log:A.npnct17.log, A.nuppr.log:S.T.time, A.nuppr.log:S.T.new, A.nuppr.log:S.P.metropolitan.diary.colon, A.nuppr.log:H.T.polit, A.nuppr.log:A.T.year, A.nuppr.log:S.npnct12.log, A.nuppr.log:H.T.read, A.nuppr.log:A.T.will, A.nuppr.log:H.T.word, A.nuppr.log:A.T.senat, A.nuppr.log:S.T.show, A.nuppr.log:S.T.day, A.nuppr.log:S.npnct28.log, A.nuppr.log:H.T.clip, A.nuppr.log:A.T.first, A.nuppr.log:H.P.first.draft, A.nuppr.log:A.T.newyork, A.nuppr.log:A.T.report, A.nuppr.log:A.T.compani, A.nuppr.log:A.T.word, A.nuppr.log:A.npnct28.log, A.nuppr.log:A.T.newyorktim, A.nuppr.log:S.T.share, A.nuppr.log:H.T.billion, A.nuppr.log:A.npnct13.log, A.nuppr.log:A.T.articl, A.nuppr.log:H.P.today.in.politic, A.nuppr.log:H.T.springsumm, A.nuppr.log:S.T.diari, A.nuppr.log:S.npnct04.log, A.nuppr.log:H.T.report, A.nuppr.log:A.T.diari, A.nuppr.log:S.T.herald, A.nuppr.log:A.T.photo, A.nuppr.log:S.npnct15.log, A.nuppr.log:A.T.intern, A.nuppr.log:A.T.herald, A.nuppr.log:S.P.fashion.week, A.nuppr.log:S.T.intern, A.nuppr.log:A.T.archiv, A.nuppr.log:H.P.fashion.week, A.nuppr.log:H.T.X2015, A.nuppr.log:A.T.week, A.nuppr.log:S.npnct11.log, A.nuppr.log:S.nstopwrds.log, A.nuppr.log:S.ndgts.log, A.nuppr.log:H.nwrds.log, A.nuppr.log:S.nwrds.log, A.nuppr.log:H.nuppr.log, A.nuppr.log:A.nwrds.log, A.nuppr.log:S.nchrs.log, A.nuppr.log:S.nuppr.log
 ##   max.nTuningRuns min.elapsedtime.everything min.elapsedtime.final
-## 1               1                      4.738                 2.002
+## 1               1                      4.292                 1.812
 ##   max.auc.fit opt.prob.threshold.fit max.f.score.fit max.Accuracy.fit
 ## 1   0.8158344                    0.3       0.4834636        0.8480454
 ##   max.AccuracyLower.fit max.AccuracyUpper.fit max.Kappa.fit max.auc.OOB
@@ -13030,7 +13032,7 @@ ret_lst <- myfit_mdl(model_id="Low.cor.X",
 ##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          feats
 ## 1 WordCount.log, S.ratio.sum.TfIdf.nwrds, H.ratio.sum.TfIdf.nwrds, .clusterid.fctr, H.sum.TfIdf, A.sum.TfIdf, PubDate.hour.fctr, H.npnct19.log, S.ratio.nstopwrds.nwrds, PubDate.wkend, H.P.recap.colon, H.P.quandary, H.P.no.comment.colon, A.npnct19.log, H.P.facts.figures, H.npnct08.log, PubDate.last10.log, PubDate.last1.log, H.P.readers.respond, S.T.make, H.ratio.nstopwrds.nwrds, H.T.get, S.npnct01.log, H.npnct16.log, S.T.can, H.T.ebola, H.npnct01.log, S.T.said, H.T.make, H.npnct11.log, myCategory.fctr, S.T.one, H.P.s.notebook, H.T.take, A.npnct16.log, S.npnct16.log, A.T.presid, S.T.presid, S.npnct08.log, A.npnct08.log, PubDate.last100.log, .rnorm, H.npnct05.log, H.P.friday.night.music, H.T.say, H.T.obama, H.T.bank, PubDate.date.fctr, PubDate.second.fctr, H.npnct07.log, S.npnct07.log, S.npnct03.log, A.npnct18.log, H.npnct12.log, H.T.word, H.T.big, S.P.year.colon, S.T.obama, S.npnct20.log, H.npnct02.log, H.T.test, S.npnct14.log, H.P.on.this.day, S.P.first.draft, S.T.take, S.npnct06.log, S.T.time, H.T.newyorktim, H.npnct13.log, H.T.deal, S.T.new, H.T.billion, S.P.metropolitan.diary.colon, H.T.polit, H.P.verbatim.colon, H.T.china, H.T.art, PubDate.minute.fctr, H.T.read, S.npnct12.log, A.T.year, A.T.will, S.T.appear, PubDate.wkday.fctr, H.T.pictur, H.T.new, A.T.senat, S.T.show, H.P.today.in.smallbusiness, S.T.day, H.P.first.draft, S.npnct28.log, H.P.daily.clip.report, H.T.clip, S.P.daily.clip.report, A.T.first, H.T.news, H.T.X2014, A.T.newyork, A.T.report, A.T.compani, A.T.word, H.T.busi, A.T.newyorktim, A.npnct13.log, S.T.share, A.T.articl, H.T.newyork, H.T.springsumm, H.T.day, S.T.diari, H.T.report, S.npnct04.log, S.T.herald, S.npnct15.log, H.T.week, A.T.photo, A.T.intern, S.T.tribun, S.P.fashion.week, S.T.archiv, H.P.fashion.week, H.npnct15.log, A.T.fashion, A.T.week, H.nstopwrds.log, H.npnct28.log, S.npnct11.log, S.nstopwrds.log, H.ndgts.log, S.ndgts.log, H.nuppr.log, H.nwrds.log, S.nwrds.log, A.nchrs.log, A.nwrds.unq.log, S.nuppr.log
 ##   max.nTuningRuns min.elapsedtime.everything min.elapsedtime.final
-## 1               1                     21.294                10.116
+## 1               1                     19.897                 9.476
 ##   max.auc.fit opt.prob.threshold.fit max.f.score.fit max.Accuracy.fit
 ## 1   0.9622452                    0.4       0.7758389        0.8905043
 ##   max.AccuracyLower.fit max.AccuracyUpper.fit max.Kappa.fit max.auc.OOB
@@ -13051,8 +13053,8 @@ glb_chunks_df <- myadd_chunk(glb_chunks_df, "fit.models", major.inc=FALSE)
 
 ```
 ##         label step_major step_minor     bgn     end elapsed
-## 10 fit.models          7          0 438.967 496.277   57.31
-## 11 fit.models          7          1 496.277      NA      NA
+## 10 fit.models          7          0 372.049 425.868   53.82
+## 11 fit.models          7          1 425.869      NA      NA
 ```
 
 
@@ -13062,7 +13064,7 @@ fit.models_1_chunk_df <- myadd_chunk(NULL, "fit.models_1_bgn")
 
 ```
 ##              label step_major step_minor     bgn end elapsed
-## 1 fit.models_1_bgn          1          0 500.423  NA      NA
+## 1 fit.models_1_bgn          1          0 430.046  NA      NA
 ```
 
 ```r
@@ -13169,8 +13171,8 @@ for (method in glb_models_method_vctr) {
 
 ```
 ##              label step_major step_minor     bgn     end elapsed
-## 1 fit.models_1_bgn          1          0 500.423 500.435   0.013
-## 2 fit.models_1_glm          2          0 500.436      NA      NA
+## 1 fit.models_1_bgn          1          0 430.046 430.059   0.013
+## 2 fit.models_1_glm          2          0 430.059      NA      NA
 ## [1] "fitting model: All.X.glm"
 ## [1] "    indep_vars: WordCount.log, A.ratio.sum.TfIdf.nwrds, S.ratio.sum.TfIdf.nwrds, H.ratio.sum.TfIdf.nwrds, .clusterid.fctr, H.sum.TfIdf, S.sum.TfIdf, A.sum.TfIdf, PubDate.hour.fctr, H.npnct19.log, A.ratio.nstopwrds.nwrds, S.ratio.nstopwrds.nwrds, PubDate.wkend, H.P.recap.colon, H.P.quandary, H.P.no.comment.colon, S.npnct19.log, H.P.facts.figures, H.npnct08.log, PubDate.last10.log, PubDate.last1.log, H.P.readers.respond, A.T.make, S.T.make, H.ratio.nstopwrds.nwrds, H.T.get, H.npnct06.log, S.npnct01.log, A.T.can, H.npnct16.log, S.T.can, H.T.ebola, H.npnct01.log, A.T.said, S.T.said, H.T.make, H.npnct11.log, myCategory.fctr, A.T.one, S.T.one, H.P.s.notebook, H.T.take, S.npnct16.log, A.T.presid, S.T.presid, S.npnct08.log, PubDate.last100.log, .rnorm, H.npnct05.log, H.P.friday.night.music, H.T.say, H.T.obama, H.T.bank, PubDate.date.fctr, PubDate.second.fctr, H.npnct07.log, S.npnct07.log, S.npnct03.log, A.npnct18.log, H.npnct12.log, H.T.word, H.T.big, A.npnct02.log, A.npnct17.log, S.P.year.colon, S.T.obama, A.T.obama, S.npnct20.log, H.npnct02.log, H.T.test, H.P.on.this.day, S.P.first.draft, S.T.take, A.T.take, S.npnct06.log, A.npnct14.log, S.T.time, A.T.time, H.T.newyorktim, H.npnct13.log, H.T.deal, S.T.new, A.T.new, H.T.billion, S.P.metropolitan.diary.colon, H.T.polit, H.P.verbatim.colon, H.T.china, H.T.art, PubDate.minute.fctr, H.T.read, S.npnct12.log, H.P.today.in.politic, A.T.year, S.T.year, H.P.what.we.are, A.T.will, S.T.will, A.T.appear, S.T.appear, PubDate.wkday.fctr, H.T.pictur, H.T.new, A.T.senat, S.T.senat, S.T.show, A.T.show, H.P.today.in.smallbusiness, S.T.day, A.T.day, S.npnct28.log, A.npnct28.log, H.P.daily.clip.report, H.T.clip, A.T.first, H.T.news, S.T.first, H.T.first, H.T.X2014, A.T.newyork, S.T.newyork, A.T.report, A.T.compani, S.T.report, S.T.compani, A.T.word, S.T.word, H.T.morn, H.T.busi, A.T.newyorktim, S.T.newyorktim, A.npnct13.log, A.T.share, S.T.share, H.npnct04.log, S.npnct13.log, A.T.articl, S.T.articl, H.T.newyork, H.T.today, H.T.springsumm, H.T.day, H.npnct14.log, A.T.diari, S.T.diari, H.T.report, S.npnct04.log, H.T.daili, H.T.X2015, A.T.herald, S.T.herald, S.npnct15.log, H.T.week, A.T.photo, S.T.photo, A.T.intern, S.T.intern, A.T.tribun, S.T.tribun, S.P.fashion.week, A.T.archiv, S.T.archiv, H.P.fashion.week, H.P.year.colon, H.T.fashion, H.npnct15.log, A.T.fashion, S.T.fashion, A.T.week, S.T.week, H.nstopwrds.log, H.npnct28.log, S.npnct11.log, S.nstopwrds.log, A.nstopwrds.log, H.ndgts.log, S.ndgts.log, H.nuppr.log, H.nwrds.log, H.nchrs.log, S.nwrds.log, A.nwrds.log, H.nwrds.unq.log, S.nchrs.log, A.nwrds.unq.log, S.nwrds.unq.log, S.nuppr.log"
 ## Aggregating results
@@ -14198,7 +14200,7 @@ for (method in glb_models_method_vctr) {
 ##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              feats
 ## 1 WordCount.log, A.ratio.sum.TfIdf.nwrds, S.ratio.sum.TfIdf.nwrds, H.ratio.sum.TfIdf.nwrds, .clusterid.fctr, H.sum.TfIdf, S.sum.TfIdf, A.sum.TfIdf, PubDate.hour.fctr, H.npnct19.log, A.ratio.nstopwrds.nwrds, S.ratio.nstopwrds.nwrds, PubDate.wkend, H.P.recap.colon, H.P.quandary, H.P.no.comment.colon, S.npnct19.log, H.P.facts.figures, H.npnct08.log, PubDate.last10.log, PubDate.last1.log, H.P.readers.respond, A.T.make, S.T.make, H.ratio.nstopwrds.nwrds, H.T.get, H.npnct06.log, S.npnct01.log, A.T.can, H.npnct16.log, S.T.can, H.T.ebola, H.npnct01.log, A.T.said, S.T.said, H.T.make, H.npnct11.log, myCategory.fctr, A.T.one, S.T.one, H.P.s.notebook, H.T.take, S.npnct16.log, A.T.presid, S.T.presid, S.npnct08.log, PubDate.last100.log, .rnorm, H.npnct05.log, H.P.friday.night.music, H.T.say, H.T.obama, H.T.bank, PubDate.date.fctr, PubDate.second.fctr, H.npnct07.log, S.npnct07.log, S.npnct03.log, A.npnct18.log, H.npnct12.log, H.T.word, H.T.big, A.npnct02.log, A.npnct17.log, S.P.year.colon, S.T.obama, A.T.obama, S.npnct20.log, H.npnct02.log, H.T.test, H.P.on.this.day, S.P.first.draft, S.T.take, A.T.take, S.npnct06.log, A.npnct14.log, S.T.time, A.T.time, H.T.newyorktim, H.npnct13.log, H.T.deal, S.T.new, A.T.new, H.T.billion, S.P.metropolitan.diary.colon, H.T.polit, H.P.verbatim.colon, H.T.china, H.T.art, PubDate.minute.fctr, H.T.read, S.npnct12.log, H.P.today.in.politic, A.T.year, S.T.year, H.P.what.we.are, A.T.will, S.T.will, A.T.appear, S.T.appear, PubDate.wkday.fctr, H.T.pictur, H.T.new, A.T.senat, S.T.senat, S.T.show, A.T.show, H.P.today.in.smallbusiness, S.T.day, A.T.day, S.npnct28.log, A.npnct28.log, H.P.daily.clip.report, H.T.clip, A.T.first, H.T.news, S.T.first, H.T.first, H.T.X2014, A.T.newyork, S.T.newyork, A.T.report, A.T.compani, S.T.report, S.T.compani, A.T.word, S.T.word, H.T.morn, H.T.busi, A.T.newyorktim, S.T.newyorktim, A.npnct13.log, A.T.share, S.T.share, H.npnct04.log, S.npnct13.log, A.T.articl, S.T.articl, H.T.newyork, H.T.today, H.T.springsumm, H.T.day, H.npnct14.log, A.T.diari, S.T.diari, H.T.report, S.npnct04.log, H.T.daili, H.T.X2015, A.T.herald, S.T.herald, S.npnct15.log, H.T.week, A.T.photo, S.T.photo, A.T.intern, S.T.intern, A.T.tribun, S.T.tribun, S.P.fashion.week, A.T.archiv, S.T.archiv, H.P.fashion.week, H.P.year.colon, H.T.fashion, H.npnct15.log, A.T.fashion, S.T.fashion, A.T.week, S.T.week, H.nstopwrds.log, H.npnct28.log, S.npnct11.log, S.nstopwrds.log, A.nstopwrds.log, H.ndgts.log, S.ndgts.log, H.nuppr.log, H.nwrds.log, H.nchrs.log, S.nwrds.log, A.nwrds.log, H.nwrds.unq.log, S.nchrs.log, A.nwrds.unq.log, S.nwrds.unq.log, S.nuppr.log
 ##   max.nTuningRuns min.elapsedtime.everything min.elapsedtime.final
-## 1               1                     30.829                15.513
+## 1               1                     28.039                14.339
 ##   max.auc.fit opt.prob.threshold.fit max.f.score.fit max.Accuracy.fit
 ## 1   0.9641175                    0.4       0.7799331         0.890503
 ##   max.AccuracyLower.fit max.AccuracyUpper.fit max.Kappa.fit max.auc.OOB
@@ -14210,8 +14212,8 @@ for (method in glb_models_method_vctr) {
 ##   max.AccuracySD.fit max.KappaSD.fit
 ## 1        0.008743821       0.0323972
 ##                label step_major step_minor     bgn     end elapsed
-## 2   fit.models_1_glm          2          0 500.436 539.741  39.305
-## 3 fit.models_1_rpart          3          0 539.741      NA      NA
+## 2   fit.models_1_glm          2          0 430.059 466.393  36.334
+## 3 fit.models_1_rpart          3          0 466.394      NA      NA
 ## [1] "fitting model: All.X.no.rnorm.rpart"
 ## [1] "    indep_vars: WordCount.log, A.ratio.sum.TfIdf.nwrds, S.ratio.sum.TfIdf.nwrds, H.ratio.sum.TfIdf.nwrds, .clusterid.fctr, H.sum.TfIdf, S.sum.TfIdf, A.sum.TfIdf, PubDate.hour.fctr, H.npnct19.log, A.ratio.nstopwrds.nwrds, S.ratio.nstopwrds.nwrds, PubDate.wkend, H.P.recap.colon, H.P.quandary, H.P.no.comment.colon, S.npnct19.log, H.P.facts.figures, H.npnct08.log, PubDate.last10.log, PubDate.last1.log, H.P.readers.respond, A.T.make, S.T.make, H.ratio.nstopwrds.nwrds, H.T.get, H.npnct06.log, S.npnct01.log, A.T.can, H.npnct16.log, S.T.can, H.T.ebola, H.npnct01.log, A.T.said, S.T.said, H.T.make, H.npnct11.log, myCategory.fctr, A.T.one, S.T.one, H.P.s.notebook, H.T.take, S.npnct16.log, A.T.presid, S.T.presid, S.npnct08.log, PubDate.last100.log, H.npnct05.log, H.P.friday.night.music, H.T.say, H.T.obama, H.T.bank, PubDate.date.fctr, PubDate.second.fctr, H.npnct07.log, S.npnct07.log, S.npnct03.log, A.npnct18.log, H.npnct12.log, H.T.word, H.T.big, A.npnct02.log, A.npnct17.log, S.P.year.colon, S.T.obama, A.T.obama, S.npnct20.log, H.npnct02.log, H.T.test, H.P.on.this.day, S.P.first.draft, S.T.take, A.T.take, S.npnct06.log, A.npnct14.log, S.T.time, A.T.time, H.T.newyorktim, H.npnct13.log, H.T.deal, S.T.new, A.T.new, H.T.billion, S.P.metropolitan.diary.colon, H.T.polit, H.P.verbatim.colon, H.T.china, H.T.art, PubDate.minute.fctr, H.T.read, S.npnct12.log, H.P.today.in.politic, A.T.year, S.T.year, H.P.what.we.are, A.T.will, S.T.will, A.T.appear, S.T.appear, PubDate.wkday.fctr, H.T.pictur, H.T.new, A.T.senat, S.T.senat, S.T.show, A.T.show, H.P.today.in.smallbusiness, S.T.day, A.T.day, S.npnct28.log, A.npnct28.log, H.P.daily.clip.report, H.T.clip, A.T.first, H.T.news, S.T.first, H.T.first, H.T.X2014, A.T.newyork, S.T.newyork, A.T.report, A.T.compani, S.T.report, S.T.compani, A.T.word, S.T.word, H.T.morn, H.T.busi, A.T.newyorktim, S.T.newyorktim, A.npnct13.log, A.T.share, S.T.share, H.npnct04.log, S.npnct13.log, A.T.articl, S.T.articl, H.T.newyork, H.T.today, H.T.springsumm, H.T.day, H.npnct14.log, A.T.diari, S.T.diari, H.T.report, S.npnct04.log, H.T.daili, H.T.X2015, A.T.herald, S.T.herald, S.npnct15.log, H.T.week, A.T.photo, S.T.photo, A.T.intern, S.T.intern, A.T.tribun, S.T.tribun, S.P.fashion.week, A.T.archiv, S.T.archiv, H.P.fashion.week, H.P.year.colon, H.T.fashion, H.npnct15.log, A.T.fashion, S.T.fashion, A.T.week, S.T.week, H.nstopwrds.log, H.npnct28.log, S.npnct11.log, S.nstopwrds.log, A.nstopwrds.log, H.ndgts.log, S.ndgts.log, H.nuppr.log, H.nwrds.log, H.nchrs.log, S.nwrds.log, A.nwrds.log, H.nwrds.unq.log, S.nchrs.log, A.nwrds.unq.log, S.nwrds.unq.log, S.nuppr.log"
 ## Aggregating results
@@ -14399,7 +14401,7 @@ for (method in glb_models_method_vctr) {
 ##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      feats
 ## 1 WordCount.log, A.ratio.sum.TfIdf.nwrds, S.ratio.sum.TfIdf.nwrds, H.ratio.sum.TfIdf.nwrds, .clusterid.fctr, H.sum.TfIdf, S.sum.TfIdf, A.sum.TfIdf, PubDate.hour.fctr, H.npnct19.log, A.ratio.nstopwrds.nwrds, S.ratio.nstopwrds.nwrds, PubDate.wkend, H.P.recap.colon, H.P.quandary, H.P.no.comment.colon, S.npnct19.log, H.P.facts.figures, H.npnct08.log, PubDate.last10.log, PubDate.last1.log, H.P.readers.respond, A.T.make, S.T.make, H.ratio.nstopwrds.nwrds, H.T.get, H.npnct06.log, S.npnct01.log, A.T.can, H.npnct16.log, S.T.can, H.T.ebola, H.npnct01.log, A.T.said, S.T.said, H.T.make, H.npnct11.log, myCategory.fctr, A.T.one, S.T.one, H.P.s.notebook, H.T.take, S.npnct16.log, A.T.presid, S.T.presid, S.npnct08.log, PubDate.last100.log, H.npnct05.log, H.P.friday.night.music, H.T.say, H.T.obama, H.T.bank, PubDate.date.fctr, PubDate.second.fctr, H.npnct07.log, S.npnct07.log, S.npnct03.log, A.npnct18.log, H.npnct12.log, H.T.word, H.T.big, A.npnct02.log, A.npnct17.log, S.P.year.colon, S.T.obama, A.T.obama, S.npnct20.log, H.npnct02.log, H.T.test, H.P.on.this.day, S.P.first.draft, S.T.take, A.T.take, S.npnct06.log, A.npnct14.log, S.T.time, A.T.time, H.T.newyorktim, H.npnct13.log, H.T.deal, S.T.new, A.T.new, H.T.billion, S.P.metropolitan.diary.colon, H.T.polit, H.P.verbatim.colon, H.T.china, H.T.art, PubDate.minute.fctr, H.T.read, S.npnct12.log, H.P.today.in.politic, A.T.year, S.T.year, H.P.what.we.are, A.T.will, S.T.will, A.T.appear, S.T.appear, PubDate.wkday.fctr, H.T.pictur, H.T.new, A.T.senat, S.T.senat, S.T.show, A.T.show, H.P.today.in.smallbusiness, S.T.day, A.T.day, S.npnct28.log, A.npnct28.log, H.P.daily.clip.report, H.T.clip, A.T.first, H.T.news, S.T.first, H.T.first, H.T.X2014, A.T.newyork, S.T.newyork, A.T.report, A.T.compani, S.T.report, S.T.compani, A.T.word, S.T.word, H.T.morn, H.T.busi, A.T.newyorktim, S.T.newyorktim, A.npnct13.log, A.T.share, S.T.share, H.npnct04.log, S.npnct13.log, A.T.articl, S.T.articl, H.T.newyork, H.T.today, H.T.springsumm, H.T.day, H.npnct14.log, A.T.diari, S.T.diari, H.T.report, S.npnct04.log, H.T.daili, H.T.X2015, A.T.herald, S.T.herald, S.npnct15.log, H.T.week, A.T.photo, S.T.photo, A.T.intern, S.T.intern, A.T.tribun, S.T.tribun, S.P.fashion.week, A.T.archiv, S.T.archiv, H.P.fashion.week, H.P.year.colon, H.T.fashion, H.npnct15.log, A.T.fashion, S.T.fashion, A.T.week, S.T.week, H.nstopwrds.log, H.npnct28.log, S.npnct11.log, S.nstopwrds.log, A.nstopwrds.log, H.ndgts.log, S.ndgts.log, H.nuppr.log, H.nwrds.log, H.nchrs.log, S.nwrds.log, A.nwrds.log, H.nwrds.unq.log, S.nchrs.log, A.nwrds.unq.log, S.nwrds.unq.log, S.nuppr.log
 ##   max.nTuningRuns min.elapsedtime.everything min.elapsedtime.final
-## 1               3                     20.238                 3.785
+## 1               3                       17.7                 3.558
 ##   max.auc.fit opt.prob.threshold.fit max.f.score.fit max.Accuracy.fit
 ## 1   0.7277461                    0.7       0.5978351        0.8967604
 ##   max.AccuracyLower.fit max.AccuracyUpper.fit max.Kappa.fit max.auc.OOB
@@ -14490,16 +14492,16 @@ print(glb_models_df)
 ## 9  WordCount.log, A.ratio.sum.TfIdf.nwrds, S.ratio.sum.TfIdf.nwrds, H.ratio.sum.TfIdf.nwrds, .clusterid.fctr, H.sum.TfIdf, S.sum.TfIdf, A.sum.TfIdf, PubDate.hour.fctr, H.npnct19.log, A.ratio.nstopwrds.nwrds, S.ratio.nstopwrds.nwrds, PubDate.wkend, H.P.recap.colon, H.P.quandary, H.P.no.comment.colon, S.npnct19.log, H.P.facts.figures, H.npnct08.log, PubDate.last10.log, PubDate.last1.log, H.P.readers.respond, A.T.make, S.T.make, H.ratio.nstopwrds.nwrds, H.T.get, H.npnct06.log, S.npnct01.log, A.T.can, H.npnct16.log, S.T.can, H.T.ebola, H.npnct01.log, A.T.said, S.T.said, H.T.make, H.npnct11.log, myCategory.fctr, A.T.one, S.T.one, H.P.s.notebook, H.T.take, S.npnct16.log, A.T.presid, S.T.presid, S.npnct08.log, PubDate.last100.log, .rnorm, H.npnct05.log, H.P.friday.night.music, H.T.say, H.T.obama, H.T.bank, PubDate.date.fctr, PubDate.second.fctr, H.npnct07.log, S.npnct07.log, S.npnct03.log, A.npnct18.log, H.npnct12.log, H.T.word, H.T.big, A.npnct02.log, A.npnct17.log, S.P.year.colon, S.T.obama, A.T.obama, S.npnct20.log, H.npnct02.log, H.T.test, H.P.on.this.day, S.P.first.draft, S.T.take, A.T.take, S.npnct06.log, A.npnct14.log, S.T.time, A.T.time, H.T.newyorktim, H.npnct13.log, H.T.deal, S.T.new, A.T.new, H.T.billion, S.P.metropolitan.diary.colon, H.T.polit, H.P.verbatim.colon, H.T.china, H.T.art, PubDate.minute.fctr, H.T.read, S.npnct12.log, H.P.today.in.politic, A.T.year, S.T.year, H.P.what.we.are, A.T.will, S.T.will, A.T.appear, S.T.appear, PubDate.wkday.fctr, H.T.pictur, H.T.new, A.T.senat, S.T.senat, S.T.show, A.T.show, H.P.today.in.smallbusiness, S.T.day, A.T.day, S.npnct28.log, A.npnct28.log, H.P.daily.clip.report, H.T.clip, A.T.first, H.T.news, S.T.first, H.T.first, H.T.X2014, A.T.newyork, S.T.newyork, A.T.report, A.T.compani, S.T.report, S.T.compani, A.T.word, S.T.word, H.T.morn, H.T.busi, A.T.newyorktim, S.T.newyorktim, A.npnct13.log, A.T.share, S.T.share, H.npnct04.log, S.npnct13.log, A.T.articl, S.T.articl, H.T.newyork, H.T.today, H.T.springsumm, H.T.day, H.npnct14.log, A.T.diari, S.T.diari, H.T.report, S.npnct04.log, H.T.daili, H.T.X2015, A.T.herald, S.T.herald, S.npnct15.log, H.T.week, A.T.photo, S.T.photo, A.T.intern, S.T.intern, A.T.tribun, S.T.tribun, S.P.fashion.week, A.T.archiv, S.T.archiv, H.P.fashion.week, H.P.year.colon, H.T.fashion, H.npnct15.log, A.T.fashion, S.T.fashion, A.T.week, S.T.week, H.nstopwrds.log, H.npnct28.log, S.npnct11.log, S.nstopwrds.log, A.nstopwrds.log, H.ndgts.log, S.ndgts.log, H.nuppr.log, H.nwrds.log, H.nchrs.log, S.nwrds.log, A.nwrds.log, H.nwrds.unq.log, S.nchrs.log, A.nwrds.unq.log, S.nwrds.unq.log, S.nuppr.log
 ## 10         WordCount.log, A.ratio.sum.TfIdf.nwrds, S.ratio.sum.TfIdf.nwrds, H.ratio.sum.TfIdf.nwrds, .clusterid.fctr, H.sum.TfIdf, S.sum.TfIdf, A.sum.TfIdf, PubDate.hour.fctr, H.npnct19.log, A.ratio.nstopwrds.nwrds, S.ratio.nstopwrds.nwrds, PubDate.wkend, H.P.recap.colon, H.P.quandary, H.P.no.comment.colon, S.npnct19.log, H.P.facts.figures, H.npnct08.log, PubDate.last10.log, PubDate.last1.log, H.P.readers.respond, A.T.make, S.T.make, H.ratio.nstopwrds.nwrds, H.T.get, H.npnct06.log, S.npnct01.log, A.T.can, H.npnct16.log, S.T.can, H.T.ebola, H.npnct01.log, A.T.said, S.T.said, H.T.make, H.npnct11.log, myCategory.fctr, A.T.one, S.T.one, H.P.s.notebook, H.T.take, S.npnct16.log, A.T.presid, S.T.presid, S.npnct08.log, PubDate.last100.log, H.npnct05.log, H.P.friday.night.music, H.T.say, H.T.obama, H.T.bank, PubDate.date.fctr, PubDate.second.fctr, H.npnct07.log, S.npnct07.log, S.npnct03.log, A.npnct18.log, H.npnct12.log, H.T.word, H.T.big, A.npnct02.log, A.npnct17.log, S.P.year.colon, S.T.obama, A.T.obama, S.npnct20.log, H.npnct02.log, H.T.test, H.P.on.this.day, S.P.first.draft, S.T.take, A.T.take, S.npnct06.log, A.npnct14.log, S.T.time, A.T.time, H.T.newyorktim, H.npnct13.log, H.T.deal, S.T.new, A.T.new, H.T.billion, S.P.metropolitan.diary.colon, H.T.polit, H.P.verbatim.colon, H.T.china, H.T.art, PubDate.minute.fctr, H.T.read, S.npnct12.log, H.P.today.in.politic, A.T.year, S.T.year, H.P.what.we.are, A.T.will, S.T.will, A.T.appear, S.T.appear, PubDate.wkday.fctr, H.T.pictur, H.T.new, A.T.senat, S.T.senat, S.T.show, A.T.show, H.P.today.in.smallbusiness, S.T.day, A.T.day, S.npnct28.log, A.npnct28.log, H.P.daily.clip.report, H.T.clip, A.T.first, H.T.news, S.T.first, H.T.first, H.T.X2014, A.T.newyork, S.T.newyork, A.T.report, A.T.compani, S.T.report, S.T.compani, A.T.word, S.T.word, H.T.morn, H.T.busi, A.T.newyorktim, S.T.newyorktim, A.npnct13.log, A.T.share, S.T.share, H.npnct04.log, S.npnct13.log, A.T.articl, S.T.articl, H.T.newyork, H.T.today, H.T.springsumm, H.T.day, H.npnct14.log, A.T.diari, S.T.diari, H.T.report, S.npnct04.log, H.T.daili, H.T.X2015, A.T.herald, S.T.herald, S.npnct15.log, H.T.week, A.T.photo, S.T.photo, A.T.intern, S.T.intern, A.T.tribun, S.T.tribun, S.P.fashion.week, A.T.archiv, S.T.archiv, H.P.fashion.week, H.P.year.colon, H.T.fashion, H.npnct15.log, A.T.fashion, S.T.fashion, A.T.week, S.T.week, H.nstopwrds.log, H.npnct28.log, S.npnct11.log, S.nstopwrds.log, A.nstopwrds.log, H.ndgts.log, S.ndgts.log, H.nuppr.log, H.nwrds.log, H.nchrs.log, S.nwrds.log, A.nwrds.log, H.nwrds.unq.log, S.nchrs.log, A.nwrds.unq.log, S.nwrds.unq.log, S.nuppr.log
 ##    max.nTuningRuns min.elapsedtime.everything min.elapsedtime.final
-## 1                0                      0.587                 0.003
-## 2                0                      0.363                 0.002
-## 3                0                      0.702                 0.055
-## 4                0                      0.614                 0.054
-## 5                1                      1.219                 0.057
-## 6                1                      1.239                 0.081
-## 7                1                      4.738                 2.002
-## 8                1                     21.294                10.116
-## 9                1                     30.829                15.513
-## 10               3                     20.238                 3.785
+## 1                0                      0.765                 0.003
+## 2                0                      0.349                 0.002
+## 3                0                      0.686                 0.057
+## 4                0                      0.607                 0.056
+## 5                1                      1.207                 0.057
+## 6                1                      1.228                 0.080
+## 7                1                      4.292                 1.812
+## 8                1                     19.897                 9.476
+## 9                1                     28.039                14.339
+## 10               3                     17.700                 3.558
 ##    max.auc.fit opt.prob.threshold.fit max.f.score.fit max.Accuracy.fit
 ## 1    0.5000000                    0.5       0.0000000        0.8326257
 ## 2    0.5072166                    0.1       0.2867534        0.1673743
@@ -14565,8 +14567,8 @@ fit.models_1_chunk_df <- myadd_chunk(fit.models_1_chunk_df, "fit.models_1_end",
 
 ```
 ##                label step_major step_minor     bgn     end elapsed
-## 3 fit.models_1_rpart          3          0 539.741 564.892  25.151
-## 4   fit.models_1_end          4          0 564.893      NA      NA
+## 3 fit.models_1_rpart          3          0 466.394 489.062  22.668
+## 4   fit.models_1_end          4          0 489.063      NA      NA
 ```
 
 ```r
@@ -14574,9 +14576,9 @@ glb_chunks_df <- myadd_chunk(glb_chunks_df, "fit.models", major.inc=FALSE)
 ```
 
 ```
-##         label step_major step_minor     bgn   end elapsed
-## 11 fit.models          7          1 496.277 564.9  68.623
-## 12 fit.models          7          2 564.901    NA      NA
+##         label step_major step_minor     bgn     end elapsed
+## 11 fit.models          7          1 425.869 489.069    63.2
+## 12 fit.models          7          2 489.070      NA      NA
 ```
 
 
@@ -14689,16 +14691,16 @@ print(plt_models_df)
 ## 9        0.7173913        0.8988819     0.6561351
 ## 10       0.5650558        0.8862421     0.5054039
 ##    inv.elapsedtime.everything inv.elapsedtime.final  inv.aic.fit
-## 1                  1.70357751          333.33333333           NA
-## 2                  2.75482094          500.00000001           NA
-## 3                  1.42450142           18.18181818           NA
-## 4                  1.62866450           18.51851852           NA
-## 5                  0.82034454           17.54385965           NA
-## 6                  0.80710250           12.34567901 0.0002692079
-## 7                  0.21105952            0.49950050 0.0003030028
-## 8                  0.04696159            0.09885330 0.0004787023
-## 9                  0.03243699            0.06446206 0.0004670967
-## 10                 0.04941200            0.26420079           NA
+## 1                  1.30718954          333.33333333           NA
+## 2                  2.86532951          500.00000001           NA
+## 3                  1.45772595           17.54385965           NA
+## 4                  1.64744646           17.85714286           NA
+## 5                  0.82850041           17.54385965           NA
+## 6                  0.81433225           12.50000000 0.0002692079
+## 7                  0.23299161            0.55187638 0.0003030028
+## 8                  0.05025883            0.10552976 0.0004787023
+## 9                  0.03566461            0.06973987 0.0004670967
+## 10                 0.05649718            0.28105677           NA
 ```
 
 ```r
@@ -17715,8 +17717,8 @@ glb_chunks_df <- myadd_chunk(glb_chunks_df, "fit.models", major.inc=FALSE)
 
 ```
 ##         label step_major step_minor     bgn     end elapsed
-## 12 fit.models          7          2 564.901 582.444  17.543
-## 13 fit.models          7          3 582.445      NA      NA
+## 12 fit.models          7          2 489.070 505.385  16.315
+## 13 fit.models          7          3 505.386      NA      NA
 ```
 
 
@@ -17870,9 +17872,9 @@ glb_chunks_df <- myadd_chunk(glb_chunks_df, "fit.data.training", major.inc=TRUE)
 ```
 
 ```
-##                label step_major step_minor     bgn    end elapsed
-## 13        fit.models          7          3 582.445 589.31   6.866
-## 14 fit.data.training          8          0 589.311     NA      NA
+##                label step_major step_minor     bgn     end elapsed
+## 13        fit.models          7          3 505.386 514.309   8.923
+## 14 fit.data.training          8          0 514.310      NA      NA
 ```
 
 ## Step `8.0: fit data training`
@@ -19127,7 +19129,7 @@ if (!is.null(glb_fin_mdl_id) && (glb_fin_mdl_id %in% names(glb_models_lst))) {
 ##                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           feats
 ## 1 WordCount.log, H.P.readers.respond, myCategory.fctr, H.npnct19.log, H.npnct15.log, .clusterid.fctr, A.npnct13.log, A.npnct19.log, S.nuppr.log, S.T.diari, H.T.word, H.npnct08.log, H.T.read, H.ndgts.log, S.P.metropolitan.diary.colon, S.ratio.sum.TfIdf.nwrds, A.T.newyork, H.nuppr.log, S.T.make, PubDate.wkday.fctr, H.nstopwrds.log, H.ratio.nstopwrds.nwrds, H.npnct11.log, S.T.can, H.P.no.comment.colon, H.P.friday.night.music, A.T.newyorktim, S.npnct04.log, H.T.newyork, S.T.share, S.npnct08.log, H.sum.TfIdf, H.P.recap.colon, S.T.one, H.npnct07.log, PubDate.last10.log, H.T.report, A.nwrds.unq.log, A.T.report, PubDate.hour.fctr, A.T.articl, A.sum.TfIdf, S.nstopwrds.log, PubDate.minute.fctr, H.T.polit, S.ratio.nstopwrds.nwrds, A.T.intern, S.T.time, H.npnct12.log, S.T.take, H.T.art, H.npnct13.log, PubDate.second.fctr, H.T.week, H.T.get, S.npnct01.log, A.T.will, S.T.show, H.T.new, .rnorm, H.ratio.sum.TfIdf.nwrds, S.ndgts.log, H.T.say, A.T.first, A.T.photo, H.T.china, H.npnct01.log, H.T.make, A.T.senat, S.T.said, S.T.day, H.npnct28.log, H.T.news, H.npnct16.log, H.T.take, S.npnct12.log, H.T.busi, A.T.compani, S.npnct11.log, H.T.day, A.T.word, H.P.facts.figures, H.T.X2014, PubDate.last1.log, S.T.obama, PubDate.date.fctr, H.T.big, S.npnct14.log, A.npnct16.log, S.npnct06.log, S.T.appear, PubDate.last100.log, PubDate.wkend, H.T.ebola, H.nwrds.log, H.T.obama, A.T.year, A.nchrs.log, H.T.test, A.T.week, H.T.pictur, S.nwrds.log, H.T.newyorktim, S.npnct15.log, H.T.bank, H.T.billion, S.T.new, A.T.fashion, H.P.fashion.week, S.T.archiv, S.T.herald, H.T.springsumm, S.T.tribun, H.T.deal, H.P.first.draft, S.npnct28.log, H.P.daily.clip.report, H.P.today.in.smallbusiness, H.P.verbatim.colon, S.P.first.draft, H.npnct02.log, H.P.quandary, S.npnct20.log, S.npnct03.log, A.npnct18.log, A.T.presid, S.T.presid, S.P.year.colon, H.P.on.this.day, H.npnct05.log, S.npnct07.log, S.P.fashion.week, H.P.s.notebook
 ##   max.nTuningRuns min.elapsedtime.everything min.elapsedtime.final
-## 1               1                     36.406                19.126
+## 1               1                      35.58                19.035
 ##   max.auc.fit opt.prob.threshold.fit max.f.score.fit max.Accuracy.fit
 ## 1   0.9584716                    0.4       0.7727691        0.8770685
 ##   max.AccuracyLower.fit max.AccuracyUpper.fit max.Kappa.fit min.aic.fit
@@ -19143,8 +19145,8 @@ glb_chunks_df <- myadd_chunk(glb_chunks_df, "fit.data.training", major.inc=FALSE
 
 ```
 ##                label step_major step_minor     bgn     end elapsed
-## 14 fit.data.training          8          0 589.311 633.562  44.251
-## 15 fit.data.training          8          1 633.562      NA      NA
+## 14 fit.data.training          8          0 514.310 558.729  44.419
+## 15 fit.data.training          8          1 558.729      NA      NA
 ```
 
 
@@ -21052,8 +21054,8 @@ glb_chunks_df <- myadd_chunk(glb_chunks_df, "predict.data.new", major.inc=TRUE)
 
 ```
 ##                label step_major step_minor     bgn     end elapsed
-## 15 fit.data.training          8          1 633.562 644.963  11.402
-## 16  predict.data.new          9          0 644.964      NA      NA
+## 15 fit.data.training          8          1 558.729 569.943  11.214
+## 16  predict.data.new          9          0 569.943      NA      NA
 ```
 
 ## Step `9.0: predict data new`
@@ -22331,8 +22333,8 @@ glb_chunks_df <- myadd_chunk(glb_chunks_df, "display.session.info", major.inc=TR
 
 ```
 ##                   label step_major step_minor     bgn     end elapsed
-## 16     predict.data.new          9          0 644.964 653.713   8.749
-## 17 display.session.info         10          0 653.714      NA      NA
+## 16     predict.data.new          9          0 569.943 578.939   8.996
+## 17 display.session.info         10          0 578.939      NA      NA
 ```
 
 Null Hypothesis ($\sf{H_{0}}$): mpg is not impacted by am_fctr.  
@@ -22347,54 +22349,54 @@ We reject the null hypothesis i.e. we have evidence to conclude that am_fctr imp
 
 ```
 ##                      label step_major step_minor     bgn     end elapsed
-## 6         extract.features          3          0  40.093 280.479 240.386
-## 8          select.features          5          0 301.782 437.606 135.824
-## 11              fit.models          7          1 496.277 564.900  68.623
-## 10              fit.models          7          0 438.967 496.277  57.310
-## 14       fit.data.training          8          0 589.311 633.562  44.251
-## 7             cluster.data          4          0 280.480 301.781  21.302
-## 2             inspect.data          2          0  10.557  29.598  19.041
-## 12              fit.models          7          2 564.901 582.444  17.543
-## 15       fit.data.training          8          1 633.562 644.963  11.402
-## 16        predict.data.new          9          0 644.964 653.713   8.749
-## 13              fit.models          7          3 582.445 589.310   6.866
-## 4      manage.missing.data          2          2  33.594  39.919   6.325
-## 3             cleanse.data          2          1  29.599  33.594   3.995
-## 9  partition.data.training          6          0 437.606 438.967   1.361
-## 1              import.data          1          0   9.508  10.557   1.049
-## 5              encode.data          2          3  39.919  40.092   0.174
+## 6         extract.features          3          0  42.469 213.686 171.217
+## 8          select.features          5          0 235.859 370.726 134.867
+## 11              fit.models          7          1 425.869 489.069  63.200
+## 10              fit.models          7          0 372.049 425.868  53.820
+## 14       fit.data.training          8          0 514.310 558.729  44.419
+## 7             cluster.data          4          0 213.686 235.859  22.173
+## 2             inspect.data          2          0  14.258  33.040  18.782
+## 12              fit.models          7          2 489.070 505.385  16.315
+## 15       fit.data.training          8          1 558.729 569.943  11.214
+## 16        predict.data.new          9          0 569.943 578.939   8.996
+## 13              fit.models          7          3 505.386 514.309   8.923
+## 4      manage.missing.data          2          2  36.983  42.439   5.456
+## 3             cleanse.data          2          1  33.040  36.982   3.942
+## 9  partition.data.training          6          0 370.726 372.048   1.322
+## 1              import.data          1          0  13.224  14.257   1.033
+## 5              encode.data          2          3  42.440  42.468   0.028
 ##    duration
-## 6   240.386
-## 8   135.824
-## 11   68.623
-## 10   57.310
-## 14   44.251
-## 7    21.301
-## 2    19.041
-## 12   17.543
-## 15   11.401
-## 16    8.749
-## 13    6.865
-## 4     6.325
-## 3     3.995
-## 9     1.361
-## 1     1.049
-## 5     0.173
-## [1] "Total Elapsed Time: 653.713 secs"
+## 6   171.217
+## 8   134.867
+## 11   63.200
+## 10   53.819
+## 14   44.419
+## 7    22.173
+## 2    18.782
+## 12   16.315
+## 15   11.214
+## 16    8.996
+## 13    8.923
+## 4     5.456
+## 3     3.942
+## 9     1.322
+## 1     1.033
+## 5     0.028
+## [1] "Total Elapsed Time: 578.939 secs"
 ```
 
 ![](NYTBlogs_cluster_files/figure-html/display.session.info-1.png) 
 
 ```
 ##                label step_major step_minor     bgn     end elapsed
-## 2   fit.models_1_glm          2          0 500.436 539.741  39.305
-## 3 fit.models_1_rpart          3          0 539.741 564.892  25.151
-## 1   fit.models_1_bgn          1          0 500.423 500.435   0.013
+## 2   fit.models_1_glm          2          0 430.059 466.393  36.334
+## 3 fit.models_1_rpart          3          0 466.394 489.062  22.668
+## 1   fit.models_1_bgn          1          0 430.046 430.059   0.013
 ##   duration
-## 2   39.305
-## 3   25.151
-## 1    0.012
-## [1] "Total Elapsed Time: 564.892 secs"
+## 2   36.334
+## 3   22.668
+## 1    0.013
+## [1] "Total Elapsed Time: 489.062 secs"
 ```
 
 ![](NYTBlogs_cluster_files/figure-html/display.session.info-2.png) 

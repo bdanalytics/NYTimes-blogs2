@@ -1670,7 +1670,7 @@ if (glb_cluster) {
 #     glb_hash_lst <- hash(key=unique(glb_allobs_df$myCategory), 
 #                      values=1:length(unique(glb_allobs_df$myCategory)))
     print("Clustering features: ")
-    #print(cluster_vars <- grep("[HSA]\\.[PT]\\.", names(ctgry_allobs_df), value=TRUE))
+    #print(cluster_vars <- grep("[HSA]\\.[PT]\\.", names(glb_allobs_df), value=TRUE))
     print(cluster_vars <- grep("[HSA]\\.", names(glb_allobs_df), value=TRUE))
     glb_allobs_df$.clusterid <- 1    
     print(max(table(glb_allobs_df$myCategory.fctr) / 20))
@@ -1702,7 +1702,9 @@ if (glb_cluster) {
         #clusterGroups = cutree(clusters, k=7)
         clusterGroups <- cutreeDynamic(clusters, minClusterSize=20, method="tree", deepSplit=0)
         # Unassigned groups are labeled 0; the largest group has label 1
-        table(clusterGroups, ctgry_allobs_df[, glb_rsp_var], useNA="ifany")        
+        table(clusterGroups, ctgry_allobs_df[, glb_rsp_var], useNA="ifany")   
+        #print(ctgry_allobs_df[which(clusterGroups == 1), c("UniqueID", "Popular", "Headline")])
+        #print(ctgry_allobs_df[(clusterGroups == 1) & !is.na(ctgry_allobs_df$Popular) & (ctgry_allobs_df$Popular==1), c("UniqueID", "Popular", "Headline")])
         clusterGroups[clusterGroups == 0] <- 1
         table(clusterGroups, ctgry_allobs_df[, glb_rsp_var], useNA="ifany")        
         #summary(factor(clusterGroups))

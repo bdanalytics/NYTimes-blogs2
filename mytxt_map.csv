@@ -131,6 +131,7 @@
 "\bUSAF\.", "USAF"
 "\bU\.S\.O\.", "USO"
 "\bV\.A\.", "VA"
+"\b[Vv]s\.", "versus"
 "\bWashington D\.C\.", "WashingtonDC"
 "\bD\.C\.", "WashingtonDC"
 "\bW\. Eugene Smith", "WEugeneSmith"
@@ -145,22 +146,22 @@
 "\bWall Street",    "WallStreet"
 "\bWall St\.",      "WallStreet"
 "\bWall St",        "WallStreet"
-###    
-"\bFort( |-)((Fisher|Lauderdale|Worth)\b)+",    "Fort\2" 
+###
+"\bFort( |-)((Fisher|Lauderdale|Worth)\b)+",    "Fort\2"
 "\bFt\.( |-)((DummyA|DummyB)\b)+",              "Fort\2"
 "\bHong( |-)((Kong|Kongs|Kongers)\b)+",         "Hong\2"
 "\bLas( |-)((Vegas|Dummy)\b)+",                 "Las\2"
 "\bLos( |-)((Angeles|Angeless)\b)+",            "Los\2"
 "\bNew( |-)((American|Amsterdam|Delhi|Dirt|England|Hampshire|Haven|Jersey|Jerseys|Jerseyans|Mexico|Music|Orleans|Republic|Testament|World|Year|Years|York|Yorker|Yorkers|Yorks|Zealand)\b)+", "New\2"
-"\bPuerto( |-)((Rican|Rico|Ricos)\b)+",       "Puerto\2"    
-"\bSaint( |-)((Laurent|Lucia)\b)+",           "Saint\2" # Saint-Laurent   
-"\bSan( |-)((Francisco|Franciscos|Gennaro|Giovanni|Juan|Marino)\b)+", "San\2"    
+"\bPuerto( |-)((Rican|Rico|Ricos)\b)+",       "Puerto\2"
+"\bSaint( |-)((Laurent|Lucia)\b)+",           "Saint\2" # Saint-Laurent
+"\bSan( |-)((Francisco|Franciscos|Gennaro|Giovanni|Juan|Marino)\b)+", "San\2"
 "\bSt\.( |-)((Albans|Barts|Francis|Joe|John|Louis|Lucia|Martin|Martins|Marys|Matthew|Patricks|Paul|Regis|Vincent)\b)+", "Saint\2"   # St. Mary's City, MD; St. Lucia|Martin, Virgin Islands; Add s for plurality (e.g. New Yorks)
 ###
-"\b([[:upper:]])([[:lower:]]*)-(based|bred|imposed|raised)\b",  "\1\2 \3" # matches "Internet-based" also   
+"\b([[:upper:]])([[:lower:]]*)-(based|bred|imposed|raised)\b",  "\1\2 \3" # matches "Internet-based" also
 "\b(China|Chinese|Dallas|Iraq|Minneapolis|USA|Yangzhou)-(\w)",  "\1 \2"
 "\b(Russia|Dummy)-(\w)",                                        "\1 \2"
-"\b(Alaska|Dummy)-(\w)",                                        "\1 \2"    
+"\b(Alaska|Dummy)-(\w)",                                        "\1 \2"
 "(\w)-(Shanghai|USA)\b",                                        "\1 \2"
 #
 #---compass terms---
@@ -172,21 +173,21 @@
 #
 #---numbers---
 #
-"([[:digit:]]+)-by-([[:digit:]]+)", "\1 by \2"    
-"([[:digit:]]+)-([[:digit:]]+)", "\1 to \2" 
-"([[:digit:]]+)-", "\1 " 
-"(.+)-(first|second|third|fourth|fifth|sixth|seventh|eighth|ninth)", "\1 \2" 
-"(first|second|third|fourth|fifth|sixth|seventh|eighth|ninth)-(.+)", "\1 \2" 
-"(one|two|three|four|five|six|seven|eight|nine)-", "\1 " 
-"(once|twice)-", "\1 " 
-"\byear-old", "year old" # conflicts:end|round    
+"([[:digit:]]+)-by-([[:digit:]]+)", "\1 by \2"
+"([[:digit:]]+)-([[:digit:]]+)", "\1 to \2"
+"([[:digit:]]+)-", "\1 "
+"(.+)-(first|second|third|fourth|fifth|sixth|seventh|eighth|ninth)", "\1 \2"
+"(first|second|third|fourth|fifth|sixth|seventh|eighth|ninth)-(.+)", "\1 \2"
+"(one|two|three|four|five|six|seven|eight|nine)-", "\1 "
+"(once|twice)-", "\1 "
+"\byear-old", "year old" # conflicts:end|round
 "(\w)-a-year", "\1-per-year" # billion-a-year gets transformed into billion-ayear after removePunctuation w/ OR w/o preserve_intra...
 "(\w)-birthday", "\1 birthday"
-"\bto-([[:digit:]]+)", "to \1"    
-"\bhalf-dozen\b", "6"    
-"\bdozen\b", "12"        
+"\bto-([[:digit:]]+)", "to \1"
+"\bhalf-dozen\b", "6"
+"\bdozen\b", "12"
 "\b[Tt]hirty-[Ff]ive\b", "35"
-"\b[Ff]ifty-[Ee]ight\b", "58"    
+"\b[Ff]ifty-[Ee]ight\b", "58"
 "\b[Ss]eventy-[Oo]ne\b", "71"
 #
 #---misc consolidations---
